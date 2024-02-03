@@ -1,0 +1,10 @@
+{
+  "name": "DramaMask",
+  "version_number": "1.1.0",
+  "website_url": "",
+  "description": "Adds a new type of mask, Drama, which will make the Masked ignore you!",
+  "dependencies": [
+    "BepInEx-BepInExPack-5.4.2100",
+    "Evaisa-LethalLib-0.13.0"
+  ]
+}

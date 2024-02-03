@@ -1,0 +1,13 @@
+# Auto-Generated files
+bin/*
+obj/*
+.vs/*
+
+# Local setup
+*.bat
+*.yml
+
+# Local files
+_Releases/*
+Assets/*
+Patches/Old/*
