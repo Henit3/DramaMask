@@ -7,6 +7,7 @@ using UnityEngine;
 using System.Linq;
 using DramaMask.Extensions;
 using BepInEx.Configuration;
+using System;
 
 namespace DramaMask;
 
@@ -177,12 +178,14 @@ public class Plugin : BaseUnityPlugin
         AssetBundle bundle = null;
 
         var assembly = Assembly.GetExecutingAssembly();
-        var bundleName = assembly
-            .GetManifestResourceNames()
+        var embeddedResources = assembly
+            .GetManifestResourceNames();
+        var bundleName = embeddedResources
             .FirstOrDefault(n => n.StartsWith($"{guid}.Assets"));
         if (bundleName == null)
         {
-            Logger.LogError($"Embedded resource for [{guid}] not found!");
+            Logger.LogError($"Embedded resource for [{guid}] not found!" +
+                $"\nAvailable: [{string.Join(", ", embeddedResources)}]");
             return bundle;
         }
 
@@ -195,14 +198,15 @@ public class Plugin : BaseUnityPlugin
 
             bundle = AssetBundle.LoadFromMemory(memoryStream.ToArray());
         }
-        catch
+        catch (Exception e)
         {
-            Logger.LogError($"Bundle [{bundleName}] failed to load!");
+            Logger.LogError($"Bundle [{bundleName}] failed to load!" +
+                $"\nAvailable: [{string.Join(", ", bundle.GetAllAssetNames())}]" +
+                $"\n{e}");
             return bundle;
         }
 
         Logger.LogDebug($"Bundle [{bundleName}] accessible!");
-        //Logger.LogDebug(string.Join(", ", bundle.GetAllAssetNames()));
         return bundle;
     }
 }

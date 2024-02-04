@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net46</TargetFramework>
@@ -15,6 +15,21 @@
     <Authors />
     <PackageId>DramaMask</PackageId>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="_Releases\**" />
+    <None Remove="_Releases\**" />
+    <Compile Remove="Assets\**" />
+    <None Remove="Assets\**" />
+    <Compile Remove="Patches\Old\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="*.bat" />
+    <Compile Remove="*.yml" />
+    <None Remove="*.yml" />
+    <Compile Remove="Network\NetworkTester.cs" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="BepInEx.Analyzers" Version="1.*" PrivateAssets="all" />
@@ -62,21 +77,5 @@
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Remove="_Releases\**" />
-    <None Remove="_Releases\**" />
-    <Compile Remove="Assets\**" />
-    <EmbeddedResource Remove="Assets\**" />
-    <None Remove="Assets\**" />
-    <Compile Remove="Patches\Old\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Remove="netcode-patch-this.bat" />
-    <Compile Remove="Network\NetworkTester.cs" />
-    <Compile Remove="Notes.yml" />
-    <None Remove="Notes.yml" />
   </ItemGroup>
 </Project>
