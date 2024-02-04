@@ -16,7 +16,7 @@ To balance this mechanic out, there is a stealth meter that is used while attemp
 - Allow the player to resemble the Masked enemies
 	- Allow the Drama Mask to latch onto the player's face
 	- Allow the player to activate the eyes on the Drama Mask
-	- Allow the player to have their hands out like
+	- Allow the player to have their hands out like the Masked
 
 ### Credits
 Made on request from @tkcool and @pedro9006 in the Unofficial Lethal Company Modding Discord, check it out.
