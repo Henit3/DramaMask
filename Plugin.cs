@@ -141,6 +141,16 @@ public class Plugin : BaseUnityPlugin
             ConfigValues.BarColour.AsConfigString(),
             new("The colour that the stealth bar will appear as (format as \"r|g|b\" in hex, e.g. \"00|80|ff\" for cyan).")
         ).Value.FromConfigString();
+
+
+        configSection = "Miscellaneous";
+
+        ConfigValues.SeeWornMaskOutline = Config.Bind(
+            new(configSection, "Only See Outline of Worn Mask"),
+            ConfigValues.SeeWornMaskOutline,
+            new("Whether to only see the mask outline when wearing a mask.",
+                new AcceptableValueList<bool>(true, false))
+        ).Value;
     }
 
     private void LoadAssets()
@@ -159,9 +169,10 @@ public class Plugin : BaseUnityPlugin
         var outlineBundle = LoadBundle(PluginInfo.PLUGIN_GUID, "maskoutline");
         if (outlineBundle == null) return;
 
-        var maskOutline = outlineBundle.SafeLoadAsset<GameObject>("assets/outline/maskoutline.prefab");
-        if (maskOutline == null) return;
+        var outlineMesh = outlineBundle.SafeLoadAsset<Mesh>("assets/outline/maskoutline.001.mesh");
+        if (outlineMesh == null) return;
 
+        HauntedMaskItemExtensions.OutlineMesh = outlineMesh;
         Logger.LogDebug("Loaded asset: maskOutline");
     }
 

@@ -16,11 +16,11 @@ public class ItemActivatePatch
         if (instance.playerHeldBy == null) return;
 
         // Continue only if the server (behaviour), or the local player (UI)
-        if (!(NetworkHandler.IsHostOrServer() || __instance.playerHeldBy.IsLocal())) return;
+        if (!(NetworkHandler.IsHostOrServer() || instance.playerHeldBy.IsLocal())) return;
 
         var id = instance.playerHeldBy.GetId();
 
-        var targetData = __instance.playerHeldBy.IsLocal()
+        var targetData = instance.playerHeldBy.IsLocal()
             ? NetworkHandler.Instance.MyStealth
             : NetworkHandler.Instance.StealthMap[id];
 
@@ -31,5 +31,7 @@ public class ItemActivatePatch
             if (targetData.AddExhaustionPenalty) adjustedTime = adjustedTime.AddSeconds(ConfigValues.ExhaustionPenaltyDelay);
             targetData.LastStoppedStealth = adjustedTime;
         }
+
+        instance.SetOutlineView(buttonDown);
     }
 }

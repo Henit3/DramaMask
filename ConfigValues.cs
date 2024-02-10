@@ -17,4 +17,6 @@ public static class ConfigValues
     public static float BarXPosition = 0f;
     public static float BarYPosition = 235f;
     public static Color BarColour = new(220, 220, 220, byte.MaxValue);
+
+    public static bool SeeWornMaskOutline = false;
 }
