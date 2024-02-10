@@ -32,6 +32,8 @@ public class ItemActivatePatch
             targetData.LastStoppedStealth = adjustedTime;
         }
 
+        if (!instance.playerHeldBy.IsLocal()) return;
+
         instance.SetOutlineView(buttonDown);
     }
 }

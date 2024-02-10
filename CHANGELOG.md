@@ -1,3 +1,6 @@
+# 1.1.2
+- Fix to stop server host seeing other player's masks as outlines if they have the setting enabled
+
 # 1.1.1
 - Added option to only show an outline when equipping masks for better visibility
 
