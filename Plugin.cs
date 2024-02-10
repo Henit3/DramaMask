@@ -145,16 +145,24 @@ public class Plugin : BaseUnityPlugin
 
     private void LoadAssets()
     {
-        var bundle = LoadBundle(PluginInfo.PLUGIN_GUID);
-        if (bundle == null) return;
+        var maskBundle = LoadBundle(PluginInfo.PLUGIN_GUID, "dramamask");
+        if (maskBundle == null) return;
 
-        Item dramaMask = bundle.SafeLoadAsset<Item>("assets/drama/dramamask.asset");
+        var dramaMask = maskBundle.SafeLoadAsset<Item>("assets/drama/dramamask.asset");
         if (dramaMask == null) return;
 
         LethalLib.Modules.Utilities.FixMixerGroups(dramaMask.spawnPrefab);
         LethalLib.Modules.NetworkPrefabs.RegisterNetworkPrefab(dramaMask.spawnPrefab);
         RegisterDramaScrap(dramaMask);
         Logger.LogDebug("Loaded asset: dramaMask");
+
+        var outlineBundle = LoadBundle(PluginInfo.PLUGIN_GUID, "maskoutline");
+        if (outlineBundle == null) return;
+
+        var maskOutline = outlineBundle.SafeLoadAsset<GameObject>("assets/outline/maskoutline.prefab");
+        if (maskOutline == null) return;
+
+        Logger.LogDebug("Loaded asset: maskOutline");
     }
 
     /* Rarities decided with datasheet: https://docs.google.com/spreadsheets/d/1AREkZnHaqxukdpVNOEDFKikar9R4XAIjpZ_gI7NNngM/edit#gid=0
@@ -173,16 +181,16 @@ public class Plugin : BaseUnityPlugin
         );
     }
 
-    private AssetBundle LoadBundle(string guid)
+    private AssetBundle LoadBundle(string guid, string bundleName)
     {
         AssetBundle bundle = null;
 
         var assembly = Assembly.GetExecutingAssembly();
         var embeddedResources = assembly
             .GetManifestResourceNames();
-        var bundleName = embeddedResources
-            .FirstOrDefault(n => n.StartsWith($"{guid}.Assets"));
-        if (bundleName == null)
+        var resourceName = embeddedResources
+            .FirstOrDefault(n => n.StartsWith($"{guid}.Assets.{bundleName}"));
+        if (resourceName == null)
         {
             Logger.LogError($"Embedded resource for [{guid}] not found!" +
                 $"\nAvailable: [{string.Join(", ", embeddedResources)}]");
@@ -191,8 +199,8 @@ public class Plugin : BaseUnityPlugin
 
         try
         {
-            Logger.LogDebug($"Loading embedded resource data [{bundleName}]...");
-            using var str = assembly.GetManifestResourceStream(bundleName);
+            Logger.LogDebug($"Loading embedded resource data [{resourceName}]...");
+            using var str = assembly.GetManifestResourceStream(resourceName);
             using var memoryStream = new MemoryStream();
             str.CopyTo(memoryStream);
 
@@ -200,13 +208,13 @@ public class Plugin : BaseUnityPlugin
         }
         catch (Exception e)
         {
-            Logger.LogError($"Bundle [{bundleName}] failed to load!" +
+            Logger.LogError($"Bundle [{resourceName}] failed to load!" +
                 $"\nAvailable: [{string.Join(", ", bundle.GetAllAssetNames())}]" +
                 $"\n{e}");
             return bundle;
         }
 
-        Logger.LogDebug($"Bundle [{bundleName}] accessible!");
+        Logger.LogDebug($"Bundle [{resourceName}] accessible!");
         return bundle;
     }
 }

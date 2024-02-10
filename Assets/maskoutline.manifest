@@ -1,0 +1,37 @@
+ManifestFileVersion: 0
+CRC: 2677407566
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: f36552a1c6bf2c12be934e9c32728a0e
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: d27d605e56b00c7d193d3604b99a7461
+  IncrementalBuildHash:
+    serializedVersion: 2
+    Hash: f36552a1c6bf2c12be934e9c32728a0e
+HashAppended: 0
+ClassTypes:
+- Class: 1
+  Script: {instanceID: 0}
+- Class: 4
+  Script: {instanceID: 0}
+- Class: 21
+  Script: {instanceID: 0}
+- Class: 23
+  Script: {instanceID: 0}
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 33
+  Script: {instanceID: 0}
+- Class: 43
+  Script: {instanceID: 0}
+- Class: 48
+  Script: {instanceID: 0}
+SerializeReferenceClassIdentifiers: []
+Assets:
+- Assets/Outline/MaskOutline.prefab
+- Assets/Outline/MaskOutlineTex.png
+- Assets/Outline/MaskOutline.001.mesh
+- Assets/Outline/MaskOutlineMat.mat
+Dependencies: []

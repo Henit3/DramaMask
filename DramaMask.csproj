@@ -62,6 +62,7 @@
 
   <ItemGroup>
     <EmbeddedResource Include="Assets\dramamask" />
+    <EmbeddedResource Include="Assets\maskoutline" />
   </ItemGroup>
   
   <ItemGroup>
