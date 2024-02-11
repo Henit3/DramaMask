@@ -20,16 +20,25 @@ To balance this mechanic out, there is a stealth meter that is used while attemp
 	* Allow the player to have their hands out like the Masked
 
 ### Credits
-Made on request from @tkcool and @pedro9006 in the [Unofficial Lethal Company Modding Discord](https://discord.gg/nYcQFEpXfU), check it out.
+Made on request from @tkcool and @pedro9006.
 
-Additional features:
-* Stealth meter proposed by @mintiivanilla and UI inspired by @megapiggy's Insanity Meter.
-* Changing visibility of the mask being used proposed by @star0138.
+Feature Proposers:
+* Stealth meter: @mintiivanilla
+	* UI inspired by @megapiggy's
+	[InsanityMeter](https://thunderstore.io/c/lethal-company/p/MegaPiggy/InsanityMeter/) mod.
+* Mask visibility on use: @star0138.
 
-Check out @megapiggy's mod too, which adds a buyable variant of the mask to the store!
-[BuyableDramaMask](https://thunderstore.io/c/lethal-company/p/MegaPiggy/BuyableDramaMask/)
+Bug Finders:
+* (Pre-Release) Networking: @roshposhtosh, @sabzy, and @saintshekzz
+* BiggerLobby incompatibilities: @TheRealMrKam (via GitHub)
 
-Thanks to the people who helped me test behaviour across networking (@roshposhtosh, @sabzy, and @saintshekzz)
+Check out @megapiggy's [BuyableDramaMask](https://thunderstore.io/c/lethal-company/p/MegaPiggy/BuyableDramaMask/) mod too,
+which adds a buyable variant of the mask to the store!
 
 ### Contact
-For requesting new features or highlighting issues/bugs found, please post them in the mod's [dedicated Discord channel](https://discord.com/channels/1169792572382773318/1196159046512820344)
+For requesting new features or highlighting issues/bugs found, please post them in the mod's
+[Dedicated Discord Channel](https://discord.com/channels/1169792572382773318/1196159046512820344)
+on the [Unofficial Lethal Company Modding Discord](https://discord.gg/nYcQFEpXfU).
+
+* [Thunderstore](https://thunderstore.io/c/lethal-company/p/necrowing/DramaMask/)
+* [GitHub](https://github.com/Henit3/DramaMask)

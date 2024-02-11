@@ -1,3 +1,6 @@
+# 1.1.3
+- Fixed incompatibility issues with BiggerLobby
+
 # 1.1.2
 - Fix to stop server host seeing other player's masks as outlines if they have the setting enabled
 
