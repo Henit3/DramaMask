@@ -1,7 +1,6 @@
 ﻿using GameNetcodeStuff;
 using HarmonyLib;
 using System.Collections.Generic;
-using System.Reflection;
 using System.Reflection.Emit;
 
 namespace DramaMask.Patches.EnemyAIPatch;
@@ -16,42 +15,47 @@ public class GetClosestPlayerPatch : BaseModifyPlayerArrayPatch
         SaveAndModifyPlayerArray(__instance);
     }
 
-    // Fixes the hardcoded player count
+    // Out of bounds handling with static player count transpilation from other mods
+    [HarmonyAfter([
+        "notnotnotswipez-MoreCompany-1.8.1",
+        "bizzlemip-BiggerLobby-2.6.0",
+        "PotatoePet-AdvancedCompany-1.0.150"
+    ])]
     [HarmonyTranspiler]
     private static IEnumerable<CodeInstruction> SetMaskTypePatch(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
     {
         var matcher = new CodeMatcher(instructions);
 
-        // index < 4
-        CodeMatch[] forLoopPredicate = [
-            new (OpCodes.Ldloc_1),             // index
-            new (OpCodes.Ldc_I4_4),            // 4
-            new (OpCodes.Blt)                  // <
-        ];
+        // Go to end and match backwards for first blt (main player loop predicate)
+        matcher.End();
+        matcher.MatchBack(false, [new(OpCodes.Blt)]);
 
-        // Check and go to the hardcoded predicate if it still exists
-        matcher.MatchForward(false, forLoopPredicate);
+        // Store the branch target to use in adjusted predicate
+        var enterLoopTarget = matcher.Instruction.operand;
 
-        // If match unsuccessful, dev has probably fixed this and transpilation is not needed
-        if (matcher.Remaining == 0)
-        {
-            Plugin.Logger.LogInfo("Could not find [index < 4] predicate to patch.");
-            return matcher.InstructionEnumeration();
-        }
+        // Replace blt with clt to only check as part of first "and" condition
+        matcher.RemoveInstruction().InsertAndAdvance([new(OpCodes.Clt)]);
 
-        // Jump to the position of the 4 constant to replace it
-        matcher.Advance(1);
+        // Add second "and" condition to check if out of bounds
+        matcher.InsertAndAdvance(
+            new(OpCodes.Ldloc_1),           // index
 
-        // Replace 4 with StartOfRound.Instance.allPlayerScripts.Length
-        matcher.RemoveInstruction()
-            .InsertAndAdvance(
-                new (OpCodes.Call,              // StartOfRound.Instance
-                    typeof(StartOfRound).GetMethod("get_Instance", BindingFlags.Public | BindingFlags.Static)),
-                new (OpCodes.Ldfld,             // .allPlayerScripts
-                    typeof(StartOfRound).GetField("allPlayerScripts", BindingFlags.Public | BindingFlags.Instance)),
-                new (OpCodes.Ldlen),            // .Length
-                new (OpCodes.Conv_I4)           // (int)
-            );
+            new(OpCodes.Call,               // StartOfRound.Instance
+                AccessTools.Property(typeof(StartOfRound), nameof(StartOfRound.Instance)).GetMethod),
+            new(OpCodes.Ldfld,              // .allPlayerScripts
+                AccessTools.Field(typeof(StartOfRound), nameof(StartOfRound.allPlayerScripts))),
+            new(OpCodes.Ldlen),             // .Length
+            new(OpCodes.Conv_I4),           // (int)
+
+            new(OpCodes.Clt)                // <
+        );
+
+        // Apply "and" operation and branch into processing loop if both satisfied
+        matcher.InsertAndAdvance(
+            new(OpCodes.And),                // (index < checkLength) && (index in bounds)
+            new(OpCodes.Brtrue,
+                enterLoopTarget)             // enter processing loop
+        );
 
         return matcher.InstructionEnumeration();
     }

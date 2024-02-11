@@ -1,4 +1,4 @@
-﻿using DramaMask.Extensions;
+using DramaMask.Extensions;
 using DramaMask.Network;
 using GameNetcodeStuff;
 using System.Linq;
@@ -17,7 +17,8 @@ public abstract class BaseModifyPlayerArrayPatch
         allPlayerScriptsOriginal = StartOfRound.Instance.allPlayerScripts;
 
         StartOfRound.Instance.allPlayerScripts = StartOfRound.Instance.allPlayerScripts
-            .Where(player => NetworkHandler.Instance.VisiblePlayers.Contains(player.GetId()))
+            .Where(player => player == null || !player.isPlayerControlled
+                || NetworkHandler.Instance.VisiblePlayers.Contains(player.GetId()))
             .ToArray();
     }
 
