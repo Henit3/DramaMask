@@ -10,8 +10,12 @@ public class NetworkHandler : NetworkBehaviour
     public static NetworkHandler Instance { get; private set; }
 
     public NetworkList<ulong> VisiblePlayers;
+    
     public Dictionary<ulong, StealthData> StealthMap { get; private set; }
     public StealthData MyStealth { get; private set; }
+
+    public Dictionary<ulong, PretendData> PretendMap { get; private set; }
+    public PretendData MyPretend { get; private set; }
 
     public static bool IsHostOrServer() => NetworkManager.Singleton.IsHost || NetworkManager.Singleton.IsServer;
 
@@ -34,6 +38,7 @@ public class NetworkHandler : NetworkBehaviour
         {
             // Host always has id = 0
             StealthMap = new();
+            PretendMap = new();
             VisiblePlayers.Clear();
             RegisterPlayer(0);
             
@@ -71,6 +76,7 @@ public class NetworkHandler : NetworkBehaviour
     private void RegisterPlayer(ulong id)
     {
         if (!StealthMap.ContainsKey(id)) StealthMap.Add(id, new(id));
+        if (!PretendMap.ContainsKey(id)) PretendMap.Add(id, new(id));
         if (!VisiblePlayers.Contains(id)) VisiblePlayers.Add(id);
     }
     private void NetworkManager_OnClientDisconnectedCallback(ulong obj)
@@ -82,6 +88,7 @@ public class NetworkHandler : NetworkBehaviour
     private void UnregisterPlayer(ulong id)
     {
         if (StealthMap.ContainsKey(id)) StealthMap.Remove(id);
+        if (!PretendMap.ContainsKey(id)) PretendMap.Remove(id);
         if (VisiblePlayers.Contains(id)) VisiblePlayers.Remove(id);
     }
 
@@ -98,5 +105,60 @@ public class NetworkHandler : NetworkBehaviour
     {
         if (VisiblePlayers.Contains(playerId)) VisiblePlayers.Remove(playerId);
         else VisiblePlayers.Add(playerId);
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void SetPlayerMaskAttachedServerRpc(ulong playerId, bool isAttaching)
+    {
+        SetPlayerMaskAttachedClientRpc(playerId, isAttaching);
+    }
+
+    [ClientRpc]
+    public void SetPlayerMaskAttachedClientRpc(ulong playerId, bool isAttaching)
+    {
+        var player = StartOfRound.Instance.GetPlayer(playerId);
+        if (player == null
+            || player.currentlyHeldObjectServer == null
+            || player.currentlyHeldObjectServer is not HauntedMaskItem mask)
+        {
+            return;
+        }
+
+        mask.SetMaskAttached(isAttaching);
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void SetPlayerRaisingArmsServerRpc(ulong playerId, bool isRaising)
+    {
+        SetPlayerMaskAttachedClientRpc(playerId, isRaising);
+    }
+
+    [ClientRpc]
+    public void SetPlayerRaisingArmsClientRpc(ulong playerId, bool isRaising)
+    {
+        var player = StartOfRound.Instance.GetPlayer(playerId);
+        if (player == null) return;
+
+        player.SetArmsRaised(isRaising);
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void SetPlayerMaskEyesServerRpc(ulong playerId, bool isActivating)
+    {
+        SetPlayerMaskEyesClientRpc(playerId, isActivating);
+    }
+
+    [ClientRpc]
+    public void SetPlayerMaskEyesClientRpc(ulong playerId, bool isActivating)
+    {
+        var player = StartOfRound.Instance.GetPlayer(playerId);
+        if (player == null
+            || player.currentlyHeldObjectServer == null
+            || player.currentlyHeldObjectServer is not HauntedMaskItem mask)
+        {
+            return;
+        }
+
+        mask.SetMaskEyes(isActivating);
     }
 }

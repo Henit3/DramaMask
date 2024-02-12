@@ -20,20 +20,31 @@ public class ItemActivatePatch
 
         var id = instance.playerHeldBy.GetId();
 
-        var targetData = instance.playerHeldBy.IsLocal()
+        var targetStealthData = instance.playerHeldBy.IsLocal()
             ? NetworkHandler.Instance.MyStealth
             : NetworkHandler.Instance.StealthMap[id];
 
-        targetData.IsAttemptingStealth = buttonDown && instance.CanHide();
-        if (ConfigValues.UseStealthMeter && !buttonDown)
+        var targetPretendData = instance.playerHeldBy.IsLocal()
+            ? NetworkHandler.Instance.MyPretend
+            : NetworkHandler.Instance.PretendMap[id];
+
+        if (!targetPretendData.IsMaskAttached)
         {
-            var adjustedTime = DateTime.UtcNow;
-            if (targetData.AddExhaustionPenalty) adjustedTime = adjustedTime.AddSeconds(ConfigValues.ExhaustionPenaltyDelay);
-            targetData.LastStoppedStealth = adjustedTime;
+            targetStealthData.IsAttemptingStealth = buttonDown && instance.CanHide();
+            if (ConfigValues.UseStealthMeter && !buttonDown)
+            {
+                var adjustedTime = DateTime.UtcNow;
+                if (targetStealthData.AddExhaustionPenalty) adjustedTime = adjustedTime.AddSeconds(ConfigValues.ExhaustionPenaltyDelay);
+                targetStealthData.LastStoppedStealth = adjustedTime;
+            }
+
+            if (!instance.playerHeldBy.IsLocal()) return;
+
+            instance.SetOutlineView(buttonDown);
         }
-
-        if (!instance.playerHeldBy.IsLocal()) return;
-
-        instance.SetOutlineView(buttonDown);
+        else
+        {
+            targetPretendData.IsRaisingArms = buttonDown;
+        }
     }
 }

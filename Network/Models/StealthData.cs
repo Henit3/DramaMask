@@ -2,18 +2,10 @@
 
 namespace DramaMask.Network.Models;
 
-public class StealthData
+public class StealthData : NetworkData
 {
-    private readonly bool _isClientCopy;
-    private readonly ulong _playerId;
-    public StealthData()
-    {
-        _isClientCopy = true;
-    }
-    public StealthData(ulong playerId)
-    {
-        _playerId = playerId;
-    }
+    public StealthData() : base() { }
+    public StealthData(ulong playerId) : base(playerId) { }
 
     private bool _isAttemptingStealth = false;
     public bool IsAttemptingStealth
@@ -23,7 +15,7 @@ public class StealthData
         {
             if (_isAttemptingStealth == value) return;
             _isAttemptingStealth = value;
-            if (ShouldCopyToMap()) NetworkHandler.Instance.StealthMap[_playerId].IsAttemptingStealth = value;
+            if (ShouldCopyToMap()) NetworkHandler.Instance.StealthMap[PlayerId].IsAttemptingStealth = value;
 
             HandleToggleHidden(_isAttemptingStealth);
         }
@@ -38,7 +30,7 @@ public class StealthData
         {
             var previousValue = _stealthValue;
             _stealthValue = value;
-            if (ShouldCopyToMap()) NetworkHandler.Instance.StealthMap[_playerId].StealthValue = value;
+            if (ShouldCopyToMap()) NetworkHandler.Instance.StealthMap[PlayerId].StealthValue = value;
 
             if (previousValue <= 0 && value > 0) _isStealthValueValid = true;
             else if (previousValue > 0 && value <= 0)
@@ -59,7 +51,7 @@ public class StealthData
         set
         {
             _lastStoppedStealth = value;
-            if (ShouldCopyToMap()) NetworkHandler.Instance.StealthMap[_playerId].LastStoppedStealth = value;
+            if (ShouldCopyToMap()) NetworkHandler.Instance.StealthMap[PlayerId].LastStoppedStealth = value;
         }
     }
 
@@ -70,23 +62,23 @@ public class StealthData
         set
         {
             _addExhaustionPenalty = value;
-            if (ShouldCopyToMap()) NetworkHandler.Instance.StealthMap[_playerId].AddExhaustionPenalty = value;
+            if (ShouldCopyToMap()) NetworkHandler.Instance.StealthMap[PlayerId].AddExhaustionPenalty = value;
         }
     }
 
     private void HandleToggleHidden(bool isHiddenProposed)
     {
-        if (!NetworkHandler.IsHostOrServer() || _isClientCopy) return;
+        if (!NetworkHandler.IsHostOrServer() || IsClientCopy) return;
 
         if (isHiddenProposed
             && (IsAttemptingStealth && _isStealthValueValid)
-            && NetworkHandler.Instance.VisiblePlayers.Contains(_playerId)) { /* Toggled to true and is now true */ }
+            && NetworkHandler.Instance.VisiblePlayers.Contains(PlayerId)) { /* Toggled to true and is now true */ }
         else if (!isHiddenProposed
             && !(IsAttemptingStealth && _isStealthValueValid)
-            && !NetworkHandler.Instance.VisiblePlayers.Contains(_playerId)) { /* Toggled to false and is now false */ }
+            && !NetworkHandler.Instance.VisiblePlayers.Contains(PlayerId)) { /* Toggled to false and is now false */ }
         else return;
 
-        NetworkHandler.Instance.TogglePlayerHiddenServerRpc(_playerId); 
+        NetworkHandler.Instance.TogglePlayerHiddenServerRpc(PlayerId);
     }
 
     public void Reset()
@@ -97,6 +89,5 @@ public class StealthData
         _addExhaustionPenalty = false;
     }
 
-    private bool ShouldCopyToMap() => _isClientCopy && NetworkHandler.IsHostOrServer();
-    public override string ToString() => $"{(_isClientCopy ? "Self" : _playerId)}: {IsAttemptingStealth}|{StealthValue}|{LastStoppedStealth}|{AddExhaustionPenalty}";
+    public override string ToString() => $"{base.ToString()}: {IsAttemptingStealth}|{StealthValue}|{LastStoppedStealth}|{AddExhaustionPenalty}";
 }
