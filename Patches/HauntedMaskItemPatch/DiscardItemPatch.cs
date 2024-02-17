@@ -5,9 +5,11 @@ namespace DramaMask.Patches.HauntedMaskItemPatch;
 [HarmonyPatch(typeof(HauntedMaskItem), nameof(HauntedMaskItem.DiscardItem))]
 public class DiscardItemPatch
 {
-    [HarmonyPostfix]
-    public static void Postfix(HauntedMaskItem __instance)
+    [HarmonyPrefix]
+    public static void Prefix(HauntedMaskItem __instance)
     {
+        if (__instance.playerHeldBy == null) return;
+
         __instance.playerHeldBy.equippedUsableItemQE = false;
     }
 }
