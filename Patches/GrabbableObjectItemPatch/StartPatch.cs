@@ -1,6 +1,6 @@
 ﻿using HarmonyLib;
 
-namespace DramaMask.Patches.HauntedMaskItemPatch;
+namespace DramaMask.Patches.GrabbableObjectItemPatch;
 
 [HarmonyPatch(typeof(GrabbableObject), nameof(GrabbableObject.Start))]
 public class StartPatch
@@ -12,5 +12,6 @@ public class StartPatch
 
         // Allow HauntedMask usage to sync across clients so it can be tracked on the server
         __instance.itemProperties.syncUseFunction = true;
+        __instance.itemProperties.syncInteractLRFunction = true;
     }
 }

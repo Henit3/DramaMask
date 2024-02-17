@@ -31,7 +31,8 @@ public class NetworkHandler : NetworkBehaviour
         // Allows other GameObjects access to our instance
         var previousInstance = Instance;
         Instance = this;
-        MyStealth = new StealthData();
+        MyStealth = new();
+        MyPretend = new();
 
         // Initialise network variables
         if (IsHostOrServer())

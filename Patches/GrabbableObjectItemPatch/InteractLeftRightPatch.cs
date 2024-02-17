@@ -1,10 +1,10 @@
-﻿using DramaMask.Extensions;
+using DramaMask.Extensions;
 using DramaMask.Network;
 using HarmonyLib;
 
-namespace DramaMask.Patches.HauntedMaskItemPatch;
+namespace DramaMask.Patches.GrabbableObjectItemPatch;
 
-[HarmonyPatch(typeof(GrabbableObject), "InteractLeftRightClientRpc")]
+[HarmonyPatch(typeof(GrabbableObject), "InteractLeftRightServerRpc")]
 public class InteractLeftRightPatch
 {
     [HarmonyPostfix]
@@ -27,14 +27,14 @@ public class InteractLeftRightPatch
         {
             if (!right)
             {
-                targetPretendData.IsMaskAttached = true;
+                targetPretendData.IsMaskAttached = false;
             }
         }
         else
         {
             if (!right)
             {
-                targetPretendData.IsMaskAttached = false;
+                targetPretendData.IsMaskAttached = true;
             }
             else
             {

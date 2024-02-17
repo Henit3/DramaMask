@@ -1,9 +1,9 @@
-﻿using DramaMask.Extensions;
+using DramaMask.Extensions;
 using DramaMask.Network;
 using HarmonyLib;
 using System;
 
-namespace DramaMask.Patches.HauntedMaskItemPatch;
+namespace DramaMask.Patches.GrabbableObjectItemPatch;
 
 [HarmonyPatch(typeof(GrabbableObject), "ActivateItemServerRpc")]
 public class ItemActivatePatch
