@@ -101,62 +101,59 @@ public class NetworkHandler : NetworkBehaviour
         if (IsHostOrServer()) return;
     }
 
-    [ServerRpc(RequireOwnership = false)]
-    public void TogglePlayerHiddenServerRpc(ulong playerId)
+    public void TogglePlayerHiddenServer(ulong playerId)
     {
         if (VisiblePlayers.Contains(playerId)) VisiblePlayers.Remove(playerId);
         else VisiblePlayers.Add(playerId);
     }
 
-    [ServerRpc(RequireOwnership = false)]
-    public void SetPlayerMaskAttachedServerRpc(ulong playerId, bool isAttaching)
+    public void SetPlayerMaskAttachedServer(ulong playerId, bool isAttaching)
     {
         SetPlayerMaskAttachedClientRpc(playerId, isAttaching);
     }
-
     [ClientRpc]
     public void SetPlayerMaskAttachedClientRpc(ulong playerId, bool isAttaching)
     {
         var player = StartOfRound.Instance.GetPlayer(playerId);
+        Plugin.Logger.LogDebug($"AttachMaskClientRPC {playerId} -> {player}: {isAttaching}");
         if (player == null
             || player.currentlyHeldObjectServer == null
             || player.currentlyHeldObjectServer is not HauntedMaskItem mask)
         {
+            Plugin.Logger.LogDebug($"AttachMaskClientRPC {player.currentlyHeldObjectServer}");
             return;
         }
 
         mask.SetMaskAttached(isAttaching);
     }
-
-    [ServerRpc(RequireOwnership = false)]
-    public void SetPlayerRaisingArmsServerRpc(ulong playerId, bool isRaising)
+    public void SetPlayerRaisingArmsServer(ulong playerId, bool isRaising)
     {
-        SetPlayerMaskAttachedClientRpc(playerId, isRaising);
+        SetPlayerRaisingArmsClientRpc(playerId, isRaising);
     }
-
     [ClientRpc]
     public void SetPlayerRaisingArmsClientRpc(ulong playerId, bool isRaising)
     {
         var player = StartOfRound.Instance.GetPlayer(playerId);
+        Plugin.Logger.LogDebug($"RaisingArmsClientRPC {playerId} -> {player}: {isRaising}");
         if (player == null) return;
 
         player.SetArmsRaised(isRaising);
     }
 
-    [ServerRpc(RequireOwnership = false)]
-    public void SetPlayerMaskEyesServerRpc(ulong playerId, bool isActivating)
+    public void SetPlayerMaskEyesServer(ulong playerId, bool isActivating)
     {
         SetPlayerMaskEyesClientRpc(playerId, isActivating);
     }
-
     [ClientRpc]
     public void SetPlayerMaskEyesClientRpc(ulong playerId, bool isActivating)
     {
         var player = StartOfRound.Instance.GetPlayer(playerId);
+        Plugin.Logger.LogDebug($"MaskEyesClientRPC {playerId} -> {player}: {isActivating}");
         if (player == null
             || player.currentlyHeldObjectServer == null
             || player.currentlyHeldObjectServer is not HauntedMaskItem mask)
         {
+            Plugin.Logger.LogDebug($"MaskEyesClientRPC {player.currentlyHeldObjectServer}");
             return;
         }
 

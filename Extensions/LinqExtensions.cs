@@ -14,4 +14,10 @@ public static class LinqExtensions
         List<S> output = [.. list];
         return string.Join(", ", output);
     }
+
+    public static void AddSafe<S, T>(this Dictionary<S, T> dict, S key, T value)
+    {
+        if (dict is null) return;
+        if (!dict.ContainsKey(key)) dict.Add(key, value);
+    }
 }

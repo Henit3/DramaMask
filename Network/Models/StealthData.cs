@@ -68,7 +68,7 @@ public class StealthData : NetworkData
 
     private void HandleToggleHidden(bool isHiddenProposed)
     {
-        if (!NetworkHandler.IsHostOrServer() || IsClientCopy) return;
+        if (!ShouldServerProcess()) return;
 
         if (isHiddenProposed
             && (IsAttemptingStealth && _isStealthValueValid)
@@ -78,7 +78,7 @@ public class StealthData : NetworkData
             && !NetworkHandler.Instance.VisiblePlayers.Contains(PlayerId)) { /* Toggled to false and is now false */ }
         else return;
 
-        NetworkHandler.Instance.TogglePlayerHiddenServerRpc(PlayerId);
+        NetworkHandler.Instance.TogglePlayerHiddenServer(PlayerId);
     }
 
     public void Reset()
