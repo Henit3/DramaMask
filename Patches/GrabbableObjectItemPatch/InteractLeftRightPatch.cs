@@ -1,12 +1,15 @@
 using DramaMask.Extensions;
 using DramaMask.Network;
 using HarmonyLib;
+using System.Collections.Generic;
 
 namespace DramaMask.Patches.GrabbableObjectItemPatch;
 
 [HarmonyPatch(typeof(GrabbableObject), "InteractLeftRightServerRpc")]
 public class InteractLeftRightPatch
 {
+    private static Dictionary<ulong, bool> _useInputFlipFlop = new();
+
     [HarmonyPostfix]
     public static void Postfix(GrabbableObject __instance, bool right)
     {
@@ -19,6 +22,14 @@ public class InteractLeftRightPatch
 
         var id = instance.playerHeldBy.GetId();
 
+        // Gets invoked twice so only use first (InteractQE, SecondaryUse)
+        if (NetworkHandler.IsHostOrServer())
+        {
+            _useInputFlipFlop.AddSafe(id, false);
+            _useInputFlipFlop[id] = !_useInputFlipFlop[id];
+            if (_useInputFlipFlop[id]) return;
+        }
+
         var targetPretendData = instance.playerHeldBy.IsLocal()
             ? NetworkHandler.Instance.MyPretend
             : NetworkHandler.Instance.PretendMap[id];
@@ -29,16 +40,16 @@ public class InteractLeftRightPatch
             {
                 targetPretendData.IsMaskAttached = false;
             }
+            else
+            {
+                targetPretendData.IsMaskEyesOn = !targetPretendData.IsMaskEyesOn;
+            }
         }
         else
         {
             if (!right)
             {
                 targetPretendData.IsMaskAttached = true;
-            }
-            else
-            {
-                targetPretendData.IsMaskEyesOn = !targetPretendData.IsMaskEyesOn;
             }
         }
     }
