@@ -13,6 +13,12 @@ public class LateUpdatePatch
     [HarmonyPostfix]
     public static void Postfix(PlayerControllerB __instance)
     {
+        HandleStealthMeter(__instance);
+        HandleAttachedMask(__instance);
+    }
+
+    private static void HandleStealthMeter(PlayerControllerB __instance)
+    {
         if (!ConfigValues.UseStealthMeter || !ConfigValues.SeeStealthMeter) return;
 
         // Ignore updates called by pre-loaded scripts that are not controlled by a player
@@ -35,5 +41,18 @@ public class LateUpdatePatch
         // Visible if we can always see the meter, or we are holding a hiding mask
         return ConfigValues.AlwaysSeeStealthMeter
             || (heldItem is HauntedMaskItem item && item.CanHide());
+    }
+
+    private static void HandleAttachedMask(PlayerControllerB __instance)
+    {
+        // Should see all players if they do this
+        if (!__instance.isPlayerControlled) return;
+
+        if (__instance.currentlyHeldObjectServer == null
+            || __instance.currentlyHeldObjectServer is not HauntedMaskItem mask) return;
+
+        if (mask.currentHeadMask == null) return;
+
+        AccessTools.Method(typeof(HauntedMaskItem), "PositionHeadMaskWithOffset").Invoke(mask, null);
     }
 }

@@ -12,10 +12,8 @@ public class PretendData : NetworkData
         set
         {
             _isMaskAttached = value;
-            if (!ShouldCopyToMap()) return;
-
-            NetworkHandler.Instance.PretendMap[PlayerId].IsMaskAttached = value;
-            NetworkHandler.Instance.SetPlayerMaskAttachedServerRpc(PlayerId, value);
+            if (ShouldCopyToMap()) NetworkHandler.Instance.PretendMap[PlayerId].IsMaskAttached = value;
+            if (ShouldServerProcess()) NetworkHandler.Instance.SetPlayerMaskAttachedServer(PlayerId, value);
         }
     }
 
@@ -26,10 +24,8 @@ public class PretendData : NetworkData
         set
         {
             _isRaisingArms = value;
-            if (!ShouldCopyToMap()) return;
-
-            NetworkHandler.Instance.PretendMap[PlayerId].IsRaisingArms = value;
-            NetworkHandler.Instance.SetPlayerRaisingArmsServerRpc(PlayerId, value);
+            if (ShouldCopyToMap()) NetworkHandler.Instance.PretendMap[PlayerId].IsRaisingArms = value;
+            if (ShouldServerProcess()) NetworkHandler.Instance.SetPlayerRaisingArmsServer(PlayerId, value);
         }
     }
 
@@ -40,12 +36,10 @@ public class PretendData : NetworkData
         set
         {
             _isMaskEyesOn = value;
-            if (!ShouldCopyToMap()) return;
-
-            NetworkHandler.Instance.PretendMap[PlayerId].IsMaskEyesOn = value;
-            NetworkHandler.Instance.SetPlayerMaskEyesServerRpc(PlayerId, value);
+            if (ShouldCopyToMap()) NetworkHandler.Instance.PretendMap[PlayerId].IsMaskEyesOn = value;
+            if (ShouldServerProcess()) NetworkHandler.Instance.SetPlayerMaskEyesServer(PlayerId, value);
         }
     }
 
-    public override string ToString() => $"{base.ToString()}: {null}";
+    public override string ToString() => $"{base.ToString()}: {IsMaskAttached}|{IsRaisingArms}|{IsMaskEyesOn}";
 }

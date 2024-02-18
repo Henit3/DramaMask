@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using GameNetcodeStuff;
+using HarmonyLib;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -35,42 +37,51 @@ public static class HauntedMaskItemExtensions
 
     private static bool IsMainMesh(Component component) => !(component.name is "EyesFilled" || component.name.StartsWith("ScanNode"));
 
-    public static void SetMaskAttached(this HauntedMaskItem mask, bool isAttaching/*,
-        bool ___attaching, Transform ___currentHeadMask, GameObject ___headMaskPrefab,
-        PlayerControllerB ___previousPlayerHeldBy, bool ___clampedToHead*/)
+    public static void SetMaskAttached(this HauntedMaskItem mask, bool isAttaching)
     {
-        // TODO: Don't want to destroy in hand actually, just hide (maybe replicate or transpile in condition)
-        // TODO: Don't want to destroy headMask either, just disable/enable it if not null
-        // Cannot access privates directly here since not a patch
         if (!isAttaching) mask.SetMaskEyes(false);
 
-        /*if (isAttaching)
+        //Based on HauntedMaskItem.MaskClampToHeadAnimationEvent
+        if (!ResetHoldingAnimation(mask)) return;
+
+        // Set held mask visibility based on attach status
+        mask.enabled = !isAttaching;
+
+        if (isAttaching)
         {
-            ___attaching = true;
-            mask.MaskClampToHeadAnimationEvent();
-           
+            mask.currentHeadMask = Object.Instantiate(mask.gameObject, null).transform;
+            AccessTools.Method(typeof(HauntedMaskItem), "PositionHeadMaskWithOffset").Invoke(mask, null);
+
+            AccessTools.Field(typeof(HauntedMaskItem), "clampedToHead").SetValue(mask, true);
         }
         else
         {
-            Debug.Log("Mask declamp animation event called");
-            if (!(___previousPlayerHeldBy == null))
-            {
-                Debug.Log("Destroying currentHeadMask");
-                MeshRenderer[] componentsInChildren = ___headMaskPrefab.gameObject.GetComponentsInChildren<MeshRenderer>();
-                for (int i = 0; i < componentsInChildren.Length; i++)
-                {
-                    Object.Destroy(componentsInChildren[i]);
-                }
-                ___currentHeadMask = null;
-                ___previousPlayerHeldBy.playerBodyAnimator.SetBool("HoldMask", value: false);
-                Debug.Log($"Instantiating object in hand; headmask null: {___currentHeadMask == null}");
-                ___clampedToHead = true;
-            }
-        }*/
+            Object.Destroy(mask.currentHeadMask.gameObject);
+            mask.currentHeadMask = null;
+
+            AccessTools.Field(typeof(HauntedMaskItem), "clampedToHead").SetValue(mask, false);
+        }
+    }
+
+    private static bool ResetHoldingAnimation(HauntedMaskItem mask)
+    {
+        var player = AccessTools.Field(typeof(HauntedMaskItem), "previousPlayerHeldBy").GetValue(mask) as PlayerControllerB;
+        if (player == null)
+        {
+            Plugin.Logger.LogError("No player found to attach mask to.");
+            return false;
+        }
+        player.playerBodyAnimator.SetBool("HoldMask", value: false);
+        return true;
     }
 
     public static void SetMaskEyes(this HauntedMaskItem mask, bool toActivate)
     {
+        if (mask.currentHeadMask != null)
+        {
+            mask.currentHeadMask.gameObject.GetComponent<HauntedMaskItem>()
+                .maskEyesFilled.enabled = toActivate;
+        }
         mask.maskEyesFilled.enabled = toActivate;
     }
 }
