@@ -1,4 +1,5 @@
-﻿using GameNetcodeStuff;
+using DramaMask.Network;
+using GameNetcodeStuff;
 using HarmonyLib;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,7 +40,7 @@ public static class HauntedMaskItemExtensions
 
     public static void SetMaskAttached(this HauntedMaskItem mask, bool isAttaching)
     {
-        if (!isAttaching) mask.SetMaskEyes(false);
+        if (!isAttaching) NetworkHandler.Instance.MyPretend.IsMaskEyesOn = false;
 
         //Based on HauntedMaskItem.MaskClampToHeadAnimationEvent
         if (!ResetHoldingAnimation(mask)) return;
@@ -53,6 +54,8 @@ public static class HauntedMaskItemExtensions
             AccessTools.Method(typeof(HauntedMaskItem), "PositionHeadMaskWithOffset").Invoke(mask, null);
 
             AccessTools.Field(typeof(HauntedMaskItem), "clampedToHead").SetValue(mask, true);
+
+            mask.currentHeadMask.gameObject.GetComponent<HauntedMaskItem>().SetOutlineView(true);
         }
         else
         {

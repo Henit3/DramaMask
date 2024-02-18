@@ -49,14 +49,14 @@ public class ItemActivatePatch
                 if (targetStealthData.AddExhaustionPenalty) adjustedTime = adjustedTime.AddSeconds(ConfigValues.ExhaustionPenaltyDelay);
                 targetStealthData.LastStoppedStealth = adjustedTime;
             }
-
-            if (!instance.playerHeldBy.IsLocal()) return;
-
-            instance.SetOutlineView(buttonDown);
         }
         else
         {
             targetPretendData.IsRaisingArms = buttonDown;
         }
+
+        if (!instance.playerHeldBy.IsLocal()) return;
+
+        instance.SetOutlineView(buttonDown);
     }
 }
