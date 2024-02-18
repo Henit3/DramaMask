@@ -81,7 +81,7 @@ public class StealthData : NetworkData
         NetworkHandler.Instance.TogglePlayerHiddenServer(PlayerId);
     }
 
-    public void Reset()
+    public override void Reset()
     {
         _isAttemptingStealth = false;
         _stealthValue = ConfigValues.MaxHiddenTime;

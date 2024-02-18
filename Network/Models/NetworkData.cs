@@ -6,7 +6,7 @@
  * All changes to other clients' data will need to go through the server host before being sent back,
  *  either through Network Variables or RPCs, to allow extensible moderation of rogue requests.
  */
-public class NetworkData
+public abstract class NetworkData
 {
     protected readonly bool IsClientCopy;
     protected readonly ulong PlayerId;
@@ -18,6 +18,8 @@ public class NetworkData
     {
         PlayerId = playerId;
     }
+
+    public abstract void Reset();
 
     protected bool ShouldCopyToMap() => IsClientCopy && NetworkHandler.IsHostOrServer();
     protected bool ShouldServerProcess() => !IsClientCopy && NetworkHandler.IsHostOrServer();

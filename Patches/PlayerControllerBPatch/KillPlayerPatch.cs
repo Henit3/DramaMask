@@ -21,8 +21,13 @@ public class KillPlayerPatch
         if (__instance.IsLocal())
         {
             NetworkHandler.Instance.MyStealth.Reset();
+            NetworkHandler.Instance.MyPretend.Reset();
             StealthMeterUI.Instance.Visible = false;
         }
-        if (NetworkHandler.IsHostOrServer()) NetworkHandler.Instance.StealthMap[id].Reset();
+        if (NetworkHandler.IsHostOrServer())
+        {
+            NetworkHandler.Instance.StealthMap[id].Reset();
+            NetworkHandler.Instance.PretendMap[id].Reset();
+        }
     }
 }

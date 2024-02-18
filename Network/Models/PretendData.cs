@@ -41,5 +41,12 @@ public class PretendData : NetworkData
         }
     }
 
+    public override void Reset()
+    {
+        _isMaskAttached = false;
+        _isRaisingArms = false;
+        _isMaskEyesOn = false;
+    }
+
     public override string ToString() => $"{base.ToString()}: {IsMaskAttached}|{IsRaisingArms}|{IsMaskEyesOn}";
 }
