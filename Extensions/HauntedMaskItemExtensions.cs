@@ -43,7 +43,9 @@ public static class HauntedMaskItemExtensions
         if (!isAttaching) NetworkHandler.Instance.MyPretend.IsMaskEyesOn = false;
 
         //Based on HauntedMaskItem.MaskClampToHeadAnimationEvent
-        if (!ResetHoldingAnimation(mask)) return;
+        var player = AccessTools.Field(typeof(HauntedMaskItem), "previousPlayerHeldBy").GetValue(mask) as PlayerControllerB;
+
+        if (!player.SafeSetAnimation("HoldMask", false)) return;
 
         // Set held mask visibility based on attach status
         mask.enabled = !isAttaching;
@@ -56,6 +58,9 @@ public static class HauntedMaskItemExtensions
             AccessTools.Field(typeof(HauntedMaskItem), "clampedToHead").SetValue(mask, true);
 
             mask.currentHeadMask.gameObject.GetComponent<HauntedMaskItem>().SetOutlineView(true);
+
+            player.playerBodyAnimator.SetBool("Grab", false);
+            player.playerBodyAnimator.SetTrigger("Throw");
         }
         else
         {
@@ -63,19 +68,10 @@ public static class HauntedMaskItemExtensions
             mask.currentHeadMask = null;
 
             AccessTools.Field(typeof(HauntedMaskItem), "clampedToHead").SetValue(mask, false);
-        }
-    }
 
-    private static bool ResetHoldingAnimation(HauntedMaskItem mask)
-    {
-        var player = AccessTools.Field(typeof(HauntedMaskItem), "previousPlayerHeldBy").GetValue(mask) as PlayerControllerB;
-        if (player == null)
-        {
-            Plugin.Logger.LogError("No player found to attach mask to.");
-            return false;
+            player.playerBodyAnimator.SetBool("Grab", true);
+            player.playerBodyAnimator.ResetTrigger("Throw");
         }
-        player.playerBodyAnimator.SetBool("HoldMask", value: false);
-        return true;
     }
 
     public static void SetMaskEyes(this HauntedMaskItem mask, bool toActivate)
