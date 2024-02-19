@@ -45,32 +45,41 @@ public static class HauntedMaskItemExtensions
         //Based on HauntedMaskItem.MaskClampToHeadAnimationEvent
         var player = AccessTools.Field(typeof(HauntedMaskItem), "previousPlayerHeldBy").GetValue(mask) as PlayerControllerB;
 
-        if (!player.SafeSetAnimation("HoldMask", false)) return;
-
         // Set held mask visibility based on attach status
         mask.enabled = !isAttaching;
 
+        var playerExists = player.SafeSetAnimation("HoldMask", false);
+
         if (isAttaching)
         {
-            mask.currentHeadMask = Object.Instantiate(mask.gameObject, null).transform;
-            AccessTools.Method(typeof(HauntedMaskItem), "PositionHeadMaskWithOffset").Invoke(mask, null);
+            if (playerExists)
+            {
+                mask.currentHeadMask = Object.Instantiate(mask.gameObject, null).transform;
+                AccessTools.Method(typeof(HauntedMaskItem), "PositionHeadMaskWithOffset").Invoke(mask, null);
 
-            AccessTools.Field(typeof(HauntedMaskItem), "clampedToHead").SetValue(mask, true);
+                AccessTools.Field(typeof(HauntedMaskItem), "clampedToHead").SetValue(mask, true);
+            
+                mask.currentHeadMask.gameObject.GetComponent<HauntedMaskItem>().SetOutlineView(true);
 
-            mask.currentHeadMask.gameObject.GetComponent<HauntedMaskItem>().SetOutlineView(true);
-
-            player.playerBodyAnimator.SetBool("Grab", false);
-            player.playerBodyAnimator.SetTrigger("Throw");
+                player.playerBodyAnimator.SetBool("Grab", false);
+                player.playerBodyAnimator.SetTrigger("Throw");
+            }
         }
         else
         {
-            Object.Destroy(mask.currentHeadMask.gameObject);
-            mask.currentHeadMask = null;
+            if (mask.currentHeadMask != null)
+            {
+                Object.Destroy(mask.currentHeadMask.gameObject);
+                mask.currentHeadMask = null;
+            }
 
             AccessTools.Field(typeof(HauntedMaskItem), "clampedToHead").SetValue(mask, false);
 
-            player.playerBodyAnimator.SetBool("Grab", true);
-            player.playerBodyAnimator.ResetTrigger("Throw");
+            if (playerExists)
+            {
+                player.playerBodyAnimator.SetBool("Grab", true);
+                player.playerBodyAnimator.ResetTrigger("Throw");
+            }
         }
     }
 
