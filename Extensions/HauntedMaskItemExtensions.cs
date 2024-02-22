@@ -62,7 +62,7 @@ public static class HauntedMaskItemExtensions
                 mask.currentHeadMask.gameObject.GetComponent<HauntedMaskItem>().SetOutlineView(true);
 
                 player.playerBodyAnimator.SetBool("Grab", false);
-                player.playerBodyAnimator.SetTrigger("Throw");
+                player.playerBodyAnimator.SetBool("cancelHolding", true);
             }
         }
         else
@@ -77,8 +77,8 @@ public static class HauntedMaskItemExtensions
 
             if (playerExists)
             {
+                player.playerBodyAnimator.SetBool("cancelHolding", false);
                 player.playerBodyAnimator.SetBool("Grab", true);
-                player.playerBodyAnimator.ResetTrigger("Throw");
             }
         }
     }
