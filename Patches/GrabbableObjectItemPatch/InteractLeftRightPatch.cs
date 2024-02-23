@@ -44,9 +44,19 @@ public class InteractLeftRightPatch
             {
                 targetPretendData.IsMaskAttached = false;
                 // Redundant: !targetStealthData.IsAttemptingStealth()
-                if (ConfigValues.UseStealthMeter && !targetStealthData.IsHoldingMask)
+                if (targetStealthData.IsHoldingMask)
                 {
-                    targetStealthData.SetLastStoppedStealthNow();
+                    // Set holding mask animation state manually, ready to let go when mouse unpressed
+                    instance.playerHeldBy.playerBodyAnimator.SetBool("HoldMask", true);
+                    instance.playerHeldBy.playerBodyAnimator
+                        .Play("HoldingItemsRightHand.HoldMaskToFace", 2, 1.0f);
+                }
+                else
+                {
+                    if (ConfigValues.UseStealthMeter)
+                    {
+                        targetStealthData.SetLastStoppedStealthNow();
+                    }
                 }
             }
             else
