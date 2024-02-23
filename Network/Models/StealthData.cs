@@ -7,18 +7,26 @@ public class StealthData : NetworkData
     public StealthData() : base() { }
     public StealthData(ulong playerId) : base(playerId) { }
 
-    private bool _isAttemptingStealth = false;
-    public bool IsAttemptingStealth
+    private bool _isHoldingMask = false;
+    public bool IsHoldingMask
     {
-        get => _isAttemptingStealth;
+        get => _isHoldingMask;
         set
         {
-            if (_isAttemptingStealth == value) return;
-            _isAttemptingStealth = value;
-            if (ShouldCopyToMap()) NetworkHandler.Instance.StealthMap[PlayerId].IsAttemptingStealth = value;
+            if (_isHoldingMask == value) return;
+            _isHoldingMask = value;
+            if (ShouldCopyToMap()) NetworkHandler.Instance.StealthMap[PlayerId].IsHoldingMask = value;
 
-            HandleToggleHidden(_isAttemptingStealth);
+            HandleToggleHidden(_isHoldingMask);
         }
+    }
+
+    public bool IsAttemptingStealth()
+    {
+        var pretendData = IsClientCopy
+            ? NetworkHandler.Instance.MyPretend
+            : NetworkHandler.Instance.PretendMap[PlayerId];
+        return IsHoldingMask || pretendData.IsMaskAttached;
     }
 
     private float _stealthValue = ConfigValues.MaxHiddenTime;
@@ -70,24 +78,32 @@ public class StealthData : NetworkData
     {
         if (!ShouldServerProcess()) return;
 
+        var isAttemptingStealth = IsAttemptingStealth();
         if (isHiddenProposed
-            && (IsAttemptingStealth && _isStealthValueValid)
+            && (isAttemptingStealth && _isStealthValueValid)
             && NetworkHandler.Instance.VisiblePlayers.Contains(PlayerId)) { /* Toggled to true and is now true */ }
         else if (!isHiddenProposed
-            && !(IsAttemptingStealth && _isStealthValueValid)
+            && !(isAttemptingStealth && _isStealthValueValid)
             && !NetworkHandler.Instance.VisiblePlayers.Contains(PlayerId)) { /* Toggled to false and is now false */ }
         else return;
 
         NetworkHandler.Instance.TogglePlayerHiddenServer(PlayerId);
     }
 
+    public void SetLastStoppedStealthNow()
+    {
+        var adjustedTime = DateTime.UtcNow;
+        if (AddExhaustionPenalty) adjustedTime = adjustedTime.AddSeconds(ConfigValues.ExhaustionPenaltyDelay);
+        LastStoppedStealth = adjustedTime;
+    }
+
     public override void Reset()
     {
-        _isAttemptingStealth = false;
+        _isHoldingMask = false;
         _stealthValue = ConfigValues.MaxHiddenTime;
         _lastStoppedStealth = null;
         _addExhaustionPenalty = false;
     }
 
-    public override string ToString() => $"{base.ToString()}: {IsAttemptingStealth}|{StealthValue}|{LastStoppedStealth}|{AddExhaustionPenalty}";
+    public override string ToString() => $"{base.ToString()}: {IsHoldingMask}|{StealthValue}|{LastStoppedStealth}|{AddExhaustionPenalty}";
 }

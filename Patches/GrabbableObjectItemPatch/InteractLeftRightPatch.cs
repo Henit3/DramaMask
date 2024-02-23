@@ -30,6 +30,10 @@ public class InteractLeftRightPatch
             if (_useInputFlipFlop[id]) return;
         }
 
+        var targetStealthData = instance.playerHeldBy.IsLocal()
+            ? NetworkHandler.Instance.MyStealth
+            : NetworkHandler.Instance.StealthMap[id];
+
         var targetPretendData = instance.playerHeldBy.IsLocal()
             ? NetworkHandler.Instance.MyPretend
             : NetworkHandler.Instance.PretendMap[id];
@@ -39,6 +43,11 @@ public class InteractLeftRightPatch
             if (!right)
             {
                 targetPretendData.IsMaskAttached = false;
+                // Redundant: !targetStealthData.IsAttemptingStealth()
+                if (ConfigValues.UseStealthMeter && !targetStealthData.IsHoldingMask)
+                {
+                    targetStealthData.SetLastStoppedStealthNow();
+                }
             }
             else
             {

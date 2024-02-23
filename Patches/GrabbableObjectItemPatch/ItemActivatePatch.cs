@@ -40,14 +40,13 @@ public class ItemActivatePatch
             ? NetworkHandler.Instance.MyPretend
             : NetworkHandler.Instance.PretendMap[id];
 
+        targetStealthData.IsHoldingMask = buttonDown && instance.CanHide();
         if (!targetPretendData.IsMaskAttached)
         {
-            targetStealthData.IsAttemptingStealth = buttonDown && instance.CanHide();
+            // Redundant: !targetStealthData.IsAttemptingStealth() && 
             if (ConfigValues.UseStealthMeter && !buttonDown)
             {
-                var adjustedTime = DateTime.UtcNow;
-                if (targetStealthData.AddExhaustionPenalty) adjustedTime = adjustedTime.AddSeconds(ConfigValues.ExhaustionPenaltyDelay);
-                targetStealthData.LastStoppedStealth = adjustedTime;
+                targetStealthData.SetLastStoppedStealthNow();
             }
         }
         else

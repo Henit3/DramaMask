@@ -27,11 +27,12 @@ public class UpdatePatch
             ? NetworkHandler.Instance.MyStealth
             : NetworkHandler.Instance.StealthMap[id];
 
-        if (targetData.IsAttemptingStealth && targetData.StealthValue > 0)
+        var isAttemptingStealth = targetData.IsAttemptingStealth();
+        if (isAttemptingStealth && targetData.StealthValue > 0)
         {
             targetData.StealthValue = Math.Max(0, targetData.StealthValue - Time.deltaTime);
         }
-        else if (!targetData.IsAttemptingStealth
+        else if (!isAttemptingStealth
             && targetData.StealthValue < ConfigValues.MaxHiddenTime
             && (!targetData.LastStoppedStealth.HasValue
                 || DateTime.UtcNow.Subtract(targetData.LastStoppedStealth.Value)
