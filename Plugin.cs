@@ -8,6 +8,7 @@ using System.Linq;
 using DramaMask.Extensions;
 using BepInEx.Configuration;
 using System;
+using BepInEx.Bootstrap;
 
 namespace DramaMask;
 
@@ -16,6 +17,8 @@ namespace DramaMask;
 public class Plugin : BaseUnityPlugin
 {
     public new static ManualLogSource Logger;
+
+    public static readonly bool IsMoreEmotesPresent = Chainloader.PluginInfos.ContainsKey("MoreEmotes-Sligili");
 
     private static readonly Harmony Harmony = new(PluginInfo.PLUGIN_GUID);
 
@@ -174,6 +177,15 @@ public class Plugin : BaseUnityPlugin
 
         HauntedMaskItemExtensions.OutlineMesh = outlineMesh;
         Logger.LogDebug("Loaded asset: maskOutline");
+
+        var armsOutBundle = LoadBundle(PluginInfo.PLUGIN_GUID, "armsout");
+        if (armsOutBundle == null) return;
+
+        var armsOutAnimation = armsOutBundle.SafeLoadAsset<AnimationClip>("assets/custom/armsout.anim");
+        if (armsOutAnimation == null) return;
+
+        HauntedMaskItemExtensions.ArmsOutAnimation = armsOutAnimation;
+        Logger.LogDebug("Loaded asset: armsOut");
     }
 
     /* Rarities decided with datasheet: https://docs.google.com/spreadsheets/d/1AREkZnHaqxukdpVNOEDFKikar9R4XAIjpZ_gI7NNngM/edit#gid=0

@@ -13,6 +13,10 @@ public static class HauntedMaskItemExtensions
 
     public static Mesh OutlineMesh { get; set; } = null;
     private static readonly Dictionary<int, Mesh> _originalMeshMap = new();
+
+    public static AnimationClip HoldingMaskAnimation;
+    public static AnimationClip ArmsOutAnimation;
+
     public static void SetOutlineView(this HauntedMaskItem mask, bool toOutline)
     {
         if (!ConfigValues.SeeWornMaskOutline) return;
@@ -48,22 +52,34 @@ public static class HauntedMaskItemExtensions
         // Set held mask visibility based on attach status
         mask.enabled = !isAttaching;
 
-        var playerExists = player.SafeSetAnimation("HoldMask", false);
+        if (player != null)
+        {
+            var overrideController = player.playerBodyAnimator.runtimeAnimatorController as AnimatorOverrideController;
+            if (overrideController == null)
+            {
+                Plugin.Logger.LogWarning("Player animator override controller not accessible");
+            }
+            else
+            {
+                overrideController["HoldMaskToFace"] = isAttaching ? ArmsOutAnimation : HoldingMaskAnimation;
+                //Plugin.Logger.LogDebug($"Overwrote HoldMask to {overrideController["HoldMaskToFace"].name}");
+            }
+        }
 
         if (isAttaching)
         {
-            if (playerExists)
+            if (player != null)
             {
                 mask.currentHeadMask = Object.Instantiate(mask.gameObject, null).transform;
                 AccessTools.Method(typeof(HauntedMaskItem), "PositionHeadMaskWithOffset").Invoke(mask, null);
 
                 AccessTools.Field(typeof(HauntedMaskItem), "clampedToHead").SetValue(mask, true);
-            
-                mask.currentHeadMask.gameObject.GetComponent<HauntedMaskItem>().SetOutlineView(true);
 
-                player.playerBodyAnimator.SetBool("Grab", false);
-                player.playerBodyAnimator.SetBool("cancelHolding", true);
+                mask.currentHeadMask.gameObject.GetComponent<HauntedMaskItem>().SetOutlineView(true);
             }
+
+            player.SafeSetAnimation("Grab", false);
+            player.SafeSetAnimation("cancelHolding", true);
         }
         else
         {
@@ -75,11 +91,8 @@ public static class HauntedMaskItemExtensions
 
             AccessTools.Field(typeof(HauntedMaskItem), "clampedToHead").SetValue(mask, false);
 
-            if (playerExists)
-            {
-                player.playerBodyAnimator.SetBool("cancelHolding", false);
-                player.playerBodyAnimator.SetBool("Grab", true);
-            }
+            player.SafeSetAnimation("cancelHolding", false);
+            player.SafeSetAnimation("Grab", true);
         }
     }
 

@@ -10,8 +10,29 @@ namespace DramaMask.Patches.PlayerControllerBPatch;
 [HarmonyPatch(typeof(PlayerControllerB), "Update")]
 public class UpdatePatch
 {
+    [HarmonyAfter("Sligili-More_Emotes-1.3.3")]
     [HarmonyPostfix]
     public static void Postfix(PlayerControllerB __instance)
+    {
+        HandleAnimationOverride(__instance);
+        HandleStealth(__instance);
+    }
+
+    // We aren't adding transitions or states, only overriding holdingMask, so no special extra initialisation
+    private static void HandleAnimationOverride(PlayerControllerB __instance)
+    {
+        // Let MoreEmotes handle overriding the controller if it is detected
+        // LethalEmotesApi and TooManyEmotes replace this on plugin awake so can be ignored
+        if (Plugin.IsMoreEmotesPresent) return;
+
+        // Quit if the controller has been overridden already
+        var controller = __instance.playerBodyAnimator.runtimeAnimatorController;
+        if (controller is AnimatorOverrideController) return;
+
+        __instance.playerBodyAnimator.runtimeAnimatorController = new AnimatorOverrideController(controller);
+    }
+
+    private static void HandleStealth(PlayerControllerB __instance)
     {
         if (!ConfigValues.UseStealthMeter) return;
 

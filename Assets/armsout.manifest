@@ -1,0 +1,20 @@
+ManifestFileVersion: 0
+CRC: 3501473486
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 6e839dcff186981a91c83675343e388c
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 5941c3541d8b403f80e37b0d697371e8
+  IncrementalBuildHash:
+    serializedVersion: 2
+    Hash: 6e839dcff186981a91c83675343e388c
+HashAppended: 0
+ClassTypes:
+- Class: 74
+  Script: {instanceID: 0}
+SerializeReferenceClassIdentifiers: []
+Assets:
+- Assets/Custom/ArmsOut.anim
+Dependencies: []
