@@ -94,6 +94,8 @@ public static class HauntedMaskItemExtensions
             player.SafeSetAnimation("cancelHolding", false);
             player.SafeSetAnimation("Grab", true);
         }
+
+        mask.SetControlTipsForItem();
     }
 
     public static void SetMaskEyes(this HauntedMaskItem mask, bool toActivate)
@@ -104,5 +106,7 @@ public static class HauntedMaskItemExtensions
                 .maskEyesFilled.enabled = toActivate;
         }
         mask.maskEyesFilled.enabled = toActivate;
+
+        mask.SetControlTipsForItem();
     }
 }
