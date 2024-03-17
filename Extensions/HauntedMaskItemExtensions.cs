@@ -61,7 +61,7 @@ public static class HauntedMaskItemExtensions
             }
             else
             {
-                overrideController["HoldMaskToFace"] = isAttaching ? ArmsOutAnimation : HoldingMaskAnimation;
+                //overrideController["HoldMaskToFace"] = isAttaching ? ArmsOutAnimation : HoldingMaskAnimation;
                 //Plugin.Logger.LogDebug($"Overwrote HoldMask to {overrideController["HoldMaskToFace"].name}");
             }
         }
