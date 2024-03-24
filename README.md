@@ -12,12 +12,12 @@ To balance this mechanic out, there is a stealth meter that is used while attemp
 * Adjust stealth meter behaviour
 * Adjust stealth meter appearance
 * Show only mask outlines when wearing them
+* Allow masks to be attached to players
+* Allow attached masks to have their eyes activated
 
 ### Roadmap (dependent on feedback)
-* Allow the player to resemble the Masked enemies
-	* Allow the Drama Mask to latch onto the player's face
-	* Allow the player to activate the eyes on the Drama Mask
-	* Allow the player to have their hands out like the Masked
+* Allow the player to have their hands out like the Masked
+* Sync selected configs with the host
 
 ### Credits
 Made on request from @tkcool and @pedro9006.

@@ -1,3 +1,6 @@
+# 1.2.0
+- Added behaviours to mimic the Masked (allowing masks to be attached, and activation of the eyes)
+
 # 1.1.3
 - Fixed incompatibility issues with BiggerLobby
 
