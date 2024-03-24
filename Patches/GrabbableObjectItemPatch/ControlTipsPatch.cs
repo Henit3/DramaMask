@@ -11,6 +11,15 @@ public class ControlTipsPatch
 {
     private static List<string> _defaultTooltips;
 
+    [HarmonyPrefix]
+    public static bool Prefix(GrabbableObject __instance)
+    {
+        // Don't process if called on a stealth-enabled mask that's not yours
+        return !(__instance is HauntedMaskItem mask
+                && mask.CanHide()
+                && !mask.IsOwner);
+    }
+
     [HarmonyPostfix]
     public static void Postfix(GrabbableObject __instance)
     {
@@ -29,16 +38,16 @@ public class ControlTipsPatch
         if (NetworkHandler.Instance.MyPretend.IsMaskAttached)
         {
             newTooltips.AddRange([
-                "Detach mask: Q",
+                "Detach mask: [Q]",
                 !NetworkHandler.Instance.MyPretend.IsMaskEyesOn
-                    ? "Activate eyes: E"
-                    : "Deactivate eyes: E"
+                    ? "Activate eyes: [E]"
+                    : "Deactivate eyes: [E]"
             ]);
         }
         else
         {
             newTooltips.AddRange([
-                "Attach mask: Q",
+                "Attach mask: [Q]",
                 "" // Hack to stop showing eye controls on detaching
             ]);
         }
