@@ -1,14 +1,13 @@
 using DramaMask.Extensions;
 using DramaMask.Network;
 using HarmonyLib;
-using System.Collections.Generic;
 
 namespace DramaMask.Patches.GrabbableObjectItemPatch;
 
 [HarmonyPatch(typeof(GrabbableObject), "ActivateItemServerRpc")]
 public class ItemActivatePatch
 {
-    private static Dictionary<ulong, bool> _useInputFlipFlop = new();
+    private static bool _useInputFlipFlop = false;
 
     [HarmonyPostfix]
     public static void Postfix(GrabbableObject __instance, bool onOff, bool buttonDown)
@@ -22,13 +21,11 @@ public class ItemActivatePatch
 
         var id = instance.playerHeldBy.GetId();
 
-        // Gets invoked twice so only use first (performed / cancelled via server+client)
-/// Might only apply to server, in which case we need simple bool logic
-        if (NetworkHandler.IsHostOrServer())
+        // Gets invoked twice for host so only use first
+        if (NetworkHandler.IsHostOrServer() && instance.playerHeldBy.IsLocal())
         {
-            _useInputFlipFlop.AddSafe(id, false);
-            _useInputFlipFlop[id] = !_useInputFlipFlop[id];
-            if (_useInputFlipFlop[id]) return;
+            _useInputFlipFlop = !_useInputFlipFlop;
+            if (_useInputFlipFlop) return;
         }
 
         var targetStealthData = instance.playerHeldBy.IsLocal()
