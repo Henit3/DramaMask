@@ -52,6 +52,6 @@ public class ItemActivatePatch
 
         if (!instance.playerHeldBy.IsLocal()) return;
 
-        instance.SetOutlineView(buttonDown);
+        instance.SetVisibility(!buttonDown);
     }
 }

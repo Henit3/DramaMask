@@ -17,10 +17,8 @@ public static class HauntedMaskItemExtensions
     public static AnimationClip HoldingMaskAnimation;
     public static AnimationClip ArmsOutAnimation;
 
-    public static void SetOutlineView(this HauntedMaskItem mask, bool toOutline)
+    public static void SetVisibility(this HauntedMaskItem mask, bool isVisible, bool toOutline = true)
     {
-        if (!ConfigValues.SeeWornMaskOutline) return;
-
         // Register original mesh for each mash type to reset with later
         if (!_originalMeshMap.ContainsKey(mask.maskTypeId))
         {
@@ -31,13 +29,19 @@ public static class HauntedMaskItemExtensions
         // Set visibility for all main renderers
         var renderers = mask.gameObject.GetComponentsInChildren<MeshRenderer>()
             .Where(IsMainMesh).ToList();
-        foreach (var renderer in renderers.Skip(1)) renderer.enabled = !toOutline;
+        foreach (var renderer in renderers.Skip(1)) renderer.enabled = isVisible;
 
-        // Set main mesh filter's mesh
-        var maskMeshFilter = mask.gameObject.GetComponentsInChildren<MeshFilter>().First(IsMainMesh);
-        maskMeshFilter.mesh = toOutline
-            ? OutlineMesh
-            : _originalMeshMap[mask.maskTypeId];
+        // Set completely invisible if not outlining
+        renderers.First().enabled = !(!toOutline && !isVisible);
+
+        if (toOutline)
+        {
+            // Set main mesh filter's mesh
+            var maskMeshFilter = mask.gameObject.GetComponentsInChildren<MeshFilter>().First(IsMainMesh);
+            maskMeshFilter.mesh = ConfigValues.SeeWornMaskOutline && !isVisible
+                ? OutlineMesh
+                : _originalMeshMap[mask.maskTypeId];
+        }
     }
 
     private static bool IsMainMesh(Component component) => !(component.name is "EyesFilled" || component.name.StartsWith("ScanNode"));
@@ -51,6 +55,7 @@ public static class HauntedMaskItemExtensions
 
         // Set held mask visibility based on attach status
         mask.enabled = !isAttaching;
+        mask.SetVisibility(!isAttaching, toOutline: false);
 
         if (player != null)
         {
@@ -71,11 +76,14 @@ public static class HauntedMaskItemExtensions
             if (player != null)
             {
                 mask.currentHeadMask = Object.Instantiate(mask.gameObject, null).transform;
+
                 AccessTools.Method(typeof(HauntedMaskItem), "PositionHeadMaskWithOffset").Invoke(mask, null);
 
                 AccessTools.Field(typeof(HauntedMaskItem), "clampedToHead").SetValue(mask, true);
 
-                mask.currentHeadMask.gameObject.GetComponent<HauntedMaskItem>().SetOutlineView(true);
+                // Set head mask invisibile only for the local player (if they have the config)
+                mask.currentHeadMask.gameObject.GetComponent<HauntedMaskItem>()
+                    .SetVisibility(!player.IsLocal());
             }
 
             player.SafeSetAnimation("Grab", false);
@@ -100,12 +108,10 @@ public static class HauntedMaskItemExtensions
 
     public static void SetMaskEyes(this HauntedMaskItem mask, bool toActivate)
     {
-        if (mask.currentHeadMask != null)
-        {
-            mask.currentHeadMask.gameObject.GetComponent<HauntedMaskItem>()
-                .maskEyesFilled.enabled = toActivate;
-        }
-        mask.maskEyesFilled.enabled = toActivate;
+        var eyesFilled = mask.currentHeadMask != null
+            ? mask.currentHeadMask.gameObject.GetComponent<HauntedMaskItem>().maskEyesFilled
+            : mask.maskEyesFilled;
+        eyesFilled.enabled = toActivate;
 
         mask.SetControlTipsForItem();
     }
