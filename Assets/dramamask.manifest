@@ -1,15 +1,15 @@
 ManifestFileVersion: 0
-CRC: 628412965
+CRC: 733428284
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: fd1e0d34ed358771377223de144a62c1
+    Hash: 0d756c217944983e8de067923711fccc
   TypeTreeHash:
     serializedVersion: 2
-    Hash: a0676b7733b9c58c97c752eae8cd9eb0
+    Hash: 0a845730c731046531fa873236c82e11
   IncrementalBuildHash:
     serializedVersion: 2
-    Hash: fd1e0d34ed358771377223de144a62c1
+    Hash: 0d756c217944983e8de067923711fccc
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -31,6 +31,8 @@ ClassTypes:
 - Class: 65
   Script: {instanceID: 0}
 - Class: 82
+  Script: {instanceID: 0}
+- Class: 91
   Script: {instanceID: 0}
 - Class: 95
   Script: {instanceID: 0}
@@ -68,5 +70,12 @@ SerializeReferenceClassIdentifiers:
 - AssemblyName: Unity.RenderPipelines.HighDefinition.Runtime
   ClassName: UnityEngine.Rendering.HighDefinition.IntScalableSettingValue
 Assets:
+- Assets/Drama/DramaMask.prefab
+- Assets/Drama/DramaMaskTex.png
+- Assets/Drama/DramaMask.controller
+- Assets/Drama/DramaMaskLOD0.mesh
 - Assets/Drama/DramaMask.asset
+- Assets/Drama/DramaMaskLOD1.mesh
+- Assets/Drama/DramaMaskEyesFilled.asset
+- Assets/Drama/DramaMaskMat.mat
 Dependencies: []
