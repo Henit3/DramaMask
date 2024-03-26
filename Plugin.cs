@@ -178,14 +178,14 @@ public class Plugin : BaseUnityPlugin
         HauntedMaskItemExtensions.OutlineMesh = outlineMesh;
         Logger.LogDebug("Loaded asset: maskOutline");
 
-        var armsOutBundle = LoadBundle(PluginInfo.PLUGIN_GUID, "armsout");
+        /*var armsOutBundle = LoadBundle(PluginInfo.PLUGIN_GUID, "armsout");
         if (armsOutBundle == null) return;
 
         var armsOutAnimation = armsOutBundle.SafeLoadAsset<AnimationClip>("assets/custom/armsout.anim");
         if (armsOutAnimation == null) return;
 
         HauntedMaskItemExtensions.ArmsOutAnimation = armsOutAnimation;
-        Logger.LogDebug("Loaded asset: armsOut");
+        Logger.LogDebug("Loaded asset: armsOut");*/
     }
 
     /* Rarities decided with datasheet: https://docs.google.com/spreadsheets/d/1AREkZnHaqxukdpVNOEDFKikar9R4XAIjpZ_gI7NNngM/edit#gid=0

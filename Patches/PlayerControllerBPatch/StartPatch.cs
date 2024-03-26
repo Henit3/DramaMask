@@ -8,7 +8,7 @@ namespace DramaMask.Patches.PlayerControllerBPatch;
 [HarmonyPatch(typeof(PlayerControllerB), "Start")]
 public class StartPatch
 {
-    [HarmonyPostfix]
+    /*[HarmonyPostfix]
     public static void Postfix(PlayerControllerB __instance)
     {
         if (HauntedMaskItemExtensions.HoldingMaskAnimation is not null) return;
@@ -16,5 +16,5 @@ public class StartPatch
         HauntedMaskItemExtensions.HoldingMaskAnimation = __instance
             .playerBodyAnimator.runtimeAnimatorController.animationClips
             .FirstOrDefault(anim => anim.name == "HoldMaskToFace");
-    }
+    }*/
 }

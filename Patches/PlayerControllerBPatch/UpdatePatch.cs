@@ -14,7 +14,7 @@ public class UpdatePatch
     [HarmonyPostfix]
     public static void Postfix(PlayerControllerB __instance)
     {
-        HandleAnimationOverride(__instance);
+        //HandleAnimationOverride(__instance);
         HandleStealth(__instance);
     }
 

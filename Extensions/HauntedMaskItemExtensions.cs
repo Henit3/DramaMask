@@ -14,8 +14,8 @@ public static class HauntedMaskItemExtensions
     public static Mesh OutlineMesh { get; set; } = null;
     private static readonly Dictionary<int, Mesh> _originalMeshMap = new();
 
-    public static AnimationClip HoldingMaskAnimation;
-    public static AnimationClip ArmsOutAnimation;
+    /*public static AnimationClip HoldingMaskAnimation;
+    public static AnimationClip ArmsOutAnimation;*/
 
     public static void SetVisibility(this HauntedMaskItem mask, bool isVisible, bool toOutline = true)
     {
@@ -57,7 +57,7 @@ public static class HauntedMaskItemExtensions
         mask.enabled = !isAttaching;
         mask.SetVisibility(!isAttaching, toOutline: false);
 
-        if (player != null)
+        /*if (player != null)
         {
             var overrideController = player.playerBodyAnimator.runtimeAnimatorController as AnimatorOverrideController;
             if (overrideController == null)
@@ -66,10 +66,10 @@ public static class HauntedMaskItemExtensions
             }
             else
             {
-                //overrideController["HoldMaskToFace"] = isAttaching ? ArmsOutAnimation : HoldingMaskAnimation;
-                //Plugin.Logger.LogDebug($"Overwrote HoldMask to {overrideController["HoldMaskToFace"].name}");
+                overrideController["HoldMaskToFace"] = isAttaching ? ArmsOutAnimation : HoldingMaskAnimation;
+                Plugin.Logger.LogDebug($"Overwrote HoldMask to {overrideController["HoldMaskToFace"].name}");
             }
-        }
+        }*/
 
         if (isAttaching)
         {
