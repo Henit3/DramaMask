@@ -1,5 +1,9 @@
+# 1.2.1
+- Fixed recently introduced incompatibility issues with MoreEmotes
+
 # 1.2.0
 - Added behaviours to mimic the Masked (allowing masks to be attached, and activation of the eyes)
+- Fixed Drama mask displaying incorrectly at far distances
 
 # 1.1.3
 - Fixed incompatibility issues with BiggerLobby

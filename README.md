@@ -16,8 +16,15 @@ To balance this mechanic out, there is a stealth meter that is used while attemp
 * Allow attached masks to have their eyes activated
 
 ### Roadmap (dependent on feedback)
-* Allow the player to have their hands out like the Masked
+* Improve local mask attached view (separate from what others see)
+* Differentiate configs when attached as opposed to just held up
+	* Stealth usage
+	* Mask appearance
+* Add translucent mask view to bridge gap between default mask and the outline view
+* Add fake Comedy/Tragedy masks to further confuse your friends
 * Sync selected configs with the host
+* Add better support for all the experimentatal all enemy hiding behaviour
+* Allow the player to have their hands out like the Masked (unlikely without more help)
 
 ### Credits
 Made on request from @tkcool and @pedro9006.
@@ -25,12 +32,14 @@ Made on request from @tkcool and @pedro9006.
 Feature Proposers:
 * Stealth meter: @mintiivanilla
 	* UI inspired by @megapiggy's
-	[InsanityMeter](https://thunderstore.io/c/lethal-company/p/MegaPiggy/InsanityMeter/) mod.
-* Mask visibility on use: @star0138.
+	[InsanityMeter](https://thunderstore.io/c/lethal-company/p/MegaPiggy/InsanityMeter/) mod
+* Mask visibility on use: @star0138
+* Fake Comedy/Tragedy masks: @sagey08
 
 Bug Finders:
 * (Pre-Release) Networking: @roshposhtosh, @sabzy, and @saintshekzz
 * BiggerLobby incompatibilities: @TheRealMrKam (via GitHub)
+* MoreEmotes incompatibilities: @sagey08 and @sashimi_express
 
 Check out @megapiggy's [BuyableDramaMask](https://thunderstore.io/c/lethal-company/p/MegaPiggy/BuyableDramaMask/) mod too,
 which adds a buyable variant of the mask to the store!
