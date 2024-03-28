@@ -1,39 +1,40 @@
 ﻿using DramaMask.Extensions;
 using DramaMask.Network;
-using DramaMask.Network.Models;
 using GameNetcodeStuff;
 using HarmonyLib;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Emit;
 using Unity.Netcode;
+using UnityEngine;
 
 namespace DramaMask.Patches.PlayerControllerBPatch;
 
 [HarmonyPatch(typeof(PlayerControllerB), nameof(PlayerControllerB.DropAllHeldItems))]
 public class DropAllHeldItemsPatch : BaseChangeItemPatch
 {
-    // Gathered instructions like a macro for convenience
-    // NetworkHandler.Instance.MyPretend.IsMaskAttached
     private static readonly List<CodeInstruction> _isMaskAttached = [
-        new(OpCodes.Call,               // NetworkHandler.Instance
-            AccessTools.Property(typeof(NetworkHandler), nameof(NetworkHandler.Instance)).GetMethod),
-        new(OpCodes.Call,               // .MyPretend
-            AccessTools.Property(typeof(NetworkHandler), nameof(NetworkHandler.MyPretend)).GetMethod),
-        new(OpCodes.Call,               // .IsMaskAttached
-            AccessTools.Property(typeof(PretendData), nameof(PretendData.IsMaskAttached)).GetMethod)
+        new(OpCodes.Ldarg_0),           // this
+        new(OpCodes.Call,               // DropAllHeldItemsPatch.IsMaskAttached
+            AccessTools.Method(typeof(DropAllHeldItemsPatch), nameof(DropAllHeldItemsPatch.IsMaskAttached)))
     ];
+    private static bool IsMaskAttached(PlayerControllerB player)
+    {
+        var mask = player.currentlyHeldObjectServer as HauntedMaskItem;
+        return mask != null && mask.currentHeadMask != null;
+    }
 
     // Do not check if the player is dropping on death or disconnection
-    // !(this.isPlayerDead || disconnecting)
-    private static readonly List<CodeInstruction> _shouldCheckMask = [
+    private static readonly List<CodeInstruction> _isPlayerValid = [
         new(OpCodes.Ldarg_0),           // this
-        new(OpCodes.Ldfld,              // .isPlayerDead
-            AccessTools.Field(typeof(PlayerControllerB), nameof(PlayerControllerB.isPlayerDead))),
         new(OpCodes.Ldarg_2),           // disconnecting
-        new(OpCodes.Or),                // ||
-        new(OpCodes.Not),               // !
+        new(OpCodes.Call,               // DropAllHeldItemsPatch.IsMaskAttached
+            AccessTools.Method(typeof(DropAllHeldItemsPatch), nameof(DropAllHeldItemsPatch.IsPlayerValid)))
     ];
+    private static bool IsPlayerValid(PlayerControllerB player, bool disconnecting)
+    {
+        return !player.isPlayerDead && !disconnecting;
+    }
 
     // Check if current item is held out
     // itemSlot == this.CurrentlyHeldObjectServer
@@ -45,19 +46,34 @@ public class DropAllHeldItemsPatch : BaseChangeItemPatch
         new(OpCodes.Ceq)                // ==
     ];
 
-    /*[HarmonyPrefix]
+    [HarmonyPrefix]
     public static void Prefix(PlayerControllerB __instance, bool itemsFall = true, bool disconnecting = false)
     {
-        if (!disconnecting) return;
+        if (IsPlayerValid(__instance, disconnecting)) return;
 
-        // Do this on the server since the player who's doing this will disconnect anyway
-        if (!NetworkHandler.IsHostOrServer()) return;
+        var mask = __instance.currentlyHeldObjectServer as HauntedMaskItem;
 
-        // If player had mask attached, detach the mask before it is dropped
-        var id = __instance.GetId();
-        var targetData = NetworkHandler.Instance.PretendMap[id];
-        if (targetData.IsMaskAttached) targetData.IsMaskAttached = false;
-    }*/
+        // Rest maskAttached status (will also remove currentHeadMask to stop mask duplication)
+        var targetPretendData = __instance.IsLocal()
+            ? NetworkHandler.Instance.MyPretend
+            : NetworkHandler.Instance.PretendMap[__instance.GetId()];
+        targetPretendData.IsMaskAttached = false;
+
+        // Enable mask to drop correctly on disconnection (killing handled partly in KillPlayerClientRpc patch)
+        if (mask != null) mask.enabled = true;
+    }
+
+    [HarmonyPostfix]
+    public static void Postfix(PlayerControllerB __instance, bool itemsFall = true, bool disconnecting = false)
+    {
+        if (!IsPlayerValid(__instance, disconnecting)) return;
+
+        // Reset weight to the correct value if mask is attached (done outside transpilation for simplicity)
+        if (IsMaskAttached(__instance))
+        {
+            __instance.carryWeight = __instance.currentlyHeldObjectServer.itemProperties.weight;
+        }
+    }
 
     [HarmonyTranspiler]
     private static IEnumerable<CodeInstruction> IgnoreDroppingAttachedMask(IEnumerable<CodeInstruction> instructions,
@@ -97,9 +113,9 @@ public class DropAllHeldItemsPatch : BaseChangeItemPatch
         matcher.Advance(1);
 
         // Skip dropping the active mask if a mask is attached and it is currently being held
-        // if (_shouldCheckMask && (_isMaskAttached && _currentItemIsHeld)) continue;
+        // if (_isPlayerValid && (_isMaskAttached && _currentItemIsHeld)) continue;
         matcher.InsertAndAdvance(
-            _shouldCheckMask
+            _isPlayerValid
             .Union(_isMaskAttached)
             .Union(_currentItemIsHeld)
             .Union([
@@ -119,9 +135,9 @@ public class DropAllHeldItemsPatch : BaseChangeItemPatch
         matcher.Advance(1);
 
         // Add condition to stop discard item on client if mask is attached
-        // && !(_shouldCheckMask && _isMaskAttached)
+        // && !(_isPlayerValid && _isMaskAttached)
         matcher.InsertAndAdvance(
-            _shouldCheckMask
+            _isPlayerValid
             .Union(_isMaskAttached)
             .Union([
                 new(OpCodes.And),           // &&
@@ -140,17 +156,15 @@ public class DropAllHeldItemsPatch : BaseChangeItemPatch
         matcher.Advance(2);
 
         // Skip overall resets if a mask is attached
-        // if (_shouldCheckMask && _isMaskAttached) return;
+        // if (_isPlayerValid && _isMaskAttached) return;
         matcher.InsertAndAdvance(
-            _shouldCheckMask
+            _isPlayerValid
             .Union(_isMaskAttached)
             .Union([
                 new(OpCodes.And),           // &&
                 new(OpCodes.Brtrue,         // return
                     returnTarget)
         ]));
-
-        Plugin.Logger.LogDebugInstructionsFrom(matcher);
 
         return matcher.InstructionEnumeration();
     }
