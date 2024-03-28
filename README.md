@@ -3,17 +3,17 @@
 Adds a new type of mask, Drama, which is not haunted unlike its Tragedy and Comedy counterparts.
 Wearing it will make other Masked enemies ignore you.
 
+They can also be attached to players' faces, allowing you to look identical to Masked enemies and spook your friends!
+
 To balance this mechanic out, there is a stealth meter that is used while attempting to hide.
 
-### Config Options
-* All masks can be used by the player to hide
-* The player can hide from all enemies [Experimental]
-* Disable the stealth meter balancing mechanic
+### Config Options (Default value)
+* All masks can be used by the player to hide (true)
+* The player can hide from all enemies [Experimental] (false)
+* Disable the stealth meter balancing mechanic (false)
+* Show only mask outlines when wearing them (false)
 * Adjust stealth meter behaviour
 * Adjust stealth meter appearance
-* Show only mask outlines when wearing them
-* Allow masks to be attached to players
-* Allow attached masks to have their eyes activated
 
 ### Roadmap (dependent on feedback)
 * Improve local mask attached view (separate from what others see)
@@ -40,6 +40,7 @@ Bug Finders:
 * (Pre-Release) Networking: @roshposhtosh, @sabzy, and @saintshekzz
 * BiggerLobby incompatibilities: @TheRealMrKam (via GitHub)
 * MoreEmotes incompatibilities: @sagey08 and @sashimi_express
+* Stuck Mask on orbit: @Regnareb and @sashimi_express
 
 Check out @megapiggy's [BuyableDramaMask](https://thunderstore.io/c/lethal-company/p/MegaPiggy/BuyableDramaMask/) mod too,
 which adds a buyable variant of the mask to the store!

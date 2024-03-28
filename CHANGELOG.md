@@ -1,3 +1,8 @@
+# 1.2.2
+- Fixed being softlocked in the mask attached state if worn on teleport, centipede attack, or ship retuning to orbit
+- Fixed duplication of masks on disconnection
+- Fixed control tips being overridden when other players attach their masks
+
 # 1.2.1
 - Fixed recently introduced incompatibility issues with MoreEmotes
 
