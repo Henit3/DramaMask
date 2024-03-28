@@ -103,7 +103,7 @@ public static class HauntedMaskItemExtensions
             player.SafeSetAnimation("Grab", true);
         }
 
-        mask.SetControlTipsForItem();
+        if (player.IsLocal()) mask.SetControlTipsForItem();
     }
 
     public static void SetMaskEyes(this HauntedMaskItem mask, bool toActivate)
@@ -113,6 +113,6 @@ public static class HauntedMaskItemExtensions
             : mask.maskEyesFilled;
         eyesFilled.enabled = toActivate;
 
-        mask.SetControlTipsForItem();
+        if (mask.playerHeldBy.IsLocal()) mask.SetControlTipsForItem();
     }
 }

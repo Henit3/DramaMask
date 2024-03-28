@@ -11,20 +11,12 @@ public class ControlTipsPatch
 {
     private static List<string> _defaultTooltips;
 
-    [HarmonyPrefix]
-    public static bool Prefix(GrabbableObject __instance)
-    {
-        // Don't process if called on a stealth-enabled mask that's not yours
-        return !(__instance is HauntedMaskItem mask
-                && mask.CanHide()
-                && !mask.IsOwner);
-    }
-
     [HarmonyPostfix]
     public static void Postfix(GrabbableObject __instance)
     {
         if (__instance is not HauntedMaskItem mask
             || mask.playerHeldBy == null
+            || !mask.IsOwner
             || mask.itemProperties == null
             || mask.itemProperties.toolTips == null
             || !mask.CanHide())
