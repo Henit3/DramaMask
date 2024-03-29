@@ -14,6 +14,15 @@ public static class HauntedMaskItemExtensions
     public static Mesh OutlineMesh { get; set; } = null;
     private static readonly Dictionary<int, Mesh> _originalMeshMap = new();
 
+    private static bool _headMaskTransformsLoaded = false;
+    private static Vector3 _originalHeadMaskPos;
+    private static readonly Vector3 _localHeadMaskPosAdjustment = new(-0.026f, -0.02f, -0.03f);
+    private static readonly Vector3 _publicHeadMaskPosAdjustment = new(-0.03f, -0.02f, -0.03f);
+    private static Vector3 _originalHeadMaskRot;
+    private static readonly Vector3 _localHeadMaskRotAdjustment = new(-5f, 0f, -2f);
+    private static readonly Vector3 _publicHeadMaskRotAdjustment = new(-5f, 0f, 0f);
+    private static Vector3 _originalHeadMaskScale;
+
     /*public static AnimationClip HoldingMaskAnimation;
     public static AnimationClip ArmsOutAnimation;*/
 
@@ -77,6 +86,8 @@ public static class HauntedMaskItemExtensions
             {
                 mask.currentHeadMask = Object.Instantiate(mask.gameObject, null).transform;
 
+                AdjustMaskOffsets(mask, player.IsLocal());
+
                 AccessTools.Method(typeof(HauntedMaskItem), "PositionHeadMaskWithOffset").Invoke(mask, null);
 
                 AccessTools.Field(typeof(HauntedMaskItem), "clampedToHead").SetValue(mask, true);
@@ -104,6 +115,28 @@ public static class HauntedMaskItemExtensions
         }
 
         if (player.IsLocal()) mask.SetControlTipsForItem();
+    }
+
+    private static void AdjustMaskOffsets(this HauntedMaskItem mask, bool isLocal)
+    {
+        var headMask = mask.currentHeadMask.gameObject.GetComponent<HauntedMaskItem>();
+
+        if (!_headMaskTransformsLoaded)
+        {
+            // Assumes all mask types have the same offset
+            _headMaskTransformsLoaded = true;
+            _originalHeadMaskPos = mask.headPositionOffset;
+            _originalHeadMaskRot = mask.headRotationOffset;
+            _originalHeadMaskScale = headMask.transform.localScale;
+        }
+
+        mask.headPositionOffset = _originalHeadMaskPos + (isLocal
+            ? _localHeadMaskPosAdjustment
+            : _publicHeadMaskPosAdjustment);
+        mask.headRotationOffset += _originalHeadMaskRot + (isLocal
+            ? _localHeadMaskRotAdjustment
+            : _publicHeadMaskRotAdjustment);
+        headMask.transform.localScale = _originalHeadMaskScale * 0.83f;
     }
 
     public static void SetMaskEyes(this HauntedMaskItem mask, bool toActivate)
