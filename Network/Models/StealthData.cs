@@ -74,7 +74,7 @@ public class StealthData : NetworkData
         }
     }
 
-    private void HandleToggleHidden(bool isHiddenProposed)
+    public void HandleToggleHidden(bool isHiddenProposed)
     {
         if (!ShouldServerProcess()) return;
 
@@ -87,7 +87,7 @@ public class StealthData : NetworkData
             && !NetworkHandler.Instance.VisiblePlayers.Contains(PlayerId)) { /* Toggled to false and is now false */ }
         else return;
 
-        NetworkHandler.Instance.TogglePlayerHiddenServer(PlayerId);
+        NetworkHandler.Instance.SetPlayerHiddenServer(PlayerId, isHiddenProposed);
     }
 
     public void SetLastStoppedStealthNow()

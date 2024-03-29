@@ -101,10 +101,10 @@ public class NetworkHandler : NetworkBehaviour
         if (IsHostOrServer()) return;
     }
 
-    public void TogglePlayerHiddenServer(ulong playerId)
+    public void SetPlayerHiddenServer(ulong playerId, bool isHidden)
     {
-        if (VisiblePlayers.Contains(playerId)) VisiblePlayers.Remove(playerId);
-        else VisiblePlayers.Add(playerId);
+        if (isHidden && VisiblePlayers.Contains(playerId)) VisiblePlayers.Remove(playerId);
+        else if (!isHidden && !VisiblePlayers.Contains(playerId)) VisiblePlayers.Add(playerId);
     }
 
     public void SetPlayerMaskAttachedServer(ulong playerId, bool isAttaching)
