@@ -4,7 +4,7 @@
     <TargetFramework>net46</TargetFramework>
     <AssemblyName>DramaMask</AssemblyName>
     <Description>Enables masks to be worn to hide from the Masked and adds a safe mask, Drama!</Description>
-    <Version>1.2.3</Version>
+    <Version>1.2.4</Version>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <LangVersion>latest</LangVersion>
     <PackageReadmeFile>README.md</PackageReadmeFile>

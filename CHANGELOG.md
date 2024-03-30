@@ -1,3 +1,7 @@
+# 1.2.4
+- Fixed masks rotating every time they are worn
+- Fixed bar colour config not working as intended
+
 # 1.2.3
 - Fixed mask size and positioning to match Masked enemies
 - Fixed bug where wearing mask won't always hide you

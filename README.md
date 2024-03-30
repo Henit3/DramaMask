@@ -17,13 +17,14 @@ To balance this mechanic out, there is a stealth meter that is used while attemp
 * Adjust stealth meter appearance
 
 ### Roadmap (dependent on feedback)
-* Improve local mask attached view (separate from what others see)
+* Sync selected configs with the host
 * Differentiate configs when attached as opposed to just held up
 	* Stealth usage
 	* Mask appearance
-* Add translucent mask view to bridge gap between default mask and the outline view
+* Add configurable option to remove mask on meter depletion
 * Add fake Comedy/Tragedy masks to further confuse your friends
-* Sync selected configs with the host
+* Add sounds to wearing masks and as an alternative to the meter for VR
+* Add translucent mask view to bridge gap between default mask and the outline view
 * Add better support for all the experimentatal all enemy hiding behaviour
 * Allow the player to have their hands out like the Masked (unlikely without more help)
 
@@ -42,6 +43,7 @@ Bug Finders:
 * BiggerLobby incompatibilities: @TheRealMrKam (via GitHub)
 * MoreEmotes incompatibilities: @sagey08 and @sashimi_express
 * Stuck Mask on orbit: @Regnareb and @sashimi_express
+* Rotating masks & colour config: @sashimi_express
 
 Check out @megapiggy's [BuyableDramaMask](https://thunderstore.io/c/lethal-company/p/MegaPiggy/BuyableDramaMask/) mod too,
 which adds a buyable variant of the mask to the store!
