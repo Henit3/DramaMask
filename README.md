@@ -12,6 +12,7 @@ To balance this mechanic out, there is a stealth meter that is used while attemp
 * The player can hide from all enemies [Experimental] (false)
 * Disable the stealth meter balancing mechanic (false)
 * Show only mask outlines when wearing them (false)
+* Adjust spawn rates with a multiplier, and on specific moons
 * Adjust stealth meter behaviour
 * Adjust stealth meter appearance
 
