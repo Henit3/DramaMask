@@ -133,7 +133,7 @@ public static class HauntedMaskItemExtensions
         mask.headPositionOffset = _originalHeadMaskPos + (isLocal
             ? _localHeadMaskPosAdjustment
             : _publicHeadMaskPosAdjustment);
-        mask.headRotationOffset += _originalHeadMaskRot + (isLocal
+        mask.headRotationOffset = _originalHeadMaskRot + (isLocal
             ? _localHeadMaskRotAdjustment
             : _publicHeadMaskRotAdjustment);
         headMask.transform.localScale = _originalHeadMaskScale * 0.83f;
