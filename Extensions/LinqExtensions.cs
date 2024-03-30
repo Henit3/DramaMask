@@ -7,7 +7,7 @@ namespace DramaMask.Extensions;
 public static class LinqExtensions
 {
     public static string AsString<S, T>(this Dictionary<S, T> dict) => dict is null ? null
-        : string.Join(", ", dict.Select(p => $"[{p.Key}: {p.Value}]"));
+        : string.Join(", ", dict.Select(p => $"{p.Key}: {p.Value}"));
 
     public static string AsString<S>(this NetworkList<S> list) where S : unmanaged, System.IEquatable<S>
     {

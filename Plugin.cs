@@ -9,10 +9,11 @@ using DramaMask.Extensions;
 using BepInEx.Configuration;
 using System;
 using BepInEx.Bootstrap;
+using LethalLib.Modules;
 
 namespace DramaMask;
 
-[BepInDependency("evaisa.lethallib", "0.13.0")]
+[BepInDependency("evaisa.lethallib", "0.15.0")]
 [BepInPlugin(PluginInfo.PLUGIN_GUID, PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
 public class Plugin : BaseUnityPlugin
 {
@@ -76,7 +77,22 @@ public class Plugin : BaseUnityPlugin
             new("[EXPERIMENTAL] Whether the masks are able to hide the player from all types of enemies.",
                 new AcceptableValueList<bool>(true, false))
         ).Value;
+        
+        configSection = "Mask Spawning";
 
+        ConfigValues.BaseDramaSpawnChance = Config.Bind(
+            new(configSection, "Base Drama Mask Spawn Chance"),
+            ConfigValues.BaseDramaSpawnChance,
+            new("The default spawn chance of drama masks",
+                new AcceptableValueRange<int>(0, 1000))
+        ).Value;
+
+        ConfigValues.CustomDramaSpawnConfig = Config.Bind(
+            new(configSection, "Drama Mask Moon Spawn Chances"),
+            ConfigValues.CustomDramaSpawnConfig,
+            new("Custom spawn chances for moons the Drama mask can spawn on, comma separated")
+        ).Value;
+        ConfigValues.ParseRarityConfigString();
 
         configSection = "Stealth Meter";
 
@@ -164,9 +180,11 @@ public class Plugin : BaseUnityPlugin
         var dramaMask = maskBundle.SafeLoadAsset<Item>("assets/drama/dramamask.asset");
         if (dramaMask == null) return;
 
-        LethalLib.Modules.Utilities.FixMixerGroups(dramaMask.spawnPrefab);
-        LethalLib.Modules.NetworkPrefabs.RegisterNetworkPrefab(dramaMask.spawnPrefab);
-        RegisterDramaScrap(dramaMask);
+        Utilities.FixMixerGroups(dramaMask.spawnPrefab);
+        NetworkPrefabs.RegisterNetworkPrefab(dramaMask.spawnPrefab);
+        Items.RegisterScrap(dramaMask,
+             ConfigValues.DramaSpawnMapVanilla,
+             ConfigValues.DramaSpawnMapModded);
         Logger.LogDebug("Loaded asset: dramaMask");
 
         var outlineBundle = LoadBundle(PluginInfo.PLUGIN_GUID, "maskoutline");
@@ -188,20 +206,12 @@ public class Plugin : BaseUnityPlugin
         Logger.LogDebug("Loaded asset: armsOut");*/
     }
 
-    /* Rarities decided with datasheet: https://docs.google.com/spreadsheets/d/1AREkZnHaqxukdpVNOEDFKikar9R4XAIjpZ_gI7NNngM/edit#gid=0
-     * Kept between Tragedy and Comedy rarity values, on the lower side due to utility
-     */
+    
     private void RegisterDramaScrap(Item dramaMask)
     {
-        LethalLib.Modules.Items.RegisterScrap(dramaMask, 3,
-            LethalLib.Modules.Levels.LevelTypes.AssuranceLevel
-        );
-        LethalLib.Modules.Items.RegisterScrap(dramaMask, 40,
-            LethalLib.Modules.Levels.LevelTypes.RendLevel
-            | LethalLib.Modules.Levels.LevelTypes.DineLevel
-            | LethalLib.Modules.Levels.LevelTypes.TitanLevel
-            | LethalLib.Modules.Levels.LevelTypes.Modded
-        );
+        Items.RegisterScrap(dramaMask,
+            ConfigValues.DramaSpawnMapVanilla,
+            ConfigValues.DramaSpawnMapModded);
     }
 
     private AssetBundle LoadBundle(string guid, string bundleName)
