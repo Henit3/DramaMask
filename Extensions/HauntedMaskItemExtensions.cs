@@ -16,7 +16,7 @@ public static class HauntedMaskItemExtensions
 
     private static bool _headMaskTransformsLoaded = false;
     private static Vector3 _originalHeadMaskPos;
-    private static readonly Vector3 _localHeadMaskPosAdjustment = new(-0.026f, -0.02f, -0.03f);
+    private static readonly Vector3 _localHeadMaskPosAdjustment = new(-0.028f, -0.02f, -0.03f);
     private static readonly Vector3 _publicHeadMaskPosAdjustment = new(-0.03f, -0.02f, -0.03f);
     private static Vector3 _originalHeadMaskRot;
     private static readonly Vector3 _localHeadMaskRotAdjustment = new(-5f, 0f, -2f);
