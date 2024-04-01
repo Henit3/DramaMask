@@ -45,6 +45,7 @@ public class StealthData : NetworkData
             {
                 _isStealthValueValid = false;
                 AddExhaustionPenalty = true;
+                if (ConfigValues.RemoveOnDepletion) SetLastStoppedStealthNow();
             }
             else return;
 

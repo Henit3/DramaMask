@@ -52,10 +52,20 @@ public class UpdatePatch
             : NetworkHandler.Instance.StealthMap[id];
 
         var isAttemptingStealth = stealthData.IsAttemptingStealth();
-        if (isAttemptingStealth && stealthData.StealthValue > 0)
+        if (isAttemptingStealth)
         {
-            stealthData.StealthValue = Math.Max(0, stealthData.StealthValue - (Time.deltaTime
-                * (pretendData.IsMaskAttached ? ConfigValues.AttachedStealthMultiplier : 1f)));
+            if (stealthData.StealthValue > 0)
+            {
+                stealthData.StealthValue = Math.Max(0, stealthData.StealthValue - (Time.deltaTime
+                    * (pretendData.IsMaskAttached ? ConfigValues.AttachedStealthMultiplier : 1f)));
+            }
+            else
+            {
+                if (ConfigValues.RemoveOnDepletion && pretendData.IsMaskAttached)
+                {
+                    pretendData.IsMaskAttached = false;
+                }
+            }
         }
         else if (!isAttemptingStealth
             && stealthData.StealthValue < ConfigValues.MaxHiddenTime

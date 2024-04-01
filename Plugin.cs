@@ -131,6 +131,13 @@ public class Plugin : BaseUnityPlugin
                 new AcceptableValueRange<float>(0.1f, 10))
         ).Value;
 
+        ConfigValues.RemoveOnDepletion = Config.Bind(
+            new(configSection, "Remove On Depletion"),
+            ConfigValues.RemoveOnDepletion,
+            new("Whether the mask should take itself off when the stealth meter has been depleted.",
+                new AcceptableValueList<bool>(true, false))
+        ).Value;
+
 
         configSection = "Stealth Meter HUD";
 

@@ -1,4 +1,4 @@
-using DramaMask.Extensions;
+﻿using DramaMask.Extensions;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -37,6 +37,7 @@ public static class ConfigValues
     public static Color BarColour = new(220, 220, 220, byte.MaxValue);
 
     public static bool SeeWornMaskOutline = false;
+    public static bool RemoveOnDepletion = false;
 
     public static void ParseRarityConfigString()
     {
