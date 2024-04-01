@@ -55,6 +55,7 @@ public class InteractLeftRightPatch
                     {
                         targetStealthData.SetLastStoppedStealthNow();
                     }
+                    Traverse.Create(instance).Field("maskOn").SetValue(false);
                 }
             }
             else
@@ -67,6 +68,7 @@ public class InteractLeftRightPatch
             if (!right)
             {
                 targetPretendData.IsMaskAttached = true;
+                Traverse.Create(instance).Field("maskOn").SetValue(true);
             }
         }
     }

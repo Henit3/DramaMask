@@ -62,10 +62,6 @@ public static class HauntedMaskItemExtensions
         //Based on HauntedMaskItem.MaskClampToHeadAnimationEvent
         var player = AccessTools.Field(typeof(HauntedMaskItem), "previousPlayerHeldBy").GetValue(mask) as PlayerControllerB;
 
-        // Set held mask visibility based on attach status
-        mask.enabled = !isAttaching;
-        mask.SetVisibility(!isAttaching, toOutline: false);
-
         /*if (player != null)
         {
             var overrideController = player.playerBodyAnimator.runtimeAnimatorController as AnimatorOverrideController;
@@ -93,8 +89,9 @@ public static class HauntedMaskItemExtensions
                 AccessTools.Field(typeof(HauntedMaskItem), "clampedToHead").SetValue(mask, true);
 
                 // Set head mask invisibile only for the local player (if they have the config)
-                mask.currentHeadMask.gameObject.GetComponent<HauntedMaskItem>()
-                    .SetVisibility(!player.IsLocal());
+                var headMask = mask.currentHeadMask.gameObject.GetComponent<HauntedMaskItem>();
+                headMask.SetVisibility(!player.IsLocal());
+                headMask.enabled = false;
             }
 
             player.SafeSetAnimation("Grab", false);
@@ -113,6 +110,9 @@ public static class HauntedMaskItemExtensions
             player.SafeSetAnimation("cancelHolding", false);
             player.SafeSetAnimation("Grab", true);
         }
+
+        // Set held mask visibility based on attach status
+        mask.SetVisibility(!isAttaching, toOutline: false);
 
         if (player.IsLocal()) mask.SetControlTipsForItem();
     }

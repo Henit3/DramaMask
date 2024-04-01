@@ -44,6 +44,7 @@ public class ItemActivatePatch
             {
                 targetStealthData.SetLastStoppedStealthNow();
             }
+            Traverse.Create(instance).Field("maskOn").SetValue(buttonDown);
         }
         else
         {
