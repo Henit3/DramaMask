@@ -15,6 +15,6 @@ public class BaseEndSpecialAnimationPatch
             return;
         }
 
-        mask.SetVisibility(false, toOutline: false);
+        mask.SetVisibility(false);
     }
 }

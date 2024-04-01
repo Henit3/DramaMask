@@ -1,3 +1,4 @@
+using DramaMask.Models;
 using DramaMask.Network;
 using GameNetcodeStuff;
 using HarmonyLib;
@@ -26,34 +27,40 @@ public static class HauntedMaskItemExtensions
     /*public static AnimationClip HoldingMaskAnimation;
     public static AnimationClip ArmsOutAnimation;*/
 
-    public static void SetVisibility(this HauntedMaskItem mask, bool isVisible, bool toOutline = true)
+    public static void SetVisibility(this HauntedMaskItem mask,
+        bool isVisible, bool? isOthersVisible = null)
+    {
+        isOthersVisible ??= isVisible;
+
+        // Set visibility for all main mask renderers
+        var renderers = mask.gameObject.GetComponentsInChildren<MeshRenderer>()
+            .Where(IsMainMaskMesh).ToList();
+        foreach (var renderer in renderers.Skip(1)) renderer.enabled = isOthersVisible.Value;
+
+        // Set main renderer visibility
+        renderers.First().enabled = isVisible;
+    }
+
+    public static void SetMaskView(this HauntedMaskItem mask, string maskView)
     {
         // Register original mesh for each mash type to reset with later
         if (!_originalMeshMap.ContainsKey(mask.maskTypeId))
         {
             _originalMeshMap.Add(mask.maskTypeId,
-                mask.gameObject.GetComponentsInChildren<MeshFilter>().First(IsMainMesh).mesh);
+                mask.gameObject.GetComponentsInChildren<MeshFilter>().First(IsMainMaskMesh).mesh);
         }
 
-        // Set visibility for all main renderers
-        var renderers = mask.gameObject.GetComponentsInChildren<MeshRenderer>()
-            .Where(IsMainMesh).ToList();
-        foreach (var renderer in renderers.Skip(1)) renderer.enabled = isVisible;
-
-        // Set completely invisible if not outlining
-        renderers.First().enabled = !(!toOutline && !isVisible);
-
-        if (toOutline)
+        // Set main mesh filter's mesh
+        var maskMeshFilter = mask.gameObject.GetComponentsInChildren<MeshFilter>().First(IsMainMaskMesh);
+        maskMeshFilter.mesh = maskView switch
         {
-            // Set main mesh filter's mesh
-            var maskMeshFilter = mask.gameObject.GetComponentsInChildren<MeshFilter>().First(IsMainMesh);
-            maskMeshFilter.mesh = ConfigValues.SeeWornMaskOutline && !isVisible
-                ? OutlineMesh
-                : _originalMeshMap[mask.maskTypeId];
-        }
+            //MaskView.Translucent => TranslucentMesh,
+            MaskView.Outline => OutlineMesh,
+            _ => _originalMeshMap[mask.maskTypeId]
+        };
     }
 
-    private static bool IsMainMesh(Component component) => !(component.name is "EyesFilled" || component.name.StartsWith("ScanNode"));
+    private static bool IsMainMaskMesh(Component component) => !(component.name is "EyesFilled" || component.name.StartsWith("ScanNode"));
 
     public static void SetMaskAttached(this HauntedMaskItem mask, bool isAttaching)
     {
@@ -88,9 +95,11 @@ public static class HauntedMaskItemExtensions
 
                 AccessTools.Field(typeof(HauntedMaskItem), "clampedToHead").SetValue(mask, true);
 
-                // Set head mask invisibile only for the local player (if they have the config)
+                // Set head mask's mask view only for the local player
                 var headMask = mask.currentHeadMask.gameObject.GetComponent<HauntedMaskItem>();
-                headMask.SetVisibility(!player.IsLocal());
+                headMask.SetMaskView(player.IsLocal()
+                    ? ConfigValues.SelectedMaskView
+                    : null);
                 headMask.enabled = false;
             }
 
@@ -112,7 +121,7 @@ public static class HauntedMaskItemExtensions
         }
 
         // Set held mask visibility based on attach status
-        mask.SetVisibility(!isAttaching, toOutline: false);
+        mask.SetVisibility(!isAttaching);
 
         if (player.IsLocal()) mask.SetControlTipsForItem();
     }

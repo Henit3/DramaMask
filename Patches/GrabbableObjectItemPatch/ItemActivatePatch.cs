@@ -53,6 +53,8 @@ public class ItemActivatePatch
 
         if (!instance.playerHeldBy.IsLocal()) return;
 
-        instance.SetVisibility(!buttonDown);
+        instance.SetMaskView(buttonDown
+            ? ConfigValues.SelectedMaskView
+            : null);
     }
 }

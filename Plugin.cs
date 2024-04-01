@@ -10,6 +10,7 @@ using BepInEx.Configuration;
 using System;
 using BepInEx.Bootstrap;
 using LethalLib.Modules;
+using DramaMask.Models;
 
 namespace DramaMask;
 
@@ -178,11 +179,11 @@ public class Plugin : BaseUnityPlugin
 
         configSection = "Miscellaneous";
 
-        ConfigValues.SeeWornMaskOutline = Config.Bind(
-            new(configSection, "Only See Outline of Worn Mask"),
-            ConfigValues.SeeWornMaskOutline,
+        ConfigValues.SelectedMaskView = Config.Bind(
+            new(configSection, "Mask View"),
+            ConfigValues.SelectedMaskView,
             new("Whether to only see the mask outline when wearing a mask.",
-                new AcceptableValueList<bool>(true, false))
+                new AcceptableValueList<string>(MaskView.Opaque/*, MaskView.Translucent*/, MaskView.Outline))
         ).Value;
     }
 
