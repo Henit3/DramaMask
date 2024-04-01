@@ -1,4 +1,6 @@
-﻿namespace DramaMask.Network.Models;
+﻿using DramaMask.Network;
+
+namespace DramaMask.Models.Network;
 
 /**
  * Core part of the networking architecture:

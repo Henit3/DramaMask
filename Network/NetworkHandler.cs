@@ -1,5 +1,5 @@
 ﻿using DramaMask.Extensions;
-using DramaMask.Network.Models;
+using DramaMask.Models.Network;
 using System.Collections.Generic;
 using Unity.Netcode;
 

@@ -1,6 +1,7 @@
 ﻿using System;
+using DramaMask.Network;
 
-namespace DramaMask.Network.Models;
+namespace DramaMask.Models.Network;
 
 public class StealthData : NetworkData
 {
@@ -81,7 +82,7 @@ public class StealthData : NetworkData
 
         var isAttemptingStealth = IsAttemptingStealth();
         if (isHiddenProposed
-            && (isAttemptingStealth && _isStealthValueValid)
+            && isAttemptingStealth && _isStealthValueValid
             && NetworkHandler.Instance.VisiblePlayers.Contains(PlayerId)) { /* Toggled to true and is now true */ }
         else if (!isHiddenProposed
             && !(isAttemptingStealth && _isStealthValueValid)
