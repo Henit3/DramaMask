@@ -11,7 +11,7 @@ using UnityEngine;
 namespace DramaMask.Patches.PlayerControllerBPatch;
 
 [HarmonyPatch(typeof(PlayerControllerB), nameof(PlayerControllerB.DropAllHeldItems))]
-public class DropAllHeldItemsPatch : BaseChangeItemPatch
+public class DropAllHeldItemsPatch
 {
     private static readonly List<CodeInstruction> _isMaskAttached = [
         new(OpCodes.Ldarg_0),           // this
@@ -53,14 +53,18 @@ public class DropAllHeldItemsPatch : BaseChangeItemPatch
 
         var mask = __instance.currentlyHeldObjectServer as HauntedMaskItem;
 
-        // Rest maskAttached status (will also remove currentHeadMask to stop mask duplication)
+        // Reset maskAttached status (will also remove currentHeadMask to stop mask duplication)
         var targetPretendData = __instance.IsLocal()
             ? NetworkHandler.Instance.MyPretend
             : NetworkHandler.Instance.PretendMap[__instance.GetId()];
         targetPretendData.IsMaskAttached = false;
 
-        // Enable mask to drop correctly on disconnection (killing handled partly in KillPlayerClientRpc patch)
-        if (mask != null) mask.enabled = true;
+        // Stop headmask persisting after player is dead (host disconnect: SaveItemsInShipPatch)
+        if (__instance.isPlayerDead && mask != null && mask.currentHeadMask != null)
+        {
+            Object.Destroy(mask.currentHeadMask.gameObject);
+            mask.currentHeadMask = null;
+        }
     }
 
     [HarmonyPostfix]
