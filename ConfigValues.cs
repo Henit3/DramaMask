@@ -1,4 +1,4 @@
-﻿using DramaMask.Extensions;
+using DramaMask.Extensions;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -27,6 +27,8 @@ public static class ConfigValues
     public static float ExhaustionPenaltyDelay = 3;
     public static float MaxHiddenTime = 15;
     public static float RechargeDelay = 3;
+
+    public static float AttachedStealthMultiplier = 1f;
 
     public static bool SeeStealthMeter = true;
     public static bool AlwaysSeeStealthMeter = false;

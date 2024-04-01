@@ -1,4 +1,4 @@
-﻿using BepInEx;
+using BepInEx;
 using BepInEx.Logging;
 using HarmonyLib;
 using System.IO;
@@ -122,6 +122,13 @@ public class Plugin : BaseUnityPlugin
             ConfigValues.ExhaustionPenaltyDelay,
             new("How long of a delay should be added as a penalty for fully exhausting the stealth meter.",
                 new AcceptableValueRange<float>(0, 30))
+        ).Value;
+
+        ConfigValues.AttachedStealthMultiplier = Config.Bind(
+            new(configSection, "Attached Stealth Multiplier"),
+            ConfigValues.AttachedStealthMultiplier,
+            new("A multiplier to be applied to the stealth value when a mask is attached instead of held up.",
+                new AcceptableValueRange<float>(0.1f, 10))
         ).Value;
 
 

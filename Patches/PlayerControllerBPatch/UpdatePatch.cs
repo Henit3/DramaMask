@@ -44,25 +44,29 @@ public class UpdatePatch
 
         var id = __instance.GetId();
 
-        var targetData = __instance.IsLocal()
+        var pretendData = __instance.IsLocal()
+            ? NetworkHandler.Instance.MyPretend
+            : NetworkHandler.Instance.PretendMap[id];
+        var stealthData = __instance.IsLocal()
             ? NetworkHandler.Instance.MyStealth
             : NetworkHandler.Instance.StealthMap[id];
 
-        var isAttemptingStealth = targetData.IsAttemptingStealth();
-        if (isAttemptingStealth && targetData.StealthValue > 0)
+        var isAttemptingStealth = stealthData.IsAttemptingStealth();
+        if (isAttemptingStealth && stealthData.StealthValue > 0)
         {
-            targetData.StealthValue = Math.Max(0, targetData.StealthValue - Time.deltaTime);
+            stealthData.StealthValue = Math.Max(0, stealthData.StealthValue - (Time.deltaTime
+                * (pretendData.IsMaskAttached ? ConfigValues.AttachedStealthMultiplier : 1f)));
         }
         else if (!isAttemptingStealth
-            && targetData.StealthValue < ConfigValues.MaxHiddenTime
-            && (!targetData.LastStoppedStealth.HasValue
-                || DateTime.UtcNow.Subtract(targetData.LastStoppedStealth.Value)
+            && stealthData.StealthValue < ConfigValues.MaxHiddenTime
+            && (!stealthData.LastStoppedStealth.HasValue
+                || DateTime.UtcNow.Subtract(stealthData.LastStoppedStealth.Value)
                     .TotalSeconds > ConfigValues.RechargeDelay))
         {
-            targetData.StealthValue = Math.Min(ConfigValues.MaxHiddenTime,
-                targetData.StealthValue + Time.deltaTime);
-            if (targetData.LastStoppedStealth != null) targetData.LastStoppedStealth = null;
-            if (targetData.AddExhaustionPenalty) targetData.AddExhaustionPenalty = false;
+            stealthData.StealthValue = Math.Min(ConfigValues.MaxHiddenTime,
+                stealthData.StealthValue + Time.deltaTime);
+            if (stealthData.LastStoppedStealth != null) stealthData.LastStoppedStealth = null;
+            if (stealthData.AddExhaustionPenalty) stealthData.AddExhaustionPenalty = false;
         }
     }
 }
