@@ -90,6 +90,13 @@ public class NetworkHandler : NetworkBehaviour
     {
         if (StealthMap.ContainsKey(id)) StealthMap.Remove(id);
         if (!PretendMap.ContainsKey(id)) PretendMap.Remove(id);
+
+        if (VisiblePlayers == null)
+        {
+            Plugin.Logger.LogWarning("Visible player list could not unregister player: This is fine on host disconnection");
+            return;
+        }
+
         if (VisiblePlayers.Contains(id)) VisiblePlayers.Remove(id);
     }
 
