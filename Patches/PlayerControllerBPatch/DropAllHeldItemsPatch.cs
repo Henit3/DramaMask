@@ -54,12 +54,16 @@ public class DropAllHeldItemsPatch
         var mask = __instance.currentlyHeldObjectServer as HauntedMaskItem;
 
         // Reset maskAttached status (will also remove currentHeadMask to stop mask duplication)
-        var targetPretendData = __instance.IsLocal()
-            ? NetworkHandler.Instance.MyPretend
-            : NetworkHandler.Instance.PretendMap[__instance.GetId()];
-        targetPretendData.IsMaskAttached = false;
+        if (__instance.IsLocal())
+        {
+            NetworkHandler.Instance.MyPretend.IsMaskAttached = false;
+        }
+        else if (NetworkHandler.IsHostOrServer())
+        {
+            NetworkHandler.Instance.PretendMap[__instance.GetId()].IsMaskAttached = false;
+        }
 
-        // Stop headmask persisting after player is dead (host disconnect: SaveItemsInShipPatch)
+        // Ensure headmask stops persisting after player is dead (host disconnect: SaveItemsInShipPatch)
         if (__instance.isPlayerDead && mask != null && mask.currentHeadMask != null)
         {
             Object.Destroy(mask.currentHeadMask.gameObject);
