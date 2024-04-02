@@ -37,7 +37,8 @@ public static class ConfigValues
     public static float BarYPosition = 235f;
     public static Color BarColour = new(220, 220, 220, byte.MaxValue);
 
-    public static string SelectedMaskView = MaskView.Opaque;
+    public static string HeldMaskView = MaskView.Opaque;
+    public static string AttachedMaskView = MaskView.MatchHeld;
     public static bool RemoveOnDepletion = false;
 
     public static void ParseRarityConfigString()

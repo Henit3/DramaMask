@@ -98,7 +98,7 @@ public static class HauntedMaskItemExtensions
                 // Set head mask's mask view only for the local player
                 var headMask = mask.currentHeadMask.gameObject.GetComponent<HauntedMaskItem>();
                 headMask.SetMaskView(player.IsLocal()
-                    ? ConfigValues.SelectedMaskView
+                    ? ConfigValues.AttachedMaskView
                     : null);
                 headMask.enabled = false;
             }

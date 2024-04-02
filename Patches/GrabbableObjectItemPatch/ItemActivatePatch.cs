@@ -53,8 +53,11 @@ public class ItemActivatePatch
 
         if (!instance.playerHeldBy.IsLocal()) return;
 
-        instance.SetMaskView(buttonDown
-            ? ConfigValues.SelectedMaskView
-            : null);
+        if (!targetPretendData.IsMaskAttached)
+        {
+            instance.SetMaskView(buttonDown
+                ? ConfigValues.HeldMaskView
+                : null);
+        }
     }
 }

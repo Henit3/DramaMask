@@ -177,14 +177,25 @@ public class Plugin : BaseUnityPlugin
         ).Value.FromConfigString();
 
 
-        configSection = "Miscellaneous";
+        configSection = "Mask View";
 
-        ConfigValues.SelectedMaskView = Config.Bind(
-            new(configSection, "Mask View"),
-            ConfigValues.SelectedMaskView,
-            new("Whether to only see the mask outline when wearing a mask.",
+        ConfigValues.HeldMaskView = Config.Bind(
+            new(configSection, "Held Mask View"),
+            ConfigValues.HeldMaskView,
+            new("How the mask appaears when holding up a mask to your face.",
                 new AcceptableValueList<string>(MaskView.Opaque/*, MaskView.Translucent*/, MaskView.Outline))
         ).Value;
+
+        ConfigValues.AttachedMaskView = Config.Bind(
+            new(configSection, "Attached Mask View"),
+            ConfigValues.AttachedMaskView,
+            new("How the mask appaears when attaching a mask to your face.",
+                new AcceptableValueList<string>(MaskView.MatchHeld, MaskView.Opaque/*, MaskView.Translucent*/, MaskView.Outline))
+        ).Value;
+        if (ConfigValues.AttachedMaskView == "Match Held")
+        {
+            ConfigValues.AttachedMaskView = ConfigValues.HeldMaskView;
+        }
     }
 
     private void LoadAssets()
