@@ -26,7 +26,7 @@ public class KillPlayerPatch
     public static void Postfix(PlayerControllerB __instance,
         Vector3 bodyVelocity, bool spawnBody, CauseOfDeath causeOfDeath, int deathAnimation)
     {
-        if (!ConfigValues.UseStealthMeter) return;
+        if (!Plugin.Config.UseStealthMeter) return;
 
         var id = __instance.GetId();
 

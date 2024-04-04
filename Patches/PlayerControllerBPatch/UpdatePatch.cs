@@ -14,14 +14,14 @@ public class UpdatePatch
     [HarmonyPostfix]
     public static void Postfix(PlayerControllerB __instance)
     {
-        //HandleAnimationOverride(__instance);
+        HandleAnimationOverride(__instance);
         HandleStealth(__instance);
     }
 
     // We aren't adding transitions or states, only overriding holdingMask, so no special extra initialisation
     private static void HandleAnimationOverride(PlayerControllerB __instance)
     {
-        // Let MoreEmotes handle overriding the controller if it is detected
+        /*// Let MoreEmotes handle overriding the controller if it is detected
         // LethalEmotesApi and TooManyEmotes replace this on plugin awake so can be ignored
         if (Plugin.IsMoreEmotesPresent) return;
 
@@ -29,12 +29,12 @@ public class UpdatePatch
         var controller = __instance.playerBodyAnimator.runtimeAnimatorController;
         if (controller is AnimatorOverrideController) return;
 
-        __instance.playerBodyAnimator.runtimeAnimatorController = new AnimatorOverrideController(controller);
+        __instance.playerBodyAnimator.runtimeAnimatorController = new AnimatorOverrideController(controller);*/
     }
 
     private static void HandleStealth(PlayerControllerB __instance)
     {
-        if (!ConfigValues.UseStealthMeter) return;
+        if (!Plugin.Config.UseStealthMeter) return;
 
         // Ignore updates called by pre-loaded scripts that are not controlled by a player
         if (!__instance.isPlayerControlled) return;
@@ -57,23 +57,23 @@ public class UpdatePatch
             if (stealthData.StealthValue > 0)
             {
                 stealthData.StealthValue = Math.Max(0, stealthData.StealthValue - (Time.deltaTime
-                    * (pretendData.IsMaskAttached ? ConfigValues.AttachedStealthMultiplier : 1f)));
+                    * (pretendData.IsMaskAttached ? Plugin.Config.AttachedStealthMultiplier : 1f)));
             }
             else
             {
-                if (ConfigValues.RemoveOnDepletion && pretendData.IsMaskAttached)
+                if (Plugin.Config.RemoveOnDepletion && pretendData.IsMaskAttached)
                 {
                     pretendData.IsMaskAttached = false;
                 }
             }
         }
         else if (!isAttemptingStealth
-            && stealthData.StealthValue < ConfigValues.MaxHiddenTime
+            && stealthData.StealthValue < Plugin.Config.MaxHiddenTime
             && (!stealthData.LastStoppedStealth.HasValue
                 || DateTime.UtcNow.Subtract(stealthData.LastStoppedStealth.Value)
-                    .TotalSeconds > ConfigValues.RechargeDelay))
+                    .TotalSeconds > Plugin.Config.RechargeDelay))
         {
-            stealthData.StealthValue = Math.Min(ConfigValues.MaxHiddenTime,
+            stealthData.StealthValue = Math.Min(Plugin.Config.MaxHiddenTime,
                 stealthData.StealthValue + Time.deltaTime);
             if (stealthData.LastStoppedStealth != null) stealthData.LastStoppedStealth = null;
             if (stealthData.AddExhaustionPenalty) stealthData.AddExhaustionPenalty = false;

@@ -1,48 +1,98 @@
-﻿using DramaMask.Extensions;
+﻿using BepInEx.Configuration;
+using CSync.Extensions;
+using CSync.Lib;
+using DramaMask.Extensions;
 using DramaMask.Models;
 using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using UnityEngine;
 using static LethalLib.Modules.Levels;
 
 namespace DramaMask;
-
-public static class ConfigValues
+public class ConfigValues : SyncedConfig<ConfigValues>
 {
-    public static bool AllMasksHide = true;
-    public static bool HideFromAllEnemies = false;
+    [DataMember] public SyncedEntry<bool> AllMasksHide;
+    [DataMember] public SyncedEntry<bool> HideFromAllEnemies;
 
     /* Base rarities decided with datasheet: https://docs.google.com/spreadsheets/d/1AREkZnHaqxukdpVNOEDFKikar9R4XAIjpZ_gI7NNngM/edit#gid=0
      * Kept between Tragedy and Comedy rarity values, on the lower side due to utility
      */
-    public static int BaseDramaSpawnChance = 40;
-    public static string CustomDramaSpawnConfig = new Dictionary<string, int>()
+    [DataMember] public SyncedEntry<int> BaseDramaSpawnChance;
+    [DataMember] public SyncedEntry<string> CustomDramaSpawnConfig;
+    public Dictionary<LevelTypes, int> DramaSpawnMapVanilla;
+    public Dictionary<string, int> DramaSpawnMapModded;
+
+    [DataMember] public SyncedEntry<bool> UseStealthMeter;
+    [DataMember] public SyncedEntry<float> MaxHiddenTime;
+    [DataMember] public SyncedEntry<float> ExhaustionPenaltyDelay;
+    [DataMember] public SyncedEntry<float> RechargeDelay;
+    [DataMember] public SyncedEntry<float> AttachedStealthMultiplier;
+    [DataMember] public SyncedEntry<bool> RemoveOnDepletion;
+
+    [DataMember] public SyncedEntry<bool> SeeStealthMeter;
+    [DataMember] public SyncedEntry<bool> AlwaysSeeStealthMeter;
+    [DataMember] public SyncedEntry<float> BarXPosition;
+    [DataMember] public SyncedEntry<float> BarYPosition;
+    [DataMember] public SyncedEntry<string> BarColourConfig;
+    public Color BarColour;
+
+    [DataMember] public SyncedEntry<string> HeldMaskView;
+    [DataMember] public SyncedEntry<string> AttachedMaskView;
+
+    public ConfigValues(ConfigFile cfg) : base(PluginInfo.PLUGIN_GUID)
     {
-        { "AssuranceLevel", 3 },
-        { "VowLevel", 0 }
-    }.AsString();
-    public static Dictionary<LevelTypes, int> DramaSpawnMapVanilla;
-    public static Dictionary<string, int> DramaSpawnMapModded;
+        ConfigManager.Register(this);
 
-    public static bool UseStealthMeter = true;
-    public static float ExhaustionPenaltyDelay = 3;
-    public static float MaxHiddenTime = 15;
-    public static float RechargeDelay = 3;
+        SetHidingTargets(cfg);
+        SetMaskSpawning(cfg);
+        SetStealthMeter(cfg);
+        SetStealthMeterHUD(cfg);
+        SetMaskView(cfg);
+    }
 
-    public static float AttachedStealthMultiplier = 1f;
+    private void SetHidingTargets(ConfigFile cfg) {
+        const string section = "Hiding Targets";
 
-    public static bool SeeStealthMeter = true;
-    public static bool AlwaysSeeStealthMeter = false;
-    public static float BarXPosition = 0f;
-    public static float BarYPosition = 235f;
-    public static Color BarColour = new(220, 220, 220, byte.MaxValue);
+        AllMasksHide = cfg.BindSyncedEntry(
+            new(section, "All Masks Hide"),
+            true,
+            new ConfigDescription(
+                "Whether all masks are able to hide the player from the Masked (if they don't get possessed first).",
+                new AcceptableValueList<bool>(true, false)
+            ));
 
-    public static string HeldMaskView = MaskView.Opaque;
-    public static string AttachedMaskView = MaskView.MatchHeld;
-    public static bool RemoveOnDepletion = false;
+        HideFromAllEnemies = cfg.BindSyncedEntry(
+            new(section, "Hide From All Enemies"),
+            false,
+            new ConfigDescription(
+                "[EXPERIMENTAL] Whether the masks are able to hide the player from all types of enemies.",
+                new AcceptableValueList<bool>(true, false)
+            ));
+    }
 
-    public static void ParseRarityConfigString()
+    private void SetMaskSpawning(ConfigFile cfg)
     {
+        const string section = "Mask Spawning";
+
+        BaseDramaSpawnChance = cfg.BindSyncedEntry(
+            new(section, "Base Drama Mask Spawn Chance"),
+            40,
+            new ConfigDescription(
+                "The default spawn chance of drama masks",
+                new AcceptableValueRange<int>(0, 1000)
+            ));
+
+        CustomDramaSpawnConfig = cfg.BindSyncedEntry(
+            new(section, "Drama Mask Moon Spawn Chances"),
+            new Dictionary<string, int>()
+            {
+                { "AssuranceLevel", 3 },
+                { "VowLevel", 0 }
+            }.AsString(),
+            new ConfigDescription("Custom spawn chances for moons the Drama mask can spawn on, comma separated")
+        );
+
         DramaSpawnMapVanilla = new()
         {
             { LevelTypes.AssuranceLevel, (int)Math.Round(BaseDramaSpawnChance*(3/40f)) },
@@ -55,7 +105,7 @@ public static class ConfigValues
 
         if (CustomDramaSpawnConfig is null) return;
 
-        foreach (var pair in CustomDramaSpawnConfig.Split(','))
+        foreach (var pair in CustomDramaSpawnConfig.Value.Split(','))
         {
             var values = pair.Split(':');
             if (values.Length != 2) continue;
@@ -73,5 +123,123 @@ public static class ConfigValues
                 Plugin.Logger.LogDebug($"Registered spawn rate for modded level {name} to {spawnrate}");
             }
         }
+    }
+
+    private void SetStealthMeter(ConfigFile cfg)
+    {
+        const string section = "Stealth Meter";
+
+        UseStealthMeter = cfg.BindSyncedEntry(
+            new(section, "Use Stealth Meter"),
+                    true,
+            new ConfigDescription(
+                "Whether the masks should have a timeout limiting usage to make them balanced.",
+                new AcceptableValueList<bool>(true, false)
+            ));
+
+        MaxHiddenTime = cfg.BindSyncedEntry(
+            new(section, "Max Stealth Time"),
+            15f,
+            new ConfigDescription(
+                "How long players should be able to stay hidden with the mask activated from full.",
+                new AcceptableValueRange<float>(0, 60)
+            ));
+
+        RechargeDelay = cfg.BindSyncedEntry(
+            new(section, "Stealth Recharge Delay"),
+            3f,
+            new ConfigDescription(
+                "How long to wait until the stealth meter starts automatically recharging (countermeasure for spamming its activation).",
+                new AcceptableValueRange<float>(0, 30)
+            ));
+
+        ExhaustionPenaltyDelay = cfg.BindSyncedEntry(
+            new(section, "Exhaustion Penalty Delay"),
+            3f,
+            new ConfigDescription(
+                "How long of a delay should be added as a penalty for fully exhausting the stealth meter.",
+                new AcceptableValueRange<float>(0, 30)
+            ));
+
+        AttachedStealthMultiplier = cfg.BindSyncedEntry(
+            new(section, "Attached Stealth Multiplier"),
+            1f,
+            new ConfigDescription(
+                "A multiplier to be applied to the stealth value when a mask is attached instead of held up.",
+                new AcceptableValueRange<float>(0.1f, 10)
+            ));
+
+        RemoveOnDepletion = cfg.BindSyncedEntry(
+            new(section, "Remove On Depletion"),
+            false,
+            new ConfigDescription("Whether the mask should take itself off when the stealth meter has been depleted.",
+                new AcceptableValueList<bool>(true, false)
+            ));
+    }
+
+    private void SetStealthMeterHUD(ConfigFile cfg)
+    {
+        const string section = "Stealth Meter HUD";
+
+        SeeStealthMeter = cfg.BindSyncedEntry(
+            new(section, "See Stealth Meter"),
+            true,
+            new ConfigDescription(
+                "Whether to show the stealth meter used when holding one of the masks that let you hide.",
+                new AcceptableValueList<bool>(true, false)
+            ));
+
+        AlwaysSeeStealthMeter = cfg.BindSyncedEntry(
+            new(section, "Always see Stealth Meter"),
+            false,
+            new ConfigDescription(
+                "Whether to always show the stealth meter, even when not holding a mask that lets you hide.",
+                new AcceptableValueList<bool>(true, false)
+            ));
+
+        BarXPosition = cfg.BindSyncedEntry(
+            new(section, "Bar X Position"),
+            0f,
+            new ConfigDescription(
+                "The X position (horizontal) that the stealth bar will appear at on the screen (0 is the centre).",
+                new AcceptableValueRange<float>(-380, 380)
+            ));
+
+        BarYPosition = cfg.BindSyncedEntry(
+            new(section, "Bar Y Position"),
+            235f,
+            new ConfigDescription(
+                "The Y position (vertical) that the stealth bar will appear at on the screen (0 is the centre).",
+                new AcceptableValueRange<float>(-250, 250)
+            ));
+
+        BarColourConfig = cfg.BindSyncedEntry(
+            new(section, "Bar Colour"),
+            new Color(220, 220, 220, byte.MaxValue).AsConfigString(),
+            new ConfigDescription("The colour that the stealth bar will appear as (format as \"r|g|b\" in hex, e.g. \"00|80|ff\" for cyan).")
+        );
+        BarColour = BarColourConfig.LocalValue.FromConfigString();
+    }
+
+    private void SetMaskView(ConfigFile cfg)
+    {
+        const string section = "Mask View";
+
+        HeldMaskView = cfg.BindSyncedEntry(
+            new(section, "Held Mask View"),
+            MaskView.Opaque,
+            new ConfigDescription(
+                "How the mask appears when holding up a mask to your face.",
+                new AcceptableValueList<string>(MaskView.Opaque/*, MaskView.Translucent*/, MaskView.Outline)
+            ));
+
+        AttachedMaskView = cfg.BindSyncedEntry(
+            new(section, "Attached Mask View"),
+            MaskView.MatchHeld,
+            new ConfigDescription(
+                "How the mask appears when attaching a mask to your face.",
+                new AcceptableValueList<string>(MaskView.MatchHeld, MaskView.Opaque/*, MaskView.Translucent*/, MaskView.Outline)
+            ));
+        if (AttachedMaskView == "Match Held") AttachedMaskView = HeldMaskView;
     }
 }

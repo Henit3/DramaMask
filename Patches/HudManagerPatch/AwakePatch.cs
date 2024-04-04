@@ -14,9 +14,9 @@ public class AwakePatch
     [HarmonyPostfix]
     public static void Postfix(HUDManager __instance, ref HUDElement[] ___HUDElements)
     {
-        if (!ConfigValues.UseStealthMeter || !ConfigValues.SeeStealthMeter) return;
+        if (!Plugin.Config.UseStealthMeter || !Plugin.Config.SeeStealthMeter) return;
 
-        _barPosition = new(ConfigValues.BarXPosition, ConfigValues.BarYPosition, -0.075f);
+        _barPosition = new(Plugin.Config.BarXPosition, Plugin.Config.BarYPosition, -0.075f);
 
         Transform parent = ___HUDElements[2].canvasGroup.transform.parent;
 
@@ -56,13 +56,13 @@ public class AwakePatch
         barForeground.fillMethod = 0;
         barForeground.type = (Image.Type)3;
         barForeground.sprite = CreateSpriteFromTexture(Texture2D.whiteTexture);
-        barForeground.color = ConfigValues.BarColour;
+        barForeground.color = Plugin.Config.BarColour;
 
         StealthMeterUI.Instance.RelatedVisuals = [
             barBackground,
             barForeground
         ];
-        StealthMeterUI.Instance.Visible = ConfigValues.AlwaysSeeStealthMeter;
+        StealthMeterUI.Instance.Visible = Plugin.Config.AlwaysSeeStealthMeter;
     }
 
     private static Sprite CreateSpriteFromTexture(Texture2D texture2D, float? width = null)

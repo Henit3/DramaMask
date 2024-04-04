@@ -30,7 +30,7 @@ public class StealthData : NetworkData
         return IsHoldingMask || pretendData.IsMaskAttached;
     }
 
-    private float _stealthValue = ConfigValues.MaxHiddenTime;
+    private float _stealthValue = Plugin.Config.MaxHiddenTime;
     private bool _isStealthValueValid = true;
     public float StealthValue
     {
@@ -46,7 +46,7 @@ public class StealthData : NetworkData
             {
                 _isStealthValueValid = false;
                 AddExhaustionPenalty = true;
-                if (ConfigValues.RemoveOnDepletion) SetLastStoppedStealthNow();
+                if (Plugin.Config.RemoveOnDepletion) SetLastStoppedStealthNow();
             }
             else return;
 
@@ -95,14 +95,14 @@ public class StealthData : NetworkData
     public void SetLastStoppedStealthNow()
     {
         var adjustedTime = DateTime.UtcNow;
-        if (AddExhaustionPenalty) adjustedTime = adjustedTime.AddSeconds(ConfigValues.ExhaustionPenaltyDelay);
+        if (AddExhaustionPenalty) adjustedTime = adjustedTime.AddSeconds(Plugin.Config.ExhaustionPenaltyDelay);
         LastStoppedStealth = adjustedTime;
     }
 
     public override void Reset()
     {
         _isHoldingMask = false;
-        _stealthValue = ConfigValues.MaxHiddenTime;
+        _stealthValue = Plugin.Config.MaxHiddenTime;
         _lastStoppedStealth = null;
         _addExhaustionPenalty = false;
     }

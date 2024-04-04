@@ -40,7 +40,7 @@ public class ItemActivatePatch
         if (!targetPretendData.IsMaskAttached)
         {
             // Redundant: !targetStealthData.IsAttemptingStealth() && 
-            if (ConfigValues.UseStealthMeter && !buttonDown)
+            if (Plugin.Config.UseStealthMeter && !buttonDown)
             {
                 targetStealthData.SetLastStoppedStealthNow();
             }
@@ -56,7 +56,7 @@ public class ItemActivatePatch
         if (!targetPretendData.IsMaskAttached)
         {
             instance.SetMaskView(buttonDown
-                ? ConfigValues.HeldMaskView
+                ? Plugin.Config.HeldMaskView
                 : null);
         }
     }

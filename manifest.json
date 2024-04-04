@@ -5,6 +5,7 @@
   "description": "Enables masks to be worn to hide from the Masked and adds a safe mask, Drama!",
   "dependencies": [
     "BepInEx-BepInExPack-5.4.2100",
-    "Evaisa-LethalLib-0.15.0"
+    "Evaisa-LethalLib-0.15.0",
+    "Sigurd-CSync-4.1.0"
   ]
 }
