@@ -19,7 +19,7 @@ public class LateUpdatePatch
 
     private static void HandleStealthMeter(PlayerControllerB __instance)
     {
-        if (!Plugin.Config.UseStealthMeter || !Plugin.Config.SeeStealthMeter) return;
+        if (!Plugin.Config.UseStealthMeter.Value || !Plugin.Config.SeeStealthMeter.Value) return;
 
         // Ignore updates called by pre-loaded scripts that are not controlled by a player
         if (!__instance.isPlayerControlled) return;
@@ -32,14 +32,14 @@ public class LateUpdatePatch
         StealthMeterUI.Instance.Visible = shouldBeVisible;
         if (!shouldBeVisible) return;
 
-        var percent = Math.Max(0, NetworkHandler.Instance.MyStealth.StealthValue) / Plugin.Config.MaxHiddenTime;
+        var percent = Math.Max(0, NetworkHandler.Instance.MyStealth.StealthValue) / Plugin.Config.MaxHiddenTime.Value;
         StealthMeterUI.Instance.UpdatePercentage(percent);
     }
 
     private static bool ShouldBarBeVisible(GrabbableObject heldItem)
     {
         // Visible if we can always see the meter, or we are holding a hiding mask
-        return Plugin.Config.AlwaysSeeStealthMeter
+        return Plugin.Config.AlwaysSeeStealthMeter.Value
             || (heldItem is HauntedMaskItem item && item.CanHide());
     }
 

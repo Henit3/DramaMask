@@ -94,14 +94,6 @@ public class Plugin : BaseUnityPlugin
         Logger.LogDebug("Loaded asset: armsOut");*/
     }
 
-    
-    private void RegisterDramaScrap(Item dramaMask)
-    {
-        Items.RegisterScrap(dramaMask,
-            Config.DramaSpawnMapVanilla,
-            Config.DramaSpawnMapModded);
-    }
-
     private AssetBundle LoadBundle(string guid, string bundleName)
     {
         AssetBundle bundle = null;

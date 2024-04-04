@@ -34,7 +34,7 @@ public class UpdatePatch
 
     private static void HandleStealth(PlayerControllerB __instance)
     {
-        if (!Plugin.Config.UseStealthMeter) return;
+        if (!Plugin.Config.UseStealthMeter.Value) return;
 
         // Ignore updates called by pre-loaded scripts that are not controlled by a player
         if (!__instance.isPlayerControlled) return;
@@ -57,23 +57,23 @@ public class UpdatePatch
             if (stealthData.StealthValue > 0)
             {
                 stealthData.StealthValue = Math.Max(0, stealthData.StealthValue - (Time.deltaTime
-                    * (pretendData.IsMaskAttached ? Plugin.Config.AttachedStealthMultiplier : 1f)));
+                    * (pretendData.IsMaskAttached ? Plugin.Config.AttachedStealthMultiplier.Value : 1f)));
             }
             else
             {
-                if (Plugin.Config.RemoveOnDepletion && pretendData.IsMaskAttached)
+                if (Plugin.Config.RemoveOnDepletion.Value && pretendData.IsMaskAttached)
                 {
                     pretendData.IsMaskAttached = false;
                 }
             }
         }
         else if (!isAttemptingStealth
-            && stealthData.StealthValue < Plugin.Config.MaxHiddenTime
+            && stealthData.StealthValue < Plugin.Config.MaxHiddenTime.Value
             && (!stealthData.LastStoppedStealth.HasValue
                 || DateTime.UtcNow.Subtract(stealthData.LastStoppedStealth.Value)
-                    .TotalSeconds > Plugin.Config.RechargeDelay))
+                    .TotalSeconds > Plugin.Config.RechargeDelay.Value))
         {
-            stealthData.StealthValue = Math.Min(Plugin.Config.MaxHiddenTime,
+            stealthData.StealthValue = Math.Min(Plugin.Config.MaxHiddenTime.Value,
                 stealthData.StealthValue + Time.deltaTime);
             if (stealthData.LastStoppedStealth != null) stealthData.LastStoppedStealth = null;
             if (stealthData.AddExhaustionPenalty) stealthData.AddExhaustionPenalty = false;

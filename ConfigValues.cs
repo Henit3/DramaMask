@@ -43,15 +43,19 @@ public class ConfigValues : SyncedConfig<ConfigValues>
     public ConfigValues(ConfigFile cfg) : base(PluginInfo.PLUGIN_GUID)
     {
         ConfigManager.Register(this);
+        InitialSyncCompleted += OnInitialSyncCompleted;
 
         SetHidingTargets(cfg);
         SetMaskSpawning(cfg);
         SetStealthMeter(cfg);
         SetStealthMeterHUD(cfg);
         SetMaskView(cfg);
+
+        PostSyncProcessing();
     }
 
-    private void SetHidingTargets(ConfigFile cfg) {
+    private void SetHidingTargets(ConfigFile cfg)
+    {
         const string section = "Hiding Targets";
 
         AllMasksHide = cfg.BindSyncedEntry(
@@ -92,37 +96,6 @@ public class ConfigValues : SyncedConfig<ConfigValues>
             }.AsString(),
             new ConfigDescription("Custom spawn chances for moons the Drama mask can spawn on, comma separated")
         );
-
-        DramaSpawnMapVanilla = new()
-        {
-            { LevelTypes.AssuranceLevel, (int)Math.Round(BaseDramaSpawnChance*(3/40f)) },
-            { LevelTypes.RendLevel, BaseDramaSpawnChance },
-            { LevelTypes.DineLevel, BaseDramaSpawnChance },
-            { LevelTypes.TitanLevel, BaseDramaSpawnChance },
-            { LevelTypes.Modded, BaseDramaSpawnChance }
-        };
-        DramaSpawnMapModded = new();
-
-        if (CustomDramaSpawnConfig is null) return;
-
-        foreach (var pair in CustomDramaSpawnConfig.Value.Split(','))
-        {
-            var values = pair.Split(':');
-            if (values.Length != 2) continue;
-            if (!int.TryParse(values[1], out var spawnrate)) continue;
-
-            var name = values[0];
-            if (Enum.TryParse<LevelTypes>(name, true, out var levelType))
-            {
-                DramaSpawnMapVanilla[levelType] = spawnrate;
-                Plugin.Logger.LogDebug($"Registered spawn rate for level type {levelType} to {spawnrate}");
-            }
-            else
-            {
-                DramaSpawnMapModded[name] = spawnrate;
-                Plugin.Logger.LogDebug($"Registered spawn rate for modded level {name} to {spawnrate}");
-            }
-        }
     }
 
     private void SetStealthMeter(ConfigFile cfg)
@@ -218,7 +191,6 @@ public class ConfigValues : SyncedConfig<ConfigValues>
             new Color(220, 220, 220, byte.MaxValue).AsConfigString(),
             new ConfigDescription("The colour that the stealth bar will appear as (format as \"r|g|b\" in hex, e.g. \"00|80|ff\" for cyan).")
         );
-        BarColour = BarColourConfig.LocalValue.FromConfigString();
     }
 
     private void SetMaskView(ConfigFile cfg)
@@ -240,6 +212,49 @@ public class ConfigValues : SyncedConfig<ConfigValues>
                 "How the mask appears when attaching a mask to your face.",
                 new AcceptableValueList<string>(MaskView.MatchHeld, MaskView.Opaque/*, MaskView.Translucent*/, MaskView.Outline)
             ));
-        if (AttachedMaskView == "Match Held") AttachedMaskView = HeldMaskView;
+    }
+
+    private void OnInitialSyncCompleted(object s, EventArgs e) => PostSyncProcessing();
+    private void PostSyncProcessing()
+    {
+        // Mask Spawning
+        DramaSpawnMapVanilla = new()
+        {
+            { LevelTypes.AssuranceLevel, (int)Math.Round(BaseDramaSpawnChance*(3/40f)) },
+            { LevelTypes.RendLevel, BaseDramaSpawnChance },
+            { LevelTypes.DineLevel, BaseDramaSpawnChance },
+            { LevelTypes.TitanLevel, BaseDramaSpawnChance },
+            { LevelTypes.Modded, BaseDramaSpawnChance }
+        };
+        DramaSpawnMapModded = new();
+
+        if (CustomDramaSpawnConfig is null) return;
+
+        foreach (var pair in CustomDramaSpawnConfig.Value.Split(','))
+        {
+            var values = pair.Split(':');
+            if (values.Length != 2) continue;
+            if (!int.TryParse(values[1], out var spawnrate)) continue;
+
+            var name = values[0];
+            if (Enum.TryParse<LevelTypes>(name, true, out var levelType))
+            {
+                DramaSpawnMapVanilla[levelType] = spawnrate;
+                Plugin.Logger.LogDebug($"Registered spawn rate for level type {levelType} to {spawnrate}");
+            }
+            else
+            {
+                DramaSpawnMapModded[name] = spawnrate;
+                Plugin.Logger.LogDebug($"Registered spawn rate for modded level {name} to {spawnrate}");
+            }
+        }
+
+
+        // Stealth Meter HUD
+        BarColour = BarColourConfig.LocalValue.FromConfigString();
+
+
+        // Mask View
+        if (AttachedMaskView.Value is MaskView.MatchHeld) AttachedMaskView = HeldMaskView;
     }
 }

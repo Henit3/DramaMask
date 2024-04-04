@@ -51,7 +51,7 @@ public class InteractLeftRightPatch
                 }
                 else
                 {
-                    if (Plugin.Config.UseStealthMeter)
+                    if (Plugin.Config.UseStealthMeter.Value)
                     {
                         targetStealthData.SetLastStoppedStealthNow();
                     }

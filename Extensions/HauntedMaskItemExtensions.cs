@@ -10,7 +10,7 @@ namespace DramaMask.Extensions;
 
 public static class HauntedMaskItemExtensions
 {
-    public static bool CanHide(this HauntedMaskItem mask) => mask != null && (Plugin.Config.AllMasksHide || mask.maskTypeId == 6);
+    public static bool CanHide(this HauntedMaskItem mask) => mask != null && (Plugin.Config.AllMasksHide.Value || mask.maskTypeId == 6);
 
     public static Mesh OutlineMesh { get; set; } = null;
     private static readonly Dictionary<int, Mesh> _originalMeshMap = new();
@@ -98,7 +98,7 @@ public static class HauntedMaskItemExtensions
                 // Set head mask's mask view only for the local player
                 var headMask = mask.currentHeadMask.gameObject.GetComponent<HauntedMaskItem>();
                 headMask.SetMaskView(player.IsLocal()
-                    ? Plugin.Config.AttachedMaskView
+                    ? Plugin.Config.AttachedMaskView.Value
                     : null);
                 headMask.enabled = false;
             }

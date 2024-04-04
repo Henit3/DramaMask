@@ -32,7 +32,7 @@ public abstract class BaseModifyPlayerArrayPatch
 
     private static bool ShouldHideFromEnemy(EnemyAI __instance)
     {
-        return Plugin.Config.HideFromAllEnemies
+        return Plugin.Config.HideFromAllEnemies.Value
             || __instance is MaskedPlayerEnemy;
     }
 }
