@@ -56,7 +56,7 @@ public class ItemActivatePatch
         if (!targetPretendData.IsMaskAttached)
         {
             instance.SetMaskView(buttonDown
-                ? Plugin.Config.HeldMaskView.Value
+                ? Plugin.Config.HeldMaskView.LocalValue
                 : null);
         }
     }

@@ -1,4 +1,5 @@
 ﻿using DramaMask.Extensions;
+using DramaMask.Models;
 using DramaMask.Network;
 using DramaMask.UI;
 using GameNetcodeStuff;
@@ -19,7 +20,8 @@ public class LateUpdatePatch
 
     private static void HandleStealthMeter(PlayerControllerB __instance)
     {
-        if (!Plugin.Config.UseStealthMeter.Value || !Plugin.Config.SeeStealthMeter.Value) return;
+        if (!Plugin.Config.UseStealthMeter.Value
+            || Plugin.Config.StealthMeterVisibility.LocalValue is MeterVisibility.Never) return;
 
         // Ignore updates called by pre-loaded scripts that are not controlled by a player
         if (!__instance.isPlayerControlled) return;
@@ -39,7 +41,7 @@ public class LateUpdatePatch
     private static bool ShouldBarBeVisible(GrabbableObject heldItem)
     {
         // Visible if we can always see the meter, or we are holding a hiding mask
-        return Plugin.Config.AlwaysSeeStealthMeter.Value
+        return Plugin.Config.StealthMeterVisibility.LocalValue is MeterVisibility.Always
             || (heldItem is HauntedMaskItem item && item.CanHide());
     }
 

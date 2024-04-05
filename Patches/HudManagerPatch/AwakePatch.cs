@@ -1,4 +1,5 @@
-﻿using DramaMask.UI;
+﻿using DramaMask.Models;
+using DramaMask.UI;
 using HarmonyLib;
 using UnityEngine;
 using UnityEngine.UI;
@@ -14,9 +15,10 @@ public class AwakePatch
     [HarmonyPostfix]
     public static void Postfix(HUDManager __instance, ref HUDElement[] ___HUDElements)
     {
-        if (!Plugin.Config.UseStealthMeter.Value || !Plugin.Config.SeeStealthMeter.Value) return;
+        if (!Plugin.Config.UseStealthMeter.Value
+            || Plugin.Config.StealthMeterVisibility.LocalValue is MeterVisibility.Never) return;
 
-        _barPosition = new(Plugin.Config.BarXPosition.Value, Plugin.Config.BarYPosition.Value, -0.075f);
+        _barPosition = new(Plugin.Config.BarXPosition, Plugin.Config.BarYPosition, -0.075f);
 
         Transform parent = ___HUDElements[2].canvasGroup.transform.parent;
 
@@ -62,7 +64,7 @@ public class AwakePatch
             barBackground,
             barForeground
         ];
-        StealthMeterUI.Instance.Visible = Plugin.Config.AlwaysSeeStealthMeter.Value;
+        StealthMeterUI.Instance.Visible = Plugin.Config.StealthMeterVisibility.LocalValue is MeterVisibility.Always;
     }
 
     private static Sprite CreateSpriteFromTexture(Texture2D texture2D, float? width = null)

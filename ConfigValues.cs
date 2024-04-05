@@ -12,14 +12,16 @@ using static LethalLib.Modules.Levels;
 namespace DramaMask;
 public class ConfigValues : SyncedConfig<ConfigValues>
 {
+    // Entries not synced where they are only used server-side, or are local config settings
+
     [DataMember] public SyncedEntry<bool> AllMasksHide;
-    [DataMember] public SyncedEntry<bool> HideFromAllEnemies;
+    public bool HideFromAllEnemies;
 
     /* Base rarities decided with datasheet: https://docs.google.com/spreadsheets/d/1AREkZnHaqxukdpVNOEDFKikar9R4XAIjpZ_gI7NNngM/edit#gid=0
      * Kept between Tragedy and Comedy rarity values, on the lower side due to utility
      */
-    [DataMember] public SyncedEntry<int> BaseDramaSpawnChance;
-    [DataMember] public SyncedEntry<string> CustomDramaSpawnConfig;
+    public int BaseDramaSpawnChance;
+    public string CustomDramaSpawnConfig;
     public Dictionary<LevelTypes, int> DramaSpawnMapVanilla;
     public Dictionary<string, int> DramaSpawnMapModded;
 
@@ -30,14 +32,23 @@ public class ConfigValues : SyncedConfig<ConfigValues>
     [DataMember] public SyncedEntry<float> AttachedStealthMultiplier;
     [DataMember] public SyncedEntry<bool> RemoveOnDepletion;
 
-    [DataMember] public SyncedEntry<bool> SeeStealthMeter;
-    [DataMember] public SyncedEntry<bool> AlwaysSeeStealthMeter;
-    [DataMember] public SyncedEntry<float> BarXPosition;
-    [DataMember] public SyncedEntry<float> BarYPosition;
-    [DataMember] public SyncedEntry<string> BarColourConfig;
+    [DataMember] public SyncedEntry<bool> SyncStealthMeterVisibility;
+    /// <summary>
+    /// Use LocalValue (syncing optional)
+    /// </summary>
+    [DataMember] public SyncedEntry<string> StealthMeterVisibility;
+    public float BarXPosition;
+    public float BarYPosition;
     public Color BarColour;
 
+    [DataMember] public SyncedEntry<bool> SyncMaskView;
+    /// <summary>
+    /// Use LocalValue (syncing optional)
+    /// </summary>
     [DataMember] public SyncedEntry<string> HeldMaskView;
+    /// <summary>
+    /// Use LocalValue (syncing optional)
+    /// </summary>
     [DataMember] public SyncedEntry<string> AttachedMaskView;
 
     public ConfigValues(ConfigFile cfg) : base(PluginInfo.PLUGIN_GUID)
@@ -66,13 +77,13 @@ public class ConfigValues : SyncedConfig<ConfigValues>
                 new AcceptableValueList<bool>(true, false)
             ));
 
-        HideFromAllEnemies = cfg.BindSyncedEntry(
+        HideFromAllEnemies = cfg.Bind(
             new(section, "Hide From All Enemies"),
             false,
             new ConfigDescription(
                 "[EXPERIMENTAL] Whether the masks are able to hide the player from all types of enemies.",
                 new AcceptableValueList<bool>(true, false)
-            ));
+            )).Value;
     }
 
     private void SetMaskSpawning(ConfigFile cfg)
@@ -96,6 +107,38 @@ public class ConfigValues : SyncedConfig<ConfigValues>
             }.AsString(),
             new ConfigDescription("Custom spawn chances for moons the Drama mask can spawn on, comma separated")
         );
+
+
+        DramaSpawnMapVanilla = new()
+        {
+            { LevelTypes.AssuranceLevel, (int)Math.Round(BaseDramaSpawnChance*(3/40f)) },
+            { LevelTypes.RendLevel, BaseDramaSpawnChance },
+            { LevelTypes.DineLevel, BaseDramaSpawnChance },
+            { LevelTypes.TitanLevel, BaseDramaSpawnChance },
+            { LevelTypes.Modded, BaseDramaSpawnChance }
+        };
+        DramaSpawnMapModded = new();
+
+        if (CustomDramaSpawnConfig is null) return;
+
+        foreach (var pair in CustomDramaSpawnConfig.Split(','))
+        {
+            var values = pair.Split(':');
+            if (values.Length != 2) continue;
+            if (!int.TryParse(values[1], out var spawnrate)) continue;
+
+            var name = values[0];
+            if (Enum.TryParse<LevelTypes>(name, true, out var levelType))
+            {
+                DramaSpawnMapVanilla[levelType] = spawnrate;
+                Plugin.Logger.LogDebug($"Registered spawn rate for level type {levelType} to {spawnrate}");
+            }
+            else
+            {
+                DramaSpawnMapModded[name] = spawnrate;
+                Plugin.Logger.LogDebug($"Registered spawn rate for modded level {name} to {spawnrate}");
+            }
+        }
     }
 
     private void SetStealthMeter(ConfigFile cfg)
@@ -154,54 +197,62 @@ public class ConfigValues : SyncedConfig<ConfigValues>
     {
         const string section = "Stealth Meter HUD";
 
-        SeeStealthMeter = cfg.BindSyncedEntry(
-            new(section, "See Stealth Meter"),
+        SyncStealthMeterVisibility = cfg.BindSyncedEntry(
+            new(section, "Sync Stealth Meter Visibility"),
             true,
             new ConfigDescription(
-                "Whether to show the stealth meter used when holding one of the masks that let you hide.",
+                "Whether to sync the 'Stealth Meter Visibility' config values.",
                 new AcceptableValueList<bool>(true, false)
             ));
 
-        AlwaysSeeStealthMeter = cfg.BindSyncedEntry(
-            new(section, "Always see Stealth Meter"),
-            false,
+        StealthMeterVisibility = cfg.BindSyncedEntry(
+            new(section, "Stealth Meter Visibility"),
+            MeterVisibility.OnHold,
             new ConfigDescription(
-                "Whether to always show the stealth meter, even when not holding a mask that lets you hide.",
-                new AcceptableValueList<bool>(true, false)
+                "When to show the stealth meter, if at all. [Optionally synced]",
+                new AcceptableValueList<string>(MeterVisibility.Never, MeterVisibility.OnHold, MeterVisibility.Always)
             ));
 
-        BarXPosition = cfg.BindSyncedEntry(
+        BarXPosition = cfg.Bind(
             new(section, "Bar X Position"),
             0f,
             new ConfigDescription(
                 "The X position (horizontal) that the stealth bar will appear at on the screen (0 is the centre).",
                 new AcceptableValueRange<float>(-380, 380)
-            ));
+            )).Value;
 
-        BarYPosition = cfg.BindSyncedEntry(
+        BarYPosition = cfg.Bind(
             new(section, "Bar Y Position"),
             235f,
             new ConfigDescription(
                 "The Y position (vertical) that the stealth bar will appear at on the screen (0 is the centre).",
                 new AcceptableValueRange<float>(-250, 250)
-            ));
+            )).Value;
 
-        BarColourConfig = cfg.BindSyncedEntry(
+        BarColour = cfg.Bind(
             new(section, "Bar Colour"),
             new Color(220, 220, 220, byte.MaxValue).AsConfigString(),
             new ConfigDescription("The colour that the stealth bar will appear as (format as \"r|g|b\" in hex, e.g. \"00|80|ff\" for cyan).")
-        );
+        ).Value.FromConfigString();
     }
 
     private void SetMaskView(ConfigFile cfg)
     {
         const string section = "Mask View";
 
+        SyncMaskView = cfg.BindSyncedEntry(
+            new(section, "Sync Mask View"),
+            true,
+            new ConfigDescription(
+                "Whether to sync the 'Mask View' config values.",
+                new AcceptableValueList<bool>(true, false)
+            ));
+
         HeldMaskView = cfg.BindSyncedEntry(
             new(section, "Held Mask View"),
             MaskView.Opaque,
             new ConfigDescription(
-                "How the mask appears when holding up a mask to your face.",
+                "How the mask appears when holding up a mask to your face. [Optionally synced]",
                 new AcceptableValueList<string>(MaskView.Opaque/*, MaskView.Translucent*/, MaskView.Outline)
             ));
 
@@ -209,7 +260,7 @@ public class ConfigValues : SyncedConfig<ConfigValues>
             new(section, "Attached Mask View"),
             MaskView.MatchHeld,
             new ConfigDescription(
-                "How the mask appears when attaching a mask to your face.",
+                "How the mask appears when attaching a mask to your face. [Optionally synced]",
                 new AcceptableValueList<string>(MaskView.MatchHeld, MaskView.Opaque/*, MaskView.Translucent*/, MaskView.Outline)
             ));
     }
@@ -217,44 +268,21 @@ public class ConfigValues : SyncedConfig<ConfigValues>
     private void OnInitialSyncCompleted(object s, EventArgs e) => PostSyncProcessing();
     private void PostSyncProcessing()
     {
-        // Mask Spawning
-        DramaSpawnMapVanilla = new()
+        // Stealth Meter HUD
+        if (SyncStealthMeterVisibility.Value)
         {
-            { LevelTypes.AssuranceLevel, (int)Math.Round(BaseDramaSpawnChance*(3/40f)) },
-            { LevelTypes.RendLevel, BaseDramaSpawnChance },
-            { LevelTypes.DineLevel, BaseDramaSpawnChance },
-            { LevelTypes.TitanLevel, BaseDramaSpawnChance },
-            { LevelTypes.Modded, BaseDramaSpawnChance }
-        };
-        DramaSpawnMapModded = new();
-
-        if (CustomDramaSpawnConfig is null) return;
-
-        foreach (var pair in CustomDramaSpawnConfig.Value.Split(','))
-        {
-            var values = pair.Split(':');
-            if (values.Length != 2) continue;
-            if (!int.TryParse(values[1], out var spawnrate)) continue;
-
-            var name = values[0];
-            if (Enum.TryParse<LevelTypes>(name, true, out var levelType))
-            {
-                DramaSpawnMapVanilla[levelType] = spawnrate;
-                Plugin.Logger.LogDebug($"Registered spawn rate for level type {levelType} to {spawnrate}");
-            }
-            else
-            {
-                DramaSpawnMapModded[name] = spawnrate;
-                Plugin.Logger.LogDebug($"Registered spawn rate for modded level {name} to {spawnrate}");
-            }
+            StealthMeterVisibility.LocalValue = StealthMeterVisibility.Value;
         }
 
-
-        // Stealth Meter HUD
-        BarColour = BarColourConfig.LocalValue.FromConfigString();
-
-
         // Mask View
-        if (AttachedMaskView.Value is MaskView.MatchHeld) AttachedMaskView = HeldMaskView;
+        if (SyncMaskView.Value)
+        {
+            HeldMaskView.LocalValue = HeldMaskView.Value;
+            AttachedMaskView.LocalValue = AttachedMaskView.Value;
+        }
+        if (AttachedMaskView.LocalValue is MaskView.MatchHeld)
+        {
+            AttachedMaskView.LocalValue = HeldMaskView.LocalValue;
+        }
     }
 }
