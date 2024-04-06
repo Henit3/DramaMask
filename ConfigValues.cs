@@ -50,6 +50,7 @@ public class ConfigValues : SyncedConfig<ConfigValues>
     /// Use LocalValue (syncing optional)
     /// </summary>
     [DataMember] public SyncedEntry<string> AttachedMaskView;
+    public bool ChangeClientViewInstantly;
 
     public ConfigValues(ConfigFile cfg) : base(PluginInfo.PLUGIN_GUID)
     {
@@ -244,7 +245,7 @@ public class ConfigValues : SyncedConfig<ConfigValues>
             new(section, "Sync Mask View"),
             true,
             new ConfigDescription(
-                "Whether to sync the 'Mask View' config values.",
+                "Whether to sync the Held & Attached 'Mask View' config values.",
                 new AcceptableValueList<bool>(true, false)
             ));
 
@@ -258,11 +259,19 @@ public class ConfigValues : SyncedConfig<ConfigValues>
 
         AttachedMaskView = cfg.BindSyncedEntry(
             new(section, "Attached Mask View"),
-            MaskView.MatchHeld,
+            MaskView.Translucent,
             new ConfigDescription(
                 "How the mask appears when attaching a mask to your face. [Optionally synced]",
                 new AcceptableValueList<string>(MaskView.MatchHeld, MaskView.Opaque, MaskView.Translucent, MaskView.Outline)
             ));
+
+        ChangeClientViewInstantly = cfg.Bind(
+            new(section, "Instant Client Local Mask Actions"),
+            true,
+            new ConfigDescription(
+                "Instant changes locally; can cause temporary visual desync on rapid changes",
+                new AcceptableValueList<bool>(true, false)
+            )).Value;
     }
 
     private void OnInitialSyncCompleted(object s, EventArgs e) => PostSyncProcessing();

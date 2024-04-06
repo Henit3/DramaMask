@@ -41,6 +41,7 @@ public class InteractLeftRightPatch
             if (!right)
             {
                 targetPretendData.IsMaskAttached = false;
+                if (Plugin.Config.ChangeClientViewInstantly) instance.SetMaskAttached(false);
                 // Redundant: !targetStealthData.IsAttemptingStealth()
                 if (targetStealthData.IsHoldingMask)
                 {
@@ -65,6 +66,7 @@ public class InteractLeftRightPatch
                     && instance.playerHeldBy.hoveringOverTrigger == null)
                 {
                     targetPretendData.IsMaskEyesOn = !targetPretendData.IsMaskEyesOn;
+                    if (Plugin.Config.ChangeClientViewInstantly) instance.SetMaskEyes(targetPretendData.IsMaskEyesOn);
                     NetworkHandler.Instance.SetPlayerMaskEyesValueServerRpc(id, targetPretendData.IsMaskEyesOn);
                 }
             }
@@ -74,6 +76,7 @@ public class InteractLeftRightPatch
             if (!right)
             {
                 targetPretendData.IsMaskAttached = true;
+                if (Plugin.Config.ChangeClientViewInstantly) instance.SetMaskAttached(true);
                 Traverse.Create(instance).Field("maskOn").SetValue(true);
             }
         }

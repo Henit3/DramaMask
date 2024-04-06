@@ -75,6 +75,9 @@ public static class HauntedMaskItemExtensions
 
     public static void SetMaskAttached(this HauntedMaskItem mask, bool isAttaching)
     {
+        // Early exit if already applied: isAttaching and active, or !isAttaching and !active
+        if (!(isAttaching ^ mask.currentHeadMask != null)) return;
+
         if (!isAttaching) NetworkHandler.Instance.MyPretend.IsMaskEyesOn = false;
 
         //Based on HauntedMaskItem.MaskClampToHeadAnimationEvent
@@ -170,6 +173,10 @@ public static class HauntedMaskItemExtensions
         var eyesFilled = mask.currentHeadMask != null
             ? mask.currentHeadMask.gameObject.GetComponent<HauntedMaskItem>().maskEyesFilled
             : mask.maskEyesFilled;
+
+        // Early exit if already applied: toActivate and enabled, or !toActive and !enabled
+        if (!(toActivate ^ eyesFilled.enabled)) return;
+
         eyesFilled.enabled = toActivate;
 
         if (mask.playerHeldBy.IsLocal()) mask.SetControlTipsForItem();
