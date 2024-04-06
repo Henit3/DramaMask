@@ -147,6 +147,11 @@ public class NetworkHandler : NetworkBehaviour
         player.SetArmsRaised(isRaising);
     }
 
+    [ServerRpc(RequireOwnership = false)]
+    public void SetPlayerMaskEyesValueServerRpc(ulong playerId, bool isActivating)
+    {
+        PretendMap[playerId].IsMaskEyesOn = isActivating;
+    }
     public void SetPlayerMaskEyesServer(ulong playerId, bool isActivating)
     {
         SetPlayerMaskEyesClientRpc(playerId, isActivating);

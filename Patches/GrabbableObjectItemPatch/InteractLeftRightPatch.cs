@@ -60,7 +60,13 @@ public class InteractLeftRightPatch
             }
             else
             {
-                targetPretendData.IsMaskEyesOn = !targetPretendData.IsMaskEyesOn;
+                // Local invocation of behaviour so we can query hoveringOverTrigger (tied to camera)
+                if (instance.playerHeldBy.IsLocal()
+                    && instance.playerHeldBy.hoveringOverTrigger == null)
+                {
+                    targetPretendData.IsMaskEyesOn = !targetPretendData.IsMaskEyesOn;
+                    NetworkHandler.Instance.SetPlayerMaskEyesValueServerRpc(id, targetPretendData.IsMaskEyesOn);
+                }
             }
         }
         else
