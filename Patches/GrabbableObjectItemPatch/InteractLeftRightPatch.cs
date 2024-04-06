@@ -12,7 +12,8 @@ public class InteractLeftRightPatch
     [HarmonyPostfix]
     public static void Postfix(GrabbableObject __instance, bool right)
     {
-        if (__instance is not HauntedMaskItem instance) return;
+        if (__instance is not HauntedMaskItem instance
+            || !instance.CanHide()) return;
 
         if (instance.playerHeldBy == null) return;
 

@@ -95,7 +95,7 @@ public class ConfigValues : SyncedConfig<ConfigValues>
             new(section, "Base Drama Mask Spawn Chance"),
             40,
             new ConfigDescription(
-                "The default spawn chance of drama masks",
+                "The default spawn chance of drama masks.",
                 new AcceptableValueRange<int>(0, 1000)
             ));
 
@@ -106,7 +106,7 @@ public class ConfigValues : SyncedConfig<ConfigValues>
                 { "AssuranceLevel", 3 },
                 { "VowLevel", 0 }
             }.AsString(),
-            new ConfigDescription("Custom spawn chances for moons the Drama mask can spawn on, comma separated")
+            new ConfigDescription("Custom spawn chances for moons the Drama mask can spawn on, comma separated.")
         );
 
 
@@ -269,7 +269,7 @@ public class ConfigValues : SyncedConfig<ConfigValues>
             new(section, "Instant Client Local Mask Actions"),
             true,
             new ConfigDescription(
-                "Instant changes locally; can cause temporary visual desync on rapid changes",
+                "Instant changes locally; can cause temporary visual desync on rapid changes.",
                 new AcceptableValueList<bool>(true, false)
             )).Value;
     }
