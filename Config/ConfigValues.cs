@@ -3,6 +3,9 @@ using CSync.Extensions;
 using CSync.Lib;
 using DramaMask.Extensions;
 using DramaMask.Models;
+using LethalConfig;
+using LethalConfig.ConfigItems;
+using LethalConfig.ConfigItems.Options;
 using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
@@ -15,12 +18,15 @@ public class ConfigValues : SyncedConfig<ConfigValues>
     // Entries not synced where they are only used server-side, or are local config settings
 
     [DataMember] public SyncedEntry<bool> AllMasksHide;
+    private ConfigEntry<bool> _hideFromAllEnemies;
     public bool HideFromAllEnemies;
 
     /* Base rarities decided with datasheet: https://docs.google.com/spreadsheets/d/1AREkZnHaqxukdpVNOEDFKikar9R4XAIjpZ_gI7NNngM/edit#gid=0
      * Kept between Tragedy and Comedy rarity values, on the lower side due to utility
      */
+    private ConfigEntry<int> _baseDramaSpawnChance;
     public int BaseDramaSpawnChance;
+    private ConfigEntry<string> _customDramaSpawnConfig;
     public string CustomDramaSpawnConfig;
     public Dictionary<LevelTypes, int> DramaSpawnMapVanilla;
     public Dictionary<string, int> DramaSpawnMapModded;
@@ -37,8 +43,11 @@ public class ConfigValues : SyncedConfig<ConfigValues>
     /// Use LocalValue (syncing optional)
     /// </summary>
     [DataMember] public SyncedEntry<string> StealthMeterVisibility;
+    private ConfigEntry<float> _barXPosition;
     public float BarXPosition;
+    private ConfigEntry<float> _barYPosition;
     public float BarYPosition;
+    private ConfigEntry<string> _barColour;
     public Color BarColour;
 
     [DataMember] public SyncedEntry<bool> SyncMaskView;
@@ -50,6 +59,7 @@ public class ConfigValues : SyncedConfig<ConfigValues>
     /// Use LocalValue (syncing optional)
     /// </summary>
     [DataMember] public SyncedEntry<string> AttachedMaskView;
+    private ConfigEntry<bool> _changeClientViewInstantly;
     public bool ChangeClientViewInstantly;
 
     public ConfigValues(ConfigFile cfg) : base(PluginInfo.PLUGIN_GUID)
@@ -64,6 +74,9 @@ public class ConfigValues : SyncedConfig<ConfigValues>
         SetMaskView(cfg);
 
         PostSyncProcessing();
+
+        try { SetupLethalConfig(); }
+        catch { Plugin.Logger.LogInfo("Soft dependency on LethalConfig could not be loaded."); }
     }
 
     private void SetHidingTargets(ConfigFile cfg)
@@ -78,28 +91,28 @@ public class ConfigValues : SyncedConfig<ConfigValues>
                 new AcceptableValueList<bool>(true, false)
             ));
 
-        HideFromAllEnemies = cfg.Bind(
+        HideFromAllEnemies = (_hideFromAllEnemies = cfg.Bind(
             new(section, "Hide From All Enemies"),
             false,
             new ConfigDescription(
                 "[EXPERIMENTAL] Whether the masks are able to hide the player from all types of enemies.",
                 new AcceptableValueList<bool>(true, false)
-            )).Value;
+            ))).Value;
     }
 
     private void SetMaskSpawning(ConfigFile cfg)
     {
         const string section = "Mask Spawning";
 
-        BaseDramaSpawnChance = cfg.BindSyncedEntry(
+        BaseDramaSpawnChance = (_baseDramaSpawnChance = cfg.Bind(
             new(section, "Base Drama Mask Spawn Chance"),
             40,
             new ConfigDescription(
                 "The default spawn chance of drama masks.",
                 new AcceptableValueRange<int>(0, 1000)
-            ));
+            ))).Value;
 
-        CustomDramaSpawnConfig = cfg.BindSyncedEntry(
+        CustomDramaSpawnConfig = (_customDramaSpawnConfig = cfg.Bind(
             new(section, "Drama Mask Moon Spawn Chances"),
             new Dictionary<string, int>()
             {
@@ -107,7 +120,7 @@ public class ConfigValues : SyncedConfig<ConfigValues>
                 { "VowLevel", 0 }
             }.AsString(),
             new ConfigDescription("Custom spawn chances for moons the Drama mask can spawn on, comma separated.")
-        );
+        )).Value;
 
 
         DramaSpawnMapVanilla = new()
@@ -214,27 +227,27 @@ public class ConfigValues : SyncedConfig<ConfigValues>
                 new AcceptableValueList<string>(MeterVisibility.Never, MeterVisibility.OnHold, MeterVisibility.Always)
             ));
 
-        BarXPosition = cfg.Bind(
+        BarXPosition = (_barXPosition = cfg.Bind(
             new(section, "Bar X Position"),
             0f,
             new ConfigDescription(
                 "The X position (horizontal) that the stealth bar will appear at on the screen (0 is the centre).",
                 new AcceptableValueRange<float>(-380, 380)
-            )).Value;
+            ))).Value;
 
-        BarYPosition = cfg.Bind(
+        BarYPosition = (_barYPosition = cfg.Bind(
             new(section, "Bar Y Position"),
             235f,
             new ConfigDescription(
                 "The Y position (vertical) that the stealth bar will appear at on the screen (0 is the centre).",
                 new AcceptableValueRange<float>(-250, 250)
-            )).Value;
+            ))).Value;
 
-        BarColour = cfg.Bind(
+        BarColour = (_barColour = cfg.Bind(
             new(section, "Bar Colour"),
             new Color(220, 220, 220, byte.MaxValue).AsConfigString(),
             new ConfigDescription("The colour that the stealth bar will appear as (format as \"r|g|b\" in hex, e.g. \"00|80|ff\" for cyan).")
-        ).Value.FromConfigString();
+        )).Value.FromConfigString();
     }
 
     private void SetMaskView(ConfigFile cfg)
@@ -265,13 +278,13 @@ public class ConfigValues : SyncedConfig<ConfigValues>
                 new AcceptableValueList<string>(MaskView.MatchHeld, MaskView.Opaque, MaskView.Translucent, MaskView.Outline)
             ));
 
-        ChangeClientViewInstantly = cfg.Bind(
+        ChangeClientViewInstantly = (_changeClientViewInstantly = cfg.Bind(
             new(section, "Instant Client Local Mask Actions"),
             true,
             new ConfigDescription(
                 "Instant changes locally; can cause temporary visual desync on rapid changes.",
                 new AcceptableValueList<bool>(true, false)
-            )).Value;
+            ))).Value;
     }
 
     private void OnInitialSyncCompleted(object s, EventArgs e) => PostSyncProcessing();
@@ -293,5 +306,100 @@ public class ConfigValues : SyncedConfig<ConfigValues>
         {
             AttachedMaskView.LocalValue = HeldMaskView.LocalValue;
         }
+    }
+
+    private void SetupLethalConfig()
+    {
+        // Would've liked a string option config item for the enum-like constants
+
+        LethalConfigManager.AddConfigItem(new BoolCheckBoxConfigItem(AllMasksHide.Entry, requiresRestart: false));
+        LethalConfigManager.AddConfigItem(new BoolCheckBoxConfigItem(_hideFromAllEnemies, requiresRestart: false));
+
+        LethalConfigManager.AddConfigItem(new IntSliderConfigItem(_baseDramaSpawnChance, new IntSliderOptions()
+        {
+            Min = 0,
+            Max = 1000,
+            RequiresRestart = true
+        }));
+        LethalConfigManager.AddConfigItem(new TextInputFieldConfigItem(_customDramaSpawnConfig, new TextInputFieldOptions()
+        {
+            NumberOfLines = 1,
+            TrimText = true,
+            RequiresRestart = true
+        }));
+
+        LethalConfigManager.AddConfigItem(new BoolCheckBoxConfigItem(UseStealthMeter.Entry, requiresRestart: false));
+        LethalConfigManager.AddConfigItem(new FloatStepSliderConfigItem(MaxHiddenTime.Entry, new FloatStepSliderOptions()
+        {
+            Min = 0,
+            Max = 60,
+            Step = 0.1f,
+            RequiresRestart = false
+        }));
+        LethalConfigManager.AddConfigItem(new FloatStepSliderConfigItem(ExhaustionPenaltyDelay.Entry, new FloatStepSliderOptions()
+        {
+            Min = 0,
+            Max = 30,
+            Step = 0.1f,
+            RequiresRestart = false
+        }));
+        LethalConfigManager.AddConfigItem(new FloatStepSliderConfigItem(RechargeDelay.Entry, new FloatStepSliderOptions()
+        {
+            Min = 0,
+            Max = 30,
+            Step = 0.1f,
+            RequiresRestart = false
+        }));
+        LethalConfigManager.AddConfigItem(new FloatStepSliderConfigItem(AttachedStealthMultiplier.Entry, new FloatStepSliderOptions()
+        {
+            Min = 0.1f,
+            Max = 10f,
+            Step = 0.1f,
+            RequiresRestart = false
+        }));
+        LethalConfigManager.AddConfigItem(new BoolCheckBoxConfigItem(RemoveOnDepletion.Entry, requiresRestart: false));
+
+        LethalConfigManager.AddConfigItem(new BoolCheckBoxConfigItem(SyncStealthMeterVisibility.Entry, requiresRestart: false));
+        LethalConfigManager.AddConfigItem(new TextInputFieldConfigItem(StealthMeterVisibility.Entry, new TextInputFieldOptions()
+        {
+            NumberOfLines = 1,
+            TrimText = true,
+            RequiresRestart = false
+        }));
+        LethalConfigManager.AddConfigItem(new FloatStepSliderConfigItem(_barXPosition, new FloatStepSliderOptions()
+        {
+            Min = -380f,
+            Max = 380f,
+            Step = 0.1f,
+            RequiresRestart = false
+        }));
+        LethalConfigManager.AddConfigItem(new FloatStepSliderConfigItem(_barYPosition, new FloatStepSliderOptions()
+        {
+            Min = -250f,
+            Max = 250f,
+            Step = 0.1f,
+            RequiresRestart = false
+        }));
+        LethalConfigManager.AddConfigItem(new TextInputFieldConfigItem(_barColour, new TextInputFieldOptions()
+        {
+            NumberOfLines = 1,
+            TrimText = true,
+            RequiresRestart = false
+        }));
+
+        LethalConfigManager.AddConfigItem(new BoolCheckBoxConfigItem(SyncMaskView.Entry, requiresRestart: false));
+        LethalConfigManager.AddConfigItem(new TextInputFieldConfigItem(AttachedMaskView.Entry, new TextInputFieldOptions()
+        {
+            NumberOfLines = 1,
+            TrimText = true,
+            RequiresRestart = false
+        }));
+        LethalConfigManager.AddConfigItem(new TextInputFieldConfigItem(HeldMaskView.Entry, new TextInputFieldOptions()
+        {
+            NumberOfLines = 1,
+            TrimText = true,
+            RequiresRestart = false
+        }));
+        LethalConfigManager.AddConfigItem(new BoolCheckBoxConfigItem(_changeClientViewInstantly, requiresRestart: false));
     }
 }
