@@ -75,13 +75,17 @@ public class Plugin : BaseUnityPlugin
              Config.DramaSpawnMapModded);
         Logger.LogDebug("Loaded asset: dramaMask");
 
-        var outlineBundle = LoadBundle(PluginInfo.PLUGIN_GUID, "maskoutline");
+        var outlineBundle = LoadBundle(PluginInfo.PLUGIN_GUID, "maskview");
         if (outlineBundle == null) return;
 
-        var outlineMesh = outlineBundle.SafeLoadAsset<Mesh>("assets/outline/maskoutline.001.mesh");
+        var outlineMesh = outlineBundle.SafeLoadAsset<Mesh>("assets/maskview/maskoutline.001.mesh");
         if (outlineMesh == null) return;
 
+        var transparentMat = outlineBundle.SafeLoadAsset<Material>("assets/maskview/transmaskmat.mat");
+        if (transparentMat == null) return;
+
         HauntedMaskItemExtensions.OutlineMesh = outlineMesh;
+        HauntedMaskItemExtensions.TransparentMat = transparentMat;
         Logger.LogDebug("Loaded asset: maskOutline");
 
         /*var armsOutBundle = LoadBundle(PluginInfo.PLUGIN_GUID, "armsout");

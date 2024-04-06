@@ -253,7 +253,7 @@ public class ConfigValues : SyncedConfig<ConfigValues>
             MaskView.Opaque,
             new ConfigDescription(
                 "How the mask appears when holding up a mask to your face. [Optionally synced]",
-                new AcceptableValueList<string>(MaskView.Opaque/*, MaskView.Translucent*/, MaskView.Outline)
+                new AcceptableValueList<string>(MaskView.Opaque, MaskView.Translucent, MaskView.Outline)
             ));
 
         AttachedMaskView = cfg.BindSyncedEntry(
@@ -261,7 +261,7 @@ public class ConfigValues : SyncedConfig<ConfigValues>
             MaskView.MatchHeld,
             new ConfigDescription(
                 "How the mask appears when attaching a mask to your face. [Optionally synced]",
-                new AcceptableValueList<string>(MaskView.MatchHeld, MaskView.Opaque/*, MaskView.Translucent*/, MaskView.Outline)
+                new AcceptableValueList<string>(MaskView.MatchHeld, MaskView.Opaque, MaskView.Translucent, MaskView.Outline)
             ));
     }
 

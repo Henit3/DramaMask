@@ -14,6 +14,8 @@ public static class HauntedMaskItemExtensions
 
     public static Mesh OutlineMesh { get; set; } = null;
     private static readonly Dictionary<int, Mesh> _originalMeshMap = new();
+    public static Material TransparentMat { get; set; } = null;
+    private static readonly Dictionary<int, Material> _originalMatMap = new();
 
     private static bool _headMaskTransformsLoaded = false;
     private static Vector3 _originalHeadMaskPos;
@@ -49,15 +51,24 @@ public static class HauntedMaskItemExtensions
             _originalMeshMap.Add(mask.maskTypeId,
                 mask.gameObject.GetComponentsInChildren<MeshFilter>().First(IsMainMaskMesh).mesh);
         }
+        // Register original material for each mash type to reset with later
+        if (!_originalMatMap.ContainsKey(mask.maskTypeId))
+        {
+            _originalMatMap.Add(mask.maskTypeId,
+                mask.gameObject.GetComponentsInChildren<MeshRenderer>().First(IsMainMaskMesh).material);
+        }
 
-        // Set main mesh filter's mesh
+        // Set main mesh filter's mesh and renderer material
         var maskMeshFilter = mask.gameObject.GetComponentsInChildren<MeshFilter>().First(IsMainMaskMesh);
         maskMeshFilter.mesh = maskView switch
         {
-            //MaskView.Translucent => TranslucentMesh,
             MaskView.Outline => OutlineMesh,
             _ => _originalMeshMap[mask.maskTypeId]
         };
+        var maskMeshRenderer = mask.gameObject.GetComponentsInChildren<MeshRenderer>().First(IsMainMaskMesh);
+        maskMeshRenderer.material = maskView is MaskView.Translucent
+            ? TransparentMat
+            : _originalMatMap[mask.maskTypeId];
     }
 
     private static bool IsMainMaskMesh(Component component) => !(component.name is "EyesFilled" || component.name.StartsWith("ScanNode"));
@@ -121,6 +132,12 @@ public static class HauntedMaskItemExtensions
         }
 
         // Set held mask visibility based on attach status
+        if (player != null && player.IsLocal())
+        {
+            mask.SetMaskView(isAttaching
+                ? Plugin.Config.HeldMaskView.LocalValue
+                : null);
+        }
         mask.SetVisibility(!isAttaching);
 
         if (player.IsLocal()) mask.SetControlTipsForItem();
