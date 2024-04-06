@@ -8,11 +8,13 @@ using System.Linq;
 using DramaMask.Extensions;
 using System;
 using LethalLib.Modules;
+using DramaMask.Config;
 
 namespace DramaMask;
 
-[BepInDependency("evaisa.lethallib", "0.15.0")]
+[BepInDependency("evaisa.lethallib", "0.15.1")]
 [BepInDependency("com.sigurd.csync", "4.1.0")]
+[BepInDependency("com.rune580.LethalCompanyInputUtils", BepInDependency.DependencyFlags.SoftDependency)]
 [BepInPlugin(PluginInfo.PLUGIN_GUID, PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
 public class Plugin : BaseUnityPlugin
 {
@@ -29,6 +31,8 @@ public class Plugin : BaseUnityPlugin
         Logger.LogInfo($"Plugin {PluginInfo.PLUGIN_GUID} ({PluginInfo.PLUGIN_VERSION}) is loading...");
 
         Config = new ConfigValues(base.Config);
+        try { InputUtilsCompat.Init(); }
+        catch { Logger.LogInfo("Soft dependency on InputUtils could not be loaded."); }
 
         NetcodePatcher();
 
@@ -45,7 +49,15 @@ public class Plugin : BaseUnityPlugin
 
     private static void NetcodePatcher()
     {
-        var types = Assembly.GetExecutingAssembly().GetTypes();
+        Type[] types;
+        try
+        {
+            types = Assembly.GetExecutingAssembly().GetTypes();
+        }
+        catch (ReflectionTypeLoadException e)
+        {
+            types = e.Types.Where(t => t != null).ToArray();
+        }
         foreach (var type in types)
         {
             var methods = type.GetMethods(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
@@ -80,13 +92,13 @@ public class Plugin : BaseUnityPlugin
 
         var outlineMesh = outlineBundle.SafeLoadAsset<Mesh>("assets/maskview/maskoutline.001.mesh");
         if (outlineMesh == null) return;
+        HauntedMaskItemExtensions.OutlineMesh = outlineMesh;
+        Logger.LogDebug("Loaded asset: maskOutline");
 
         var transparentMat = outlineBundle.SafeLoadAsset<Material>("assets/maskview/transmaskmat.mat");
         if (transparentMat == null) return;
-
-        HauntedMaskItemExtensions.OutlineMesh = outlineMesh;
         HauntedMaskItemExtensions.TransparentMat = transparentMat;
-        Logger.LogDebug("Loaded asset: maskOutline");
+        Logger.LogDebug("Loaded asset: transMaskMat");
 
         /*var armsOutBundle = LoadBundle(PluginInfo.PLUGIN_GUID, "armsout");
         if (armsOutBundle == null) return;

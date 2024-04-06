@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net46</TargetFramework>
@@ -49,11 +49,17 @@
     <Reference Include="com.sigurd.csync">
       <HintPath>..\..\..\..\..\AppData\Roaming\r2modmanPlus-local\LethalCompany\profiles\Debug\BepInEx\plugins\Sigurd-CSync\CSync\com.sigurd.csync.dll</HintPath>
     </Reference>
+    <Reference Include="LethalCompanyInputUtils">
+      <HintPath>..\..\..\..\..\AppData\Roaming\r2modmanPlus-local\LethalCompany\profiles\Debug\BepInEx\plugins\Rune580-LethalCompany_InputUtils\LethalCompanyInputUtils\LethalCompanyInputUtils.dll</HintPath>
+    </Reference>
     <Reference Include="LethalLib">
       <HintPath>..\..\..\..\..\AppData\Roaming\r2modmanPlus-local\LethalCompany\profiles\Debug\BepInEx\plugins\Evaisa-LethalLib\LethalLib\LethalLib.dll</HintPath>
     </Reference>
     <Reference Include="netstandard">
       <HintPath>D:\Games\Steam\steamapps\common\Lethal Company\Lethal Company_Data\Managed\netstandard.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.InputSystem">
+      <HintPath>D:\Games\Steam\steamapps\common\Lethal Company\Lethal Company_Data\Managed\Unity.InputSystem.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Netcode.Runtime">
       <HintPath>D:\Games\Steam\steamapps\common\Lethal Company\Lethal Company_Data\Managed\Unity.Netcode.Runtime.dll</HintPath>

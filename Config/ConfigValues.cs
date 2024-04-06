@@ -9,7 +9,7 @@ using System.Runtime.Serialization;
 using UnityEngine;
 using static LethalLib.Modules.Levels;
 
-namespace DramaMask;
+namespace DramaMask.Config;
 public class ConfigValues : SyncedConfig<ConfigValues>
 {
     // Entries not synced where they are only used server-side, or are local config settings
