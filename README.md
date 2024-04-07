@@ -6,23 +6,26 @@ Also adds a new type of mask, Drama, which is not haunted unlike its Tragedy and
 They can also be attached to players' faces, allowing you to look identical to Masked enemies and spook your friends!
 To balance this mechanic out, there is a stealth meter that is used while attempting to hide.
 
-Works on v45-v50 with no known incompatibilities; supports controller and LethalCompanyVR!
+Due to the current transitioning of mod libraries from v49 to v50, LethalLevelLoader may be broken until v50 comes out.
+This is only the case if you have both LLL and LLLFixed enabled; disabling LLL should fix this issue.
+Works on v45-v50 with no other known incompatibilities; supports controller and LethalCompanyVR!
 
 > Formerly known as DramaMask
 
 ### Config Options
-* Which masks can be used by the player to hide
-* The player can hide from all enemies [Experimental]
-* Disable the stealth meter balancing mechanic
-* Adjust stealth meter behaviour (can be made different if attached)
-* Adjust stealth meter appearance (position and colour)
-* Stealth meter visibility (can be synced to the host)
-* Remove mask on meter depletion
-* Adjust drama mask spawn rates with a multiplier, and on specific moons
-* Change mask action keybinds if Input Utils has been installed
-* Change mask view on usage (can be made different if attached, and synced to the host)
+* Which masks can be used by the player to hide [Host]
+* The player can hide from all enemies (Experimental) [Host]
+* Disable the stealth meter balancing mechanic [Host]
+* Adjust stealth meter behaviour (can be made different if attached) [Host]
+* Adjust stealth meter appearance (position and colour) [Client]
+* Stealth meter visibility [OptionalSync]
+* Remove mask on meter depletion [Host]
+* Adjust drama mask spawn rates with a multiplier, and on specific moons [Host]
+* Change mask action keybinds if Input Utils has been installed [Client]
+* Disable mask possession when attached [Host]
+* Change mask view on usage (can be made different if attached) [OptionalSync]
 
-### Roadmap (dependent on feedback)
+### Roadmap
 * Sound and visuals support for VR in place of the stealth bar
 * Add better support for all the experimentatal all enemy hiding behaviour
 * Allow the player to have their hands out like the Masked (unlikely without more help)

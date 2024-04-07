@@ -20,6 +20,7 @@ public class ConfigValues : SyncedConfig<ConfigValues>
     [DataMember] public SyncedEntry<bool> AllMasksHide;
     private ConfigEntry<bool> _hideFromAllEnemies;
     public bool HideFromAllEnemies;
+    [DataMember] public SyncedEntry<bool> AttachedCanPossess;
 
     /* Base rarities decided with datasheet: https://docs.google.com/spreadsheets/d/1AREkZnHaqxukdpVNOEDFKikar9R4XAIjpZ_gI7NNngM/edit#gid=0
      * Kept between Tragedy and Comedy rarity values, on the lower side due to utility
@@ -98,6 +99,14 @@ public class ConfigValues : SyncedConfig<ConfigValues>
                 "[EXPERIMENTAL] Whether the masks are able to hide the player from all types of enemies.",
                 new AcceptableValueList<bool>(true, false)
             ))).Value;
+
+        AttachedCanPossess = cfg.BindSyncedEntry(
+            new(section, "Attached Masks Can Possess"),
+            true,
+            new ConfigDescription(
+                "Whether masks that can possess you when held up, retain this behaviour when they are attached.",
+                new AcceptableValueList<bool>(true, false)
+            ));
     }
 
     private void SetMaskSpawning(ConfigFile cfg)
@@ -314,6 +323,7 @@ public class ConfigValues : SyncedConfig<ConfigValues>
 
         LethalConfigManager.AddConfigItem(new BoolCheckBoxConfigItem(AllMasksHide.Entry, requiresRestart: false));
         LethalConfigManager.AddConfigItem(new BoolCheckBoxConfigItem(_hideFromAllEnemies, requiresRestart: false));
+        LethalConfigManager.AddConfigItem(new BoolCheckBoxConfigItem(AttachedCanPossess.Entry, requiresRestart: false));
 
         LethalConfigManager.AddConfigItem(new IntSliderConfigItem(_baseDramaSpawnChance, new IntSliderOptions()
         {

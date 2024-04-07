@@ -1,3 +1,6 @@
+# 1.3.1
+- Added config to disable mask possession when attached
+
 # 1.3.0
 - Allowed players to get possessed when wearing the Comedy or Tragedy masks
 - Fixed using terminal while wearing mask showing a fake mask in the players' hand
