@@ -1,3 +1,14 @@
+# 1.3.0
+- Allowed players to get possessed when wearing the Comedy or Tragedy masks
+- Fixed using terminal while wearing mask showing a fake mask in the players' hand
+- Allow mask view to be different based on holding up or attaching
+- Added translucent mask option on usage
+- Fixed phantom bodies remaining on death for clients
+- Added config syncing through the use of CSync (Sigurd)
+- Added config for instant local mask actions for clients
+- Added compatibility for Lethal Config to change configs mid-game
+- Added compatibility for Input Utils to rebind mask controls
+
 # 1.2.4
 - Fixed masks rotating every time they are worn
 - Fixed bar colour config not working as intended
