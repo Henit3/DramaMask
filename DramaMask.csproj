@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net46</TargetFramework>
@@ -51,6 +51,9 @@
     </Reference>
     <Reference Include="LethalCompanyInputUtils">
       <HintPath>..\..\..\..\..\AppData\Roaming\r2modmanPlus-local\LethalCompany\profiles\Debug\BepInEx\plugins\Rune580-LethalCompany_InputUtils\LethalCompanyInputUtils\LethalCompanyInputUtils.dll</HintPath>
+    </Reference>
+    <Reference Include="LethalConfig">
+      <HintPath>..\..\..\..\..\AppData\Roaming\r2modmanPlus-local\LethalCompany\profiles\Debug\BepInEx\plugins\AinaVT-LethalConfig\LethalConfig\LethalConfig.dll</HintPath>
     </Reference>
     <Reference Include="LethalLib">
       <HintPath>..\..\..\..\..\AppData\Roaming\r2modmanPlus-local\LethalCompany\profiles\Debug\BepInEx\plugins\Evaisa-LethalLib\LethalLib\LethalLib.dll</HintPath>
