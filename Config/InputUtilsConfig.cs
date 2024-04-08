@@ -24,24 +24,35 @@ public class InputUtilsConfig : LcInputActions
     }
 
     public void OnAttachMask(InputAction.CallbackContext context)
-    {
-        if (!context.performed) return;
-
-        var localPlayer = StartOfRound.Instance.allPlayerScripts.FirstOrDefault(player => player.IsLocal());
-        if (localPlayer == null) return;
-
-        InputUtilsCompat.HandleAttachMask = true;
-        AccessTools.Method(typeof(PlayerControllerB), "ItemSecondaryUse_performed").Invoke(localPlayer, [context]);
-    }
+        => OnMaskAction(context, "ItemSecondaryUse", ref InputUtilsCompat.HandleAttachMask);
 
     public void OnMaskEyes(InputAction.CallbackContext context)
+        => OnMaskAction(context, "ItemTertiaryUse", ref InputUtilsCompat.HandleMaskEyes);
+
+    private void OnMaskAction(InputAction.CallbackContext context,
+        string actionName, ref bool shouldHandleCustom)
     {
         if (!context.performed) return;
 
-        var localPlayer = StartOfRound.Instance.allPlayerScripts.FirstOrDefault(player => player.IsLocal());
-        if (localPlayer == null) return;
+        shouldHandleCustom = true;
 
-        InputUtilsCompat.HandleMaskEyes = true;
-        AccessTools.Method(typeof(PlayerControllerB), "ItemTertiaryUse_performed").Invoke(localPlayer, [context]);
+        if (IsDefaultBinding(context, actionName)) return;
+
+        // Need to invoke manually if non-default bindings are in use
+        AccessTools.Method(typeof(PlayerControllerB), $"{actionName}_performed")
+            .Invoke(StartOfRound.Instance.localPlayerController, [context]);
+    }
+
+    private static bool IsDefaultBinding(InputAction.CallbackContext context, string actionName)
+    {
+        var action = IngamePlayerSettings.Instance.playerInput.actions
+            .FindAction(actionName, throwIfNotFound: false);
+        if (action == null) return false;
+
+        var defaultControl = action.controls
+            .FirstOrDefault(a => a.device == context.control.device);
+        if (defaultControl == null) return false;
+
+        return defaultControl.path == context.control.path;
     }
 }

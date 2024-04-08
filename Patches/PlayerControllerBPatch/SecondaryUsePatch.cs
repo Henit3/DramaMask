@@ -9,9 +9,5 @@ public class SecondaryUsePatch : QeInputPatchBase
 {
     [HarmonyPrefix]
     public static bool Prefix(PlayerControllerB __instance)
-        => ShouldProcessInput(__instance, ref InputUtilsCompat.HandleAttachMask);
-
-    [HarmonyPostfix]
-    public static void Postfix(PlayerControllerB __instance)
-        => InputUtilsCompat.HandleAttachMask = false;
+        => ShouldProcessInput(__instance, nameof(SecondaryUsePatch), ref InputUtilsCompat.HandleAttachMask);
 }
