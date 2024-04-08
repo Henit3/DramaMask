@@ -55,4 +55,21 @@ public class InputUtilsConfig : LcInputActions
 
         return defaultControl.path == context.control.path;
     }
+
+    public static bool ClashesWithInteract(InputAction inputAction)
+    {
+        var action = IngamePlayerSettings.Instance.playerInput.actions
+            .FindAction("Interact", throwIfNotFound: false);
+        if (action == null) return true;
+        
+        var interactControl = action.controls
+            .FirstOrDefault(a => a.device.name == "Keyboard" ^ StartOfRound.Instance.localPlayerUsingController);
+        if (interactControl == null) return false;
+
+        var inputControl = inputAction.controls
+            .FirstOrDefault(a => a.device.name == "Keyboard" ^ StartOfRound.Instance.localPlayerUsingController);
+        if (inputControl == null) return false;
+
+        return interactControl.path == inputControl.path;
+    }
 }
