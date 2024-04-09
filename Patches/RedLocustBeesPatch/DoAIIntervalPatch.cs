@@ -34,7 +34,6 @@ public class DoAIIntervalPatch
 
         // Match for first array dereference (part of player assignment)
         matcher.MatchForward(false, [new(OpCodes.Ldelem_Ref)]);
-        if (matcher.Remaining == 0) Plugin.Logger.LogWarning("Not found");
 
         // Skip to the end of the assignment, and end of the predicate
         matcher.Advance(7);
