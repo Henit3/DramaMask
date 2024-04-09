@@ -44,12 +44,12 @@ public class CheckForPlayersInLineOfSightPatch
         matcher.MatchForward(true, [new(OpCodes.Stloc_3)]);
         matcher.Advance(1);
 
-        // Skip dropping the active mask if a mask is attached and it is currently being held
-        // if (_isPlayerHidden) continue;
+        // Skip activating the turret if the found player is hidden
+        // if (_isPlayerHidden) <skip next if branch>;
         matcher.InsertAndAdvance(
             _isPlayerHidden
             .Union([
-                new(OpCodes.Brtrue,         // continue
+                new(OpCodes.Brtrue,         // <skip next if branch>
                     skipPlayerTarget)
         ]));
 
