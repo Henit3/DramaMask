@@ -1,3 +1,7 @@
+# 1.3.2
+- Fix inability to interact with items when holding a mask due to bad handling of InputUtils on default controls
+- Allow mask eyes to be toggled when looking at interactable if the keybind doesn't clash with interact's
+
 # 1.3.1
 - Added config to disable mask possession when attached
 

@@ -33,7 +33,7 @@ public class Plugin : BaseUnityPlugin
 
         Config = new ConfigValues(base.Config);
         try { InputUtilsCompat.Init(); }
-        catch { Logger.LogInfo("Soft dependency on InputUtils could not be loaded."); }
+        catch (TypeLoadException) { Logger.LogInfo("Soft dependency on InputUtils could not be loaded."); }
 
         NetcodePatcher();
 

@@ -47,6 +47,7 @@ Bug Finders:
 * Stuck Mask on orbit: @Regnareb and @sashimi_express
 * Rotating masks & colour config: @sashimi_express
 * Phantom bodies on death client-side: @ValiusV (via GitHub) and @purefpszac
+* Cannot interact when holding mask: @purefpszac
 
 Check out @megapiggy's [BuyableDramaMask](https://thunderstore.io/c/lethal-company/p/MegaPiggy/BuyableDramaMask/) mod too,
 which adds a buyable variant of the mask to the store!

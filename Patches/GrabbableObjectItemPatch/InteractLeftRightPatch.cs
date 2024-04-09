@@ -1,6 +1,8 @@
+using DramaMask.Config;
 using DramaMask.Extensions;
 using DramaMask.Network;
 using HarmonyLib;
+using System;
 
 namespace DramaMask.Patches.GrabbableObjectItemPatch;
 
@@ -63,8 +65,13 @@ public class InteractLeftRightPatch
             else
             {
                 // Local invocation of behaviour so we can query hoveringOverTrigger (tied to camera)
+                var isMaskEyeInteractClash = !StartOfRound.Instance.localPlayerUsingController;
+                try { isMaskEyeInteractClash = InputUtilsCompat.IsMaskEyeInteractClash(); }
+                catch (TypeLoadException) { }
+
                 if (instance.playerHeldBy.IsLocal()
-                    && instance.playerHeldBy.hoveringOverTrigger == null)
+                    && (!isMaskEyeInteractClash
+                        || instance.playerHeldBy.hoveringOverTrigger == null))
                 {
                     targetPretendData.IsMaskEyesOn = !targetPretendData.IsMaskEyesOn;
                     if (Plugin.Config.ChangeClientViewInstantly) instance.SetMaskEyes(targetPretendData.IsMaskEyesOn);
