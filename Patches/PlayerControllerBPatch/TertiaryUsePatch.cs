@@ -9,5 +9,5 @@ public class TertiaryUsePatch : QeInputPatchBase
 {
     [HarmonyPrefix]
     public static bool Prefix(PlayerControllerB __instance)
-        => ShouldProcessInput(__instance, nameof(TertiaryUsePatch), ref InputUtilsCompat.HandleMaskEyes);
+        => ShouldProcessInput(__instance, ref InputUtilsCompat.HandleMaskEyes);
 }

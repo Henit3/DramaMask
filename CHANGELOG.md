@@ -1,3 +1,7 @@
+# 1.3.3
+- Fix recently introduced incompatibility with MoreCompany with item QE interactions
+- Added FAQ and improved some config descriptions (e.g. showing options in LethalConfig)
+
 # 1.3.2
 - Fix inability to interact with items when holding a mask due to bad handling of InputUtils on default controls
 - Allow mask eyes to be toggled when looking at interactable if the keybind doesn't clash with interact's

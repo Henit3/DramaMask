@@ -44,6 +44,8 @@ public class ConfigValues : SyncedConfig<ConfigValues>
     /// Use LocalValue (syncing optional)
     /// </summary>
     [DataMember] public SyncedEntry<string> StealthMeterVisibility;
+    private string _stealthMeterVisibilityDesc;
+    private string[] _stealthMeterVisibilityOptions;
     private ConfigEntry<float> _barXPosition;
     public float BarXPosition;
     private ConfigEntry<float> _barYPosition;
@@ -56,10 +58,14 @@ public class ConfigValues : SyncedConfig<ConfigValues>
     /// Use LocalValue (syncing optional)
     /// </summary>
     [DataMember] public SyncedEntry<string> HeldMaskView;
+    private string _heldMaskViewDesc;
+    private string[] _heldMaskViewOptions;
     /// <summary>
     /// Use LocalValue (syncing optional)
     /// </summary>
     [DataMember] public SyncedEntry<string> AttachedMaskView;
+    private string _attachedMaskViewDesc;
+    private string[] _attachedMaskViewOptions;
     private ConfigEntry<bool> _changeClientViewInstantly;
     public bool ChangeClientViewInstantly;
 
@@ -117,7 +123,7 @@ public class ConfigValues : SyncedConfig<ConfigValues>
             new(section, "Base Drama Mask Spawn Chance"),
             40,
             new ConfigDescription(
-                "The default spawn chance of drama masks.",
+                "A multiplier applied to the default spawn chance of Drama masks (see mod description for details).",
                 new AcceptableValueRange<int>(0, 1000)
             ))).Value;
 
@@ -232,8 +238,8 @@ public class ConfigValues : SyncedConfig<ConfigValues>
             new(section, "Stealth Meter Visibility"),
             MeterVisibility.OnHold,
             new ConfigDescription(
-                "When to show the stealth meter, if at all. [Optionally synced]",
-                new AcceptableValueList<string>(MeterVisibility.Never, MeterVisibility.OnHold, MeterVisibility.Always)
+                _stealthMeterVisibilityDesc = "When to show the stealth meter, if at all. [Optionally synced]",
+                new AcceptableValueList<string>(_stealthMeterVisibilityOptions = [MeterVisibility.Never, MeterVisibility.OnHold, MeterVisibility.Always])
             ));
 
         BarXPosition = (_barXPosition = cfg.Bind(
@@ -275,16 +281,16 @@ public class ConfigValues : SyncedConfig<ConfigValues>
             new(section, "Held Mask View"),
             MaskView.Opaque,
             new ConfigDescription(
-                "How the mask appears when holding up a mask to your face. [Optionally synced]",
-                new AcceptableValueList<string>(MaskView.Opaque, MaskView.Translucent, MaskView.Outline)
+                _heldMaskViewDesc = "How the mask appears when holding up a mask to your face. [Optionally synced]",
+                new AcceptableValueList<string>(_heldMaskViewOptions = [MaskView.Opaque, MaskView.Translucent, MaskView.Outline])
             ));
 
         AttachedMaskView = cfg.BindSyncedEntry(
             new(section, "Attached Mask View"),
             MaskView.Translucent,
             new ConfigDescription(
-                "How the mask appears when attaching a mask to your face. [Optionally synced]",
-                new AcceptableValueList<string>(MaskView.MatchHeld, MaskView.Opaque, MaskView.Translucent, MaskView.Outline)
+                _attachedMaskViewDesc = "How the mask appears when attaching a mask to your face. [Optionally synced]",
+                new AcceptableValueList<string>(_attachedMaskViewOptions = [MaskView.MatchHeld, MaskView.Opaque, MaskView.Translucent, MaskView.Outline])
             ));
 
         ChangeClientViewInstantly = (_changeClientViewInstantly = cfg.Bind(
@@ -374,7 +380,8 @@ public class ConfigValues : SyncedConfig<ConfigValues>
         {
             NumberOfLines = 1,
             TrimText = true,
-            RequiresRestart = false
+            RequiresRestart = false,
+            Description = GetDescriptionWithOptions(_stealthMeterVisibilityDesc, _stealthMeterVisibilityOptions)
         }));
         LethalConfigManager.AddConfigItem(new FloatStepSliderConfigItem(_barXPosition, new FloatStepSliderOptions()
         {
@@ -402,14 +409,19 @@ public class ConfigValues : SyncedConfig<ConfigValues>
         {
             NumberOfLines = 1,
             TrimText = true,
-            RequiresRestart = false
+            RequiresRestart = false,
+            Description = GetDescriptionWithOptions(_heldMaskViewDesc, _heldMaskViewOptions)
         }));
         LethalConfigManager.AddConfigItem(new TextInputFieldConfigItem(HeldMaskView.Entry, new TextInputFieldOptions()
         {
             NumberOfLines = 1,
             TrimText = true,
-            RequiresRestart = false
+            RequiresRestart = false,
+            Description = GetDescriptionWithOptions(_attachedMaskViewDesc, _attachedMaskViewOptions)
         }));
         LethalConfigManager.AddConfigItem(new BoolCheckBoxConfigItem(_changeClientViewInstantly, requiresRestart: false));
     }
+
+    private static string GetDescriptionWithOptions(string description, string[] options)
+        => $"{description}\nOptions: [{string.Join(", ", options)}]";
 }

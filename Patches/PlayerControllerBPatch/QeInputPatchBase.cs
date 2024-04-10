@@ -5,7 +5,7 @@ namespace DramaMask.Patches.PlayerControllerBPatch;
 
 public class QeInputPatchBase
 {
-    public static bool ShouldProcessInput(PlayerControllerB __instance, string caller,
+    public static bool ShouldProcessInput(PlayerControllerB __instance,
         ref bool isCustomInput)
     {
         if (!InputUtilsCompat.Enabled) return true;
@@ -16,18 +16,17 @@ public class QeInputPatchBase
         var player = StartOfRound.Instance.localPlayerController;
         var trueIsMaskTarget = player != null && player.currentlyHeldObjectServer is HauntedMaskItem;
 
+        // Invalid calls are treated as non custom inputs for compatibility
+        var wasCustomInput = false;
         // Only use the first valid call for custom (usually the last one)
-        if (isMaskTarget == trueIsMaskTarget && isCustomInput)
+        if (isMaskTarget == trueIsMaskTarget)
         {
             // Set to false as soon as possible to avoid race condition?
+            wasCustomInput = isCustomInput;
             isCustomInput = false;
-
-            // If on custom keybind, disallow for normal invocation, allow for mask events
-            return isMaskTarget;
         }
-        // Invalid calls can go through to the usual invocation strategy for compatibility
 
-        // If not on custom keybind, allow for normal invocation, disallow for mask events
-        return !isMaskTarget;
+        // Allow custom input on masks, and default inputs on non-masks
+        return wasCustomInput ^ !isMaskTarget;
     }
 }
