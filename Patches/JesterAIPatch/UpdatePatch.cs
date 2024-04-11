@@ -19,14 +19,9 @@ public class UpdatePatch
             AccessTools.Field(typeof(StartOfRound), nameof(StartOfRound.allPlayerScripts))),
         new(OpCodes.Ldloc_2),           // index
         new(OpCodes.Ldelem_Ref),        // []
-        new(OpCodes.Call,               // DoAIIntervalPatch.IsPlayerHidden
-            AccessTools.Method(typeof(UpdatePatch), nameof(IsPlayerHidden)))
+        new(OpCodes.Call,               // .IsHidden()
+            AccessTools.Method(typeof(PlayerControllerBExtensions), nameof(PlayerControllerBExtensions.IsHidden)))
     ];
-    private static bool IsPlayerHidden(PlayerControllerB player)
-    {
-        return NetworkHandler.Instance.VisiblePlayers != null
-            && !NetworkHandler.Instance.VisiblePlayers.Contains(player.GetId());
-    }
 
     [HarmonyTranspiler]
     private static IEnumerable<CodeInstruction> HidePlayerFromColliderPatch(IEnumerable<CodeInstruction> instructions, ILGenerator generator)

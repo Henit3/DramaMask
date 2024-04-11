@@ -17,8 +17,7 @@ public abstract class BaseModifyPlayerArrayPatch
         allPlayerScriptsOriginal = StartOfRound.Instance.allPlayerScripts;
 
         StartOfRound.Instance.allPlayerScripts = StartOfRound.Instance.allPlayerScripts
-            .Where(player => player == null || !player.isPlayerControlled
-                || NetworkHandler.Instance.VisiblePlayers.Contains(player.GetId()))
+            .Where(player => player == null || !player.isPlayerControlled || player.IsHidden())
             .ToArray();
     }
 

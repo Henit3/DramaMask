@@ -14,14 +14,9 @@ public class CheckForPlayersInLineOfSightPatch
     // Do not check if the player is hidden
     private static readonly List<CodeInstruction> _isPlayerHidden = [
         new(OpCodes.Ldloc_3),           // (PlayerControllerB) component
-        new(OpCodes.Call,               // CheckForPlayersInLineOfSightPatch.IsPlayerHidden
-            AccessTools.Method(typeof(CheckForPlayersInLineOfSightPatch), nameof(IsPlayerHidden)))
+        new(OpCodes.Call,               // .IsHidden()
+            AccessTools.Method(typeof(PlayerControllerBExtensions), nameof(PlayerControllerBExtensions.IsHidden)))
     ];
-    private static bool IsPlayerHidden(PlayerControllerB player)
-    {
-        return NetworkHandler.Instance.VisiblePlayers != null
-            && !NetworkHandler.Instance.VisiblePlayers.Contains(player.GetId());
-    }
 
     // Should only be called by the server so safe to use NetworkHandler.Instance.StealthMap
     [HarmonyTranspiler]

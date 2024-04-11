@@ -1,5 +1,4 @@
 ﻿using DramaMask.Extensions;
-using DramaMask.Network;
 using HarmonyLib;
 
 namespace DramaMask.Patches.CentipedeAIPatch;
@@ -11,15 +10,10 @@ public class TriggerCentipedeFallPatch
     public static bool Prefix(CentipedeAI __instance, ref bool ___triggeredFall,
         ulong clientId)
     {
-        if (NetworkHandler.Instance.VisiblePlayers != null
-            && !NetworkHandler.Instance.VisiblePlayers
-                .Contains(GameNetworkManager.Instance.localPlayerController.GetId()))
-        {
-            // Reset the triggeredFall state if cancelling the fall
-            ___triggeredFall = false;
-            return false;
-        }
+        if (!GameNetworkManager.Instance.localPlayerController.IsHidden()) return true;
 
-        return true;
+        // Reset the triggeredFall state if cancelling the fall
+        ___triggeredFall = false;
+        return false;
     }
 }

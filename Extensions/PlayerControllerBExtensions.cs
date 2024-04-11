@@ -1,4 +1,5 @@
-﻿using GameNetcodeStuff;
+﻿using DramaMask.Network;
+using GameNetcodeStuff;
 namespace DramaMask.Extensions;
 
 public static class PlayerControllerBExtensions
@@ -17,5 +18,11 @@ public static class PlayerControllerBExtensions
         }
         player.playerBodyAnimator.SetBool(animation, value: value);
         return true;
+    }
+
+    public static bool IsHidden(this PlayerControllerB player)
+    {
+        return NetworkHandler.Instance.VisiblePlayers != null
+            && !NetworkHandler.Instance.VisiblePlayers.Contains(player.GetId());
     }
 }
