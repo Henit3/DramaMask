@@ -1,6 +1,4 @@
 ﻿using DramaMask.Extensions;
-using DramaMask.Network;
-using GameNetcodeStuff;
 using HarmonyLib;
 using System.Collections.Generic;
 using System.Linq;

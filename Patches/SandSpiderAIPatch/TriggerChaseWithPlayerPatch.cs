@@ -8,15 +8,11 @@ namespace DramaMask.Patches.SandSpiderAIPatch;
 public class TriggerChaseWithPlayerPatch
 {
     [HarmonyPrefix]
-    public static bool Prefix(SandSpiderAI __instance, ref bool __result,
+    public static bool Prefix(SandSpiderAI __instance,
         PlayerControllerB playerScript)
     {
         // TODO: Optional behaviour to ignore this
 
-        if (!playerScript.IsHidden()) return true;
-
-        // Override with can't find the player if the player is hiding
-        __result = false;
-        return false;
+        return !playerScript.IsHidden();
     }
 }
