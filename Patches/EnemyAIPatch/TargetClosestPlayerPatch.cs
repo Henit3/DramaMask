@@ -36,15 +36,12 @@ public class TargetClosestPlayerPatch : ModifyPlayerArrayPatch
         // Replace blt with clt to only check as part of first "and" condition
         matcher.RemoveInstruction().InsertAndAdvance([new(OpCodes.Clt)]);
 
-        // Add second "and" condition to check if out of bounds
+        // Add second "and" condition to check if out of bounds, branching into processing loop if both satisfied
+        // ... && IsWithinPlayerBounds(index)
         matcher.InsertAndAdvance(
             new(OpCodes.Ldloc_1),           // index
-            new(OpCodes.Call,               // IsOutOfBounds()
-                AccessTools.Method(typeof(ModifyPlayerArrayPatch), nameof(IsOutOfBounds)))
-        );
-
-        // Apply "and" operation and branch into processing loop if both satisfied
-        matcher.InsertAndAdvance(
+            new(OpCodes.Call,               // IsWithinPlayerBounds()
+                AccessTools.Method(typeof(ModifyPlayerArrayPatch), nameof(IsWithinPlayerBounds))),
             new(OpCodes.And),                // (index < checkLength) && (index in bounds)
             new(OpCodes.Brtrue,
                 enterLoopTarget)             // enter processing loop

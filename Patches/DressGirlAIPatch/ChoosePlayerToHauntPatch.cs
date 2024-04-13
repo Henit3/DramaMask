@@ -27,50 +27,38 @@ public class ChoosePlayerToHauntPatch : ModifyPlayerArrayPatch
 
         // Match for first blt (player loop predicate 1)
         matcher.MatchForward(false, [new(OpCodes.Blt)]);
-        matcher.MatchBack(false, [new(OpCodes.Add)]);
-        matcher.Advance(-2);
-        var continueLoopTarget1 = generator.DefineLabel();
-        matcher.AddLabelsAt(matcher.Pos, [continueLoopTarget1]);
 
-        // Skip this one again
-        matcher.MatchForward(false, [new(OpCodes.Blt)]);
-        matcher.Advance(1);
+        // Store the branch target to use in adjusted predicate
+        var enterLoopTarget1 = matcher.Instruction.operand;
 
-        // Match for next blt (player loop predicate 2)
-        matcher.MatchForward(false, [new(OpCodes.Blt)]);
-        matcher.MatchBack(false, [new(OpCodes.Add)]);
-        matcher.Advance(-2);
-        var continueLoopTarget2 = generator.DefineLabel();
-        matcher.AddLabelsAt(matcher.Pos, [continueLoopTarget2]);
+        // Replace blt with clt to only check as part of first "and" condition
+        matcher.RemoveInstruction().InsertAndAdvance([new(OpCodes.Clt)]);
 
-        // Restart search to find start of these loops
-        matcher.Start();
-
-        // Match for first bt (player loop start 1)
-        matcher.MatchForward(false, [new(OpCodes.Br)]);
-
-        // Add OOB check
-        matcher.Advance(1);
-        matcher.InsertAndAdvance([
+        // Add second "and" condition to check if out of bounds, branching into processing loop if both satisfied
+        // ... && IsWithinPlayerBounds(index)
+        matcher.InsertAndAdvance(
             new(OpCodes.Ldloc_S, 5),        // index
-            new(OpCodes.Call,               // IsOutOfBounds()
-                AccessTools.Method(typeof(ModifyPlayerArrayPatch), nameof(IsOutOfBounds))),
-            new(OpCodes.Brtrue,             // continue
-                continueLoopTarget1)
-        ]);
+            new(OpCodes.Call,               // IsWithinPlayerBounds()
+                AccessTools.Method(typeof(ModifyPlayerArrayPatch), nameof(IsWithinPlayerBounds))),
+            new(OpCodes.And),               // &&
+            new(OpCodes.Brtrue,
+                enterLoopTarget1)            // enter processing loop
+        );
 
-        // Match for next bt (player loop start 2)
-        matcher.MatchForward(false, [new(OpCodes.Br)]);
-        
-        // Add OOB check
-        matcher.Advance(1);
-        matcher.InsertAndAdvance([
+        // Repeat for second player loop
+        matcher.MatchForward(false, [new(OpCodes.Blt)]);
+        var enterLoopTarget2 = matcher.Instruction.operand;
+        matcher.RemoveInstruction().InsertAndAdvance([new(OpCodes.Clt)]);
+
+        // ... && IsWithinPlayerBounds(index)
+        matcher.InsertAndAdvance(
             new(OpCodes.Ldloc_S, 6),        // index
-            new(OpCodes.Call,               // IsOutOfBounds()
-                AccessTools.Method(typeof(ModifyPlayerArrayPatch), nameof(IsOutOfBounds))),
-            new(OpCodes.Brtrue,             // continue
-                continueLoopTarget2)
-        ]);
+            new(OpCodes.Call,               // IsWithinPlayerBounds()
+                AccessTools.Method(typeof(ModifyPlayerArrayPatch), nameof(IsWithinPlayerBounds))),
+            new(OpCodes.And),               // &&
+            new(OpCodes.Brtrue,
+                enterLoopTarget1)            // enter processing loop
+        );
 
         return matcher.InstructionEnumeration();
     }

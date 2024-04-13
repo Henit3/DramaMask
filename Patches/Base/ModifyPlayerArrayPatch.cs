@@ -9,7 +9,7 @@ public abstract class ModifyPlayerArrayPatch
     private static PlayerControllerB[] allPlayerScriptsOriginal;
 
     // For accompanying OOB checking transpilation
-    protected static bool IsOutOfBounds(int index)
+    protected static bool IsWithinPlayerBounds(int index)
     {
         return index < StartOfRound.Instance.allPlayerScripts.Length;
     }
