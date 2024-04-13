@@ -1,3 +1,7 @@
+[![Release Version](https://img.shields.io/github/v/release/Henit3/DramaMask?style=for-the-badge&logo=github)](https://github.com/Henit3d/DramaMask/releases)
+[![Thunderstore Version](https://img.shields.io/thunderstore/v/necrowing/DramaMask?style=for-the-badge&logo=thunderstore&logoColor=white)](https://thunderstore.io/c/lethal-company/p/necrowing/DramaMask/)
+[![Thunderstore Downloads](https://img.shields.io/thunderstore/dt/necrowing/DramaMask?style=for-the-badge&logo=thunderstore&logoColor=white)](https://thunderstore.io/c/lethal-company/p/necrowing/DramaMask/)
+
 # Stealthy Masks
 
 Wearing masks makes you blend in with the other Masked!
@@ -94,7 +98,7 @@ Made on request from @tkcool and @pedro9006.
 * Stuck Mask on orbit: @Regnareb and @sashimi_express
 * Rotating masks & colour config: @sashimi_express
 * Phantom bodies on death client-side: @ValiusV (via GitHub) and @purefpszac
-* Cannot interact when holding mask: @purefpszac
+* Cannot interact (later QE) when holding mask: @purefpszac
 
 ### Contact
 For requesting new features or highlighting issues/bugs found, please post them in the mod's
