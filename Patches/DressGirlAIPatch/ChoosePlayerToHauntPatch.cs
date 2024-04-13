@@ -8,11 +8,6 @@ namespace DramaMask.Patches.DressGirlAIPatch;
 [HarmonyPatch(typeof(DressGirlAI), "ChoosePlayerToHaunt")]
 public class ChoosePlayerToHauntPatch : ModifyPlayerArrayPatch
 {
-    private static bool IsOutOfBounds(int index)
-    {
-        return index < StartOfRound.Instance.allPlayerScripts.Length;
-    }
-
     [HarmonyPrefix]
     public static void Prefix(DressGirlAI __instance)
     {
@@ -59,7 +54,7 @@ public class ChoosePlayerToHauntPatch : ModifyPlayerArrayPatch
         matcher.InsertAndAdvance([
             new(OpCodes.Ldloc_S, 5),        // index
             new(OpCodes.Call,               // IsOutOfBounds()
-                AccessTools.Method(typeof(ChoosePlayerToHauntPatch), nameof(IsOutOfBounds))),
+                AccessTools.Method(typeof(ModifyPlayerArrayPatch), nameof(IsOutOfBounds))),
             new(OpCodes.Brtrue,             // continue
                 continueLoopTarget1)
         ]);
@@ -72,7 +67,7 @@ public class ChoosePlayerToHauntPatch : ModifyPlayerArrayPatch
         matcher.InsertAndAdvance([
             new(OpCodes.Ldloc_S, 6),        // index
             new(OpCodes.Call,               // IsOutOfBounds()
-                AccessTools.Method(typeof(ChoosePlayerToHauntPatch), nameof(IsOutOfBounds))),
+                AccessTools.Method(typeof(ModifyPlayerArrayPatch), nameof(IsOutOfBounds))),
             new(OpCodes.Brtrue,             // continue
                 continueLoopTarget2)
         ]);

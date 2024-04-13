@@ -39,15 +39,8 @@ public class TargetClosestPlayerPatch : ModifyPlayerArrayPatch
         // Add second "and" condition to check if out of bounds
         matcher.InsertAndAdvance(
             new(OpCodes.Ldloc_1),           // index
-
-            new(OpCodes.Call,               // StartOfRound.Instance
-                AccessTools.Property(typeof(StartOfRound), nameof(StartOfRound.Instance)).GetMethod),
-            new(OpCodes.Ldfld,              // .allPlayerScripts
-                AccessTools.Field(typeof(StartOfRound), nameof(StartOfRound.allPlayerScripts))),
-            new(OpCodes.Ldlen),             // .Length
-            new(OpCodes.Conv_I4),           // (int)
-
-            new(OpCodes.Clt)                // <
+            new(OpCodes.Call,               // IsOutOfBounds()
+                AccessTools.Method(typeof(ModifyPlayerArrayPatch), nameof(IsOutOfBounds)))
         );
 
         // Apply "and" operation and branch into processing loop if both satisfied
