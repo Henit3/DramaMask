@@ -16,7 +16,9 @@ public class PlayerIsTargetablePatch
         var callingMethod = new StackFrame(1).GetMethod().Name;
         if (nameof(EnemyAI.MeetsStandardPlayerCollisionConditions) == callingMethod) return true;
 
-        __result = playerScript.IsHidden();
-        return !__result;
+        if (!playerScript.IsHidden()) return true;
+
+        __result = false;
+        return false;
     }
 }
