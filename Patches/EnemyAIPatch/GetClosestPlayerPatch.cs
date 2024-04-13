@@ -31,22 +31,7 @@ public class GetClosestPlayerPatch : ModifyPlayerArrayPatch
         matcher.End();
         matcher.MatchBack(false, [new(OpCodes.Blt)]);
 
-        // Store the branch target to use in adjusted predicate
-        var enterLoopTarget = matcher.Instruction.operand;
-
-        // Replace blt with clt to only check as part of first "and" condition
-        matcher.RemoveInstruction().InsertAndAdvance([new(OpCodes.Clt)]);
-
-        // Add second "and" condition to check if out of bounds, branching into processing loop if both satisfied
-        // ... && IsWithinPlayerBounds(index)
-        matcher.InsertAndAdvance(
-            new(OpCodes.Ldloc_1),           // index
-            new(OpCodes.Call,               // IsWithinPlayerBounds()
-                AccessTools.Method(typeof(ModifyPlayerArrayPatch), nameof(IsWithinPlayerBounds))),
-            new(OpCodes.And),               // &&
-            new(OpCodes.Brtrue,
-                enterLoopTarget)            // enter processing loop
-        );
+        AddOobCheckToLoopPredicate(matcher, new(OpCodes.Ldloc_1));
 
         return matcher.InstructionEnumeration();
     }
