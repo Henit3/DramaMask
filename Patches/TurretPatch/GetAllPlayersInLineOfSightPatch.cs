@@ -16,9 +16,8 @@ public class CheckForPlayersInLineOfSightPatch
             AccessTools.Method(typeof(PlayerControllerBExtensions), nameof(PlayerControllerBExtensions.IsHidden)))
     ];
 
-    // Should only be called by the server so safe to use NetworkHandler.Instance.StealthMap
     [HarmonyTranspiler]
-    private static IEnumerable<CodeInstruction> IgnoreHiddenPlayersPatch(IEnumerable<CodeInstruction> instructions,
+    private static IEnumerable<CodeInstruction> HidePlayerFromRaycast(IEnumerable<CodeInstruction> instructions,
         ILGenerator generator)
     {
         var matcher = new CodeMatcher(instructions);

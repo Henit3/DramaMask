@@ -1,11 +1,12 @@
-﻿using GameNetcodeStuff;
+﻿using DramaMask.Patches.Base;
+using GameNetcodeStuff;
 using HarmonyLib;
 using UnityEngine;
 
 namespace DramaMask.Patches.EnemyAIPatch;
 
 [HarmonyPatch(typeof(EnemyAI), nameof(EnemyAI.GetAllPlayersInLineOfSight))]
-public class GetAllPlayersInLineOfSightPatch : BaseModifyPlayerArrayPatch
+public class GetAllPlayersInLineOfSightPatch : ModifyPlayerArrayPatch
 {
     [HarmonyPrefix]
     public static void Prefix(EnemyAI __instance,
@@ -13,6 +14,8 @@ public class GetAllPlayersInLineOfSightPatch : BaseModifyPlayerArrayPatch
     {
         SaveAndModifyPlayerArray(__instance);
     }
+
+    // TODO: Transpile OOB
 
     [HarmonyPostfix]
     public static void Postfix(EnemyAI __instance, ref PlayerControllerB[] __result,

@@ -1,11 +1,10 @@
 using DramaMask.Extensions;
-using DramaMask.Network;
 using GameNetcodeStuff;
 using System.Linq;
 
-namespace DramaMask.Patches.EnemyAIPatch;
+namespace DramaMask.Patches.Base;
 
-public abstract class BaseModifyPlayerArrayPatch
+public abstract class ModifyPlayerArrayPatch
 {
     private static PlayerControllerB[] allPlayerScriptsOriginal;
 

@@ -1,10 +1,11 @@
-﻿using GameNetcodeStuff;
+﻿using DramaMask.Patches.Base;
+using GameNetcodeStuff;
 using HarmonyLib;
 
 namespace DramaMask.Patches.EnemyAIPatch;
 
 [HarmonyPatch(typeof(EnemyAI), nameof(EnemyAI.CheckLineOfSightForClosestPlayer))]
-public class CheckLineOfSightForClosestPlayerPatch : BaseModifyPlayerArrayPatch
+public class CheckLineOfSightForClosestPlayerPatch : ModifyPlayerArrayPatch
 {
     [HarmonyPrefix]
     public static void Prefix(EnemyAI __instance,
@@ -12,6 +13,8 @@ public class CheckLineOfSightForClosestPlayerPatch : BaseModifyPlayerArrayPatch
     {
         SaveAndModifyPlayerArray(__instance);
     }
+
+    // TODO: Transpile OOB
 
     [HarmonyPostfix]
     public static void Postfix(EnemyAI __instance, ref PlayerControllerB __result,

@@ -1,4 +1,4 @@
-﻿using DramaMask.Patches.EnemyAIPatch;
+﻿using DramaMask.Patches.Base;
 using HarmonyLib;
 using System.Collections.Generic;
 using System.Reflection.Emit;
@@ -6,7 +6,7 @@ using System.Reflection.Emit;
 namespace DramaMask.Patches.DressGirlAIPatch;
 
 [HarmonyPatch(typeof(DressGirlAI), "ChoosePlayerToHaunt")]
-public class ChoosePlayerToHauntPatch : BaseModifyPlayerArrayPatch
+public class ChoosePlayerToHauntPatch : ModifyPlayerArrayPatch
 {
     private static bool IsOutOfBounds(int index)
     {
@@ -26,7 +26,7 @@ public class ChoosePlayerToHauntPatch : BaseModifyPlayerArrayPatch
         "PotatoePet-AdvancedCompany-1.0.150"
     ])]
     [HarmonyTranspiler]
-    private static IEnumerable<CodeInstruction> StopOutOfBoundsPatch(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
+    private static IEnumerable<CodeInstruction> StopOutOfBounds(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
     {
         var matcher = new CodeMatcher(instructions);
 

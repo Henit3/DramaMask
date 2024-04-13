@@ -16,7 +16,7 @@ public class DoLOSCheckPatch
 
     // Should only be called by the server so safe to use NetworkHandler.Instance.StealthMap
     [HarmonyTranspiler]
-    private static IEnumerable<CodeInstruction> IgnoreHiddenPlayersPatch(IEnumerable<CodeInstruction> instructions,
+    private static IEnumerable<CodeInstruction> HidePlayerFromCollider(IEnumerable<CodeInstruction> instructions,
         ILGenerator generator)
     {
         var matcher = new CodeMatcher(instructions);

@@ -20,7 +20,7 @@ public class DoAIIntervalPatch
     ];
 
     [HarmonyTranspiler]
-    private static IEnumerable<CodeInstruction> HidePlayerFromColliderPatch(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
+    private static IEnumerable<CodeInstruction> HidePlayerFromCollider(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
     {
         var matcher = new CodeMatcher(instructions);
 

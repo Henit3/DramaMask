@@ -1,5 +1,4 @@
 ﻿using DramaMask.Extensions;
-using DramaMask.Network;
 using GameNetcodeStuff;
 using HarmonyLib;
 using System.Collections.Generic;
@@ -24,7 +23,7 @@ public class UpdatePatch
     ];
 
     [HarmonyTranspiler]
-    private static IEnumerable<CodeInstruction> HidePlayerFromColliderPatch(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
+    private static IEnumerable<CodeInstruction> HidePlayerFromPopCheck(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
     {
         var matcher = new CodeMatcher(instructions);
 

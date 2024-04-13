@@ -1,4 +1,4 @@
-﻿using GameNetcodeStuff;
+﻿using DramaMask.Patches.Base;
 using HarmonyLib;
 using System.Collections.Generic;
 using System.Reflection.Emit;
@@ -6,7 +6,7 @@ using System.Reflection.Emit;
 namespace DramaMask.Patches.EnemyAIPatch;
 
 [HarmonyPatch(typeof(EnemyAI), nameof(EnemyAI.TargetClosestPlayer))]
-public class TargetClosestPlayerPatch : BaseModifyPlayerArrayPatch
+public class TargetClosestPlayerPatch : ModifyPlayerArrayPatch
 {
     [HarmonyPrefix]
     public static void Prefix(EnemyAI __instance,
@@ -22,7 +22,7 @@ public class TargetClosestPlayerPatch : BaseModifyPlayerArrayPatch
         "PotatoePet-AdvancedCompany-1.0.150"
     ])]
     [HarmonyTranspiler]
-    private static IEnumerable<CodeInstruction> SetMaskTypePatch(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
+    private static IEnumerable<CodeInstruction> StopOutOfBounds(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
     {
         var matcher = new CodeMatcher(instructions);
 

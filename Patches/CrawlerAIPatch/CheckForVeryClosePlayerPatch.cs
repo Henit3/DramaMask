@@ -30,7 +30,7 @@ public class CheckForVeryClosePlayerPatch
     }
 
     [HarmonyTranspiler]
-    private static IEnumerable<CodeInstruction> StopOutOfBoundsPatch(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
+    private static IEnumerable<CodeInstruction> HidePlayerFromCollider(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
     {
         var matcher = new CodeMatcher(instructions);
 
