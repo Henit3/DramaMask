@@ -1,6 +1,6 @@
 ﻿using DramaMask.Extensions;
-using DramaMask.Models;
 using DramaMask.Network;
+using DramaMask.Constants;
 using DramaMask.UI;
 using GameNetcodeStuff;
 using HarmonyLib;

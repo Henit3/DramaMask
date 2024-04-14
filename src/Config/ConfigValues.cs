@@ -1,8 +1,8 @@
-﻿using BepInEx.Configuration;
+using BepInEx.Configuration;
 using CSync.Extensions;
 using CSync.Lib;
 using DramaMask.Extensions;
-using DramaMask.Models;
+using DramaMask.Constants;
 using LethalConfig;
 using LethalConfig.ConfigItems;
 using LethalConfig.ConfigItems.Options;

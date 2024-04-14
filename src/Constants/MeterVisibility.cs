@@ -1,4 +1,4 @@
-﻿namespace DramaMask.Models;
+﻿namespace DramaMask.Constants;
 
 public static class MeterVisibility
 {
