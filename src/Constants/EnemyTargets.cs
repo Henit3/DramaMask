@@ -13,7 +13,8 @@ public static class EnemyTargets
         nameof(SandSpiderAI),
         nameof(HoarderBugAI),
         nameof(RedLocustBees),
-        nameof(DressGirlAI)
+        nameof(DressGirlAI),
+        nameof(SandWormAI)
     ];
     public static bool HidesFromEnemy(EnemyAI enemy)
         => HidesFromEnemy(enemy.GetType().Name);

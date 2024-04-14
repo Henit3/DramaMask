@@ -44,7 +44,10 @@ The Drama mask can be found as scrap with its spawn locations and rates matching
 To also make it available in the store, check out @megapiggy's [BuyableDramaMask](https://thunderstore.io/c/lethal-company/p/MegaPiggy/BuyableDramaMask/) mod.
 
 ### What enemies are supported with hide from all enemies?
-Owing to the experimental status of this config setting, there are not many enemies on this list. However, the next update plans to add much more support for this
+While the Masked are the main targets to hide from, proper support for other enemies has been added as of 1.4.0 (detailed in the table below).
+Some of these enemies can be considered to have their own agenda, so they have been classified as "Not Natural".
+Players will not be hidden from these enemies if the "Enemies Hidden From" config is set to "Natural".
+For example, Hoarding Bugs would not discriminate against a """Masked""" if they decide to start stealing from their nest.
 
 |Enemy			|Status					|
 |---------------|:---------------------:|
@@ -52,7 +55,7 @@ Owing to the experimental status of this config setting, there are not many enem
 |Thumper      	|Supported				|
 |Spore Lizard	|Supported				|
 |Coil-Head		|Supported				|
-|Earth Leviathan|Supported				|
+|Earth Leviathan|Supported - Not Natural|
 |Forest Giant	|Supported				|
 |Baboon Hawk	|Supported - Not Natural|
 |Hygrodere		|Supported				|
