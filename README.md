@@ -46,35 +46,36 @@ To also make it available in the store, check out @megapiggy's [BuyableDramaMask
 ### What enemies are supported with hide from all enemies?
 Owing to the experimental status of this config setting, there are not many enemies on this list. However, the next update plans to add much more support for this
 
-|Enemy			|Status				|
-|---------------|:-----------------:|
-|Masked 		|Supported			|
-|Thumper      	|Planned			|
-|Spore Lizard	|Planned			|
-|Coil-Head		|Planned			|
-|Earth Leviathan|Planned			|
-|Forest Giant	|Planned			|
-|Baboon Hawk	|Planned Optional	|
-|Hygrodere		|Planned			|
-|Bunker Spider	|Planned			|
-|Jester			|Planned			|
-|Bracken		|Planned			|
-|Circuit Bee	|Planned Optional	|
-|Ghost Girl		|Planned Optional	|
-|Snare Flea		|Planned			|
-|Company		|No					|
-|Nutcracker		|Planned			|
-|Hoarding Bug	|Planned Optional	|
-|Eyeless Dog	|No					|
-|Butler			|Planned			|
-|Masked Bee		|Planned			|
-|Old Bird		|Planned			|
-|Manticoil		|No					|
-|Roaming Locust	|No					|
-|Turret			|Planned			|
+|Enemy			|Status					|
+|---------------|:---------------------:|
+|Masked 		|Supported - Always		|
+|Thumper      	|Supported				|
+|Spore Lizard	|Supported				|
+|Coil-Head		|Supported				|
+|Earth Leviathan|Supported				|
+|Forest Giant	|Supported				|
+|Baboon Hawk	|Supported - Not Natural|
+|Hygrodere		|Supported				|
+|Bunker Spider	|Supported - Not Natural|
+|Jester			|Supported				|
+|Bracken		|Supported				|
+|Circuit Bee	|Supported - Not Natural|
+|Ghost Girl		|Supported - Not Natural|
+|Snare Flea		|Supported				|
+|Nutcracker		|Supported				|
+|Hoarding Bug	|Supported - Not Natural|
+|Butler			|Planned				|
+|Masked Bee		|Planned				|
+|Old Bird		|Planned				|
+|Tulip Snake	|Planned				|
+|Eyeless Dog	|No						|
+|Manticoil		|No						|
+|Roaming Locust	|No						|
+|Company		|No						|
+|Turret			|Supported				|
 
 ### Why can I not use items with a mask attached?
-This is intentional behaviour and is currently integral to how the mod's mask attaching features work. Changing this could mean rewriting the entire codebase to accomodate this, so it is currently not planned. This is feasible though and may be considered for an update in the distant future.
+This is intentional behaviour and is currently integral to how the mod's mask attaching features work. Changing this could mean rewriting the entire codebase to accomodate this, so it is currently not Supported. This is feasible though and may be considered for an update in the distant future.
 
 ## Roadmap (development to be paused)
 * Add better support for all the experimentatal all enemy hiding behaviour

@@ -1,4 +1,4 @@
-using BepInEx.Configuration;
+﻿using BepInEx.Configuration;
 using CSync.Extensions;
 using CSync.Lib;
 using DramaMask.Extensions;
@@ -18,8 +18,10 @@ public class ConfigValues : SyncedConfig<ConfigValues>
     // Entries not synced where they are only used server-side, or are local config settings
 
     [DataMember] public SyncedEntry<bool> AllMasksHide;
-    private ConfigEntry<bool> _hideFromAllEnemies;
-    public bool HideFromAllEnemies;
+    public SyncedEntry<string> EnemiesHiddenFrom;
+    private string _enemiesHiddenFromDesc;
+    private string[] _enemiesHiddenFromOptions;
+    public SyncedEntry<bool> IncreaseCustomEnemyCompatibility;
     [DataMember] public SyncedEntry<bool> AttachedCanPossess;
 
     /* Base rarities decided with datasheet: https://docs.google.com/spreadsheets/d/1AREkZnHaqxukdpVNOEDFKikar9R4XAIjpZ_gI7NNngM/edit#gid=0
@@ -98,13 +100,21 @@ public class ConfigValues : SyncedConfig<ConfigValues>
                 new AcceptableValueList<bool>(true, false)
             ));
 
-        HideFromAllEnemies = (_hideFromAllEnemies = cfg.Bind(
-            new(section, "Hide From All Enemies"),
+        EnemiesHiddenFrom = cfg.BindSyncedEntry(
+            new(section, "Enemies Hidden From"),
+            EnemyTargets.Natural,
+            new ConfigDescription(
+                _enemiesHiddenFromDesc = "The selection of enemies that attaching a mask hides you from (Natural attempts to stay true to the monster's usual behaviour).",
+                new AcceptableValueList<string>(_enemiesHiddenFromOptions = [EnemyTargets.Masked, EnemyTargets.Natural, EnemyTargets.All])
+            ));
+
+        IncreaseCustomEnemyCompatibility = cfg.BindSyncedEntry(
+            new(section, "Increased Custom Enemy Compatibility"),
             false,
             new ConfigDescription(
-                "[EXPERIMENTAL] Whether the masks are able to hide the player from all types of enemies.",
+                "[Warning] Turning this on may allow support for some custom enemies, but could make the game run slower.",
                 new AcceptableValueList<bool>(true, false)
-            ))).Value;
+            ));
 
         AttachedCanPossess = cfg.BindSyncedEntry(
             new(section, "Attached Masks Can Possess"),
@@ -328,7 +338,14 @@ public class ConfigValues : SyncedConfig<ConfigValues>
         // Would've liked a string option config item for the enum-like constants
 
         LethalConfigManager.AddConfigItem(new BoolCheckBoxConfigItem(AllMasksHide.Entry, requiresRestart: false));
-        LethalConfigManager.AddConfigItem(new BoolCheckBoxConfigItem(_hideFromAllEnemies, requiresRestart: false));
+        LethalConfigManager.AddConfigItem(new TextInputFieldConfigItem(EnemiesHiddenFrom.Entry, new TextInputFieldOptions()
+        {
+            NumberOfLines = 1,
+            TrimText = true,
+            RequiresRestart = true,
+            Description = GetDescriptionWithOptions(_enemiesHiddenFromDesc, _enemiesHiddenFromOptions)
+        }));
+        LethalConfigManager.AddConfigItem(new BoolCheckBoxConfigItem(IncreaseCustomEnemyCompatibility.Entry, requiresRestart: true));
         LethalConfigManager.AddConfigItem(new BoolCheckBoxConfigItem(AttachedCanPossess.Entry, requiresRestart: false));
 
         LethalConfigManager.AddConfigItem(new IntSliderConfigItem(_baseDramaSpawnChance, new IntSliderOptions()

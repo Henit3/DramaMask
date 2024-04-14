@@ -12,6 +12,8 @@ public class PlayerIsTargetablePatch
     public static bool Prefix(EnemyAI __instance, ref bool __result, 
         PlayerControllerB playerScript, bool cannotBeInShip = false, bool overrideInsideFactoryCheck = false)
     {
+        if (!Plugin.Config.IncreaseCustomEnemyCompatibility.Value) return true;
+
         // Don't want to invalidate player collision
         var callingMethod = new StackFrame(1).GetMethod().Name;
         if (nameof(EnemyAI.MeetsStandardPlayerCollisionConditions) == callingMethod) return true;

@@ -1,4 +1,5 @@
-﻿using DramaMask.Extensions;
+﻿using DramaMask.Constants;
+using DramaMask.Extensions;
 using GameNetcodeStuff;
 using HarmonyLib;
 
@@ -11,7 +12,7 @@ public class TriggerChaseWithPlayerPatch
     public static bool Prefix(SandSpiderAI __instance,
         PlayerControllerB playerScript)
     {
-        // TODO: Optional behaviour to ignore this
+        if (!EnemyTargets.HidesFromEnemy(nameof(SandSpiderAI))) return true;
 
         return !playerScript.IsHidden();
     }

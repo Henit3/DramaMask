@@ -1,3 +1,4 @@
+using DramaMask.Constants;
 using DramaMask.Extensions;
 using GameNetcodeStuff;
 using HarmonyLib;
@@ -58,7 +59,7 @@ public abstract class ModifyPlayerArrayPatch
 
     private static bool ShouldHideFromEnemy(EnemyAI __instance)
     {
-        return Plugin.Config.HideFromAllEnemies
+        return EnemyTargets.HidesFromEnemy(__instance)
             || __instance is MaskedPlayerEnemy;
     }
 }

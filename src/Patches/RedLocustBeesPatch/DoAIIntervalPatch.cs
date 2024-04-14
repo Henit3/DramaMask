@@ -1,7 +1,7 @@
-﻿using DramaMask.Extensions;
+﻿using DramaMask.Constants;
+using DramaMask.Extensions;
 using HarmonyLib;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection.Emit;
 
 namespace DramaMask.Patches.RedLocustBeesPatch;
@@ -9,15 +9,11 @@ namespace DramaMask.Patches.RedLocustBeesPatch;
 [HarmonyPatch(typeof(RedLocustBees), nameof(RedLocustBees.DoAIInterval))]
 public class DoAIIntervalPatch
 {
-    // Do not check if the player is hidden
-    private static readonly List<CodeInstruction> _isPlayerHidden = [
-        new(OpCodes.Call,               // StartOfRound.Instance
-                AccessTools.Property(typeof(StartOfRound), nameof(StartOfRound.Instance)).GetMethod),
-        new(OpCodes.Ldfld,              // .localPlayerController
-            AccessTools.Field(typeof(StartOfRound), nameof(StartOfRound.localPlayerController))),
-        new(OpCodes.Call,               // .IsHidden()
-            AccessTools.Method(typeof(PlayerControllerBExtensions), nameof(PlayerControllerBExtensions.IsHidden)))
-    ];
+    private static bool IsPlayerHidden()
+    {
+        return EnemyTargets.HidesFromEnemy(nameof(RedLocustBees))
+            && StartOfRound.Instance.localPlayerController.IsHidden();
+    }
 
     [HarmonyTranspiler]
     private static IEnumerable<CodeInstruction> HidePlayerFromCollider(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
@@ -31,13 +27,13 @@ public class DoAIIntervalPatch
         matcher.Advance(7);
 
         // Skip the current player from being targeted
-        // && !_isPlayerHidden
+        // && !IsPlayerHidden()
         matcher.InsertAndAdvance(
-            _isPlayerHidden
-            .Union([
-                new(OpCodes.Not),           // !
-                new(OpCodes.And)            // &
-        ]));
+            new(OpCodes.Call,           // IsPlayerHidden()
+                AccessTools.Method(typeof(DoAIIntervalPatch), nameof(IsPlayerHidden))),
+            new(OpCodes.Not),           // !
+            new(OpCodes.And)            // &
+        );
 
         return matcher.InstructionEnumeration();
     }

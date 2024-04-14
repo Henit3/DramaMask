@@ -1,4 +1,5 @@
-﻿using DramaMask.Extensions;
+﻿using DramaMask.Constants;
+using DramaMask.Extensions;
 using GameNetcodeStuff;
 using HarmonyLib;
 using System.Collections.Generic;
@@ -11,7 +12,9 @@ public class DoLOSCheckPatch
 {
     private static bool IsThreatHiddenPlayer(IVisibleThreat threat)
     {
-        return threat is PlayerControllerB player && player.IsHidden();
+        return EnemyTargets.HidesFromEnemy(nameof(BaboonBirdAI))
+            && threat is PlayerControllerB player
+            && player.IsHidden();
     }
 
     // Should only be called by the server so safe to use NetworkHandler.Instance.StealthMap
