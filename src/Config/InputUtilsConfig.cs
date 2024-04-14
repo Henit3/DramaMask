@@ -56,10 +56,10 @@ public class InputUtilsConfig : LcInputActions
         return defaultControl.path == context.control.path;
     }
 
-    public static bool ClashesWithInteract(InputAction inputAction)
+    public static bool ClashesWithAction(InputAction inputAction, string targetAction)
     {
         var action = IngamePlayerSettings.Instance.playerInput.actions
-            .FindAction("Interact", throwIfNotFound: false);
+            .FindAction(targetAction, throwIfNotFound: false);
         if (action == null) return true;
         
         var interactControl = action.controls

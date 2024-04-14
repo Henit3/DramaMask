@@ -18,5 +18,7 @@ internal static class InputUtilsCompat
     public static InputAction MaskEyes => InputUtilsConfig.Instance.MaskEyes;
     public static bool HandleMaskEyes;
 
-    public static bool IsMaskEyeInteractClash() => InputUtilsConfig.ClashesWithInteract(MaskEyes);
+    public static bool IsMaskAttachDefaultClash() => InputUtilsConfig.ClashesWithAction(AttachMask, "ItemSecondaryUse");
+    public static bool IsMaskEyeInteractClash() => InputUtilsConfig.ClashesWithAction(MaskEyes, "Interact");
+    public static bool IsMaskEyeDefaultClash() => InputUtilsConfig.ClashesWithAction(MaskEyes, "ItemTertiaryUse");
 }

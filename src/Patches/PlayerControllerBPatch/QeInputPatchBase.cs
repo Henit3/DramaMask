@@ -6,9 +6,14 @@ namespace DramaMask.Patches.PlayerControllerBPatch;
 public class QeInputPatchBase
 {
     public static bool ShouldProcessInput(PlayerControllerB __instance,
-        ref bool isCustomInput)
+        ref bool isCustomInput,
+        bool right)
     {
         if (!InputUtilsCompat.Enabled) return true;
+
+        // Return true if custom clashes with default
+        if ((right && InputUtilsCompat.IsMaskAttachDefaultClash())
+            || (!right && InputUtilsCompat.IsMaskEyeDefaultClash())) return true;
 
         // __instance is usually invalid since it doesn't hold currentlyHeldObjectServer until the last invocation
         // We can check against the true value using StartOfRound.Instance.localPlayerController
