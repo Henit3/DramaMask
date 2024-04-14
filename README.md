@@ -48,7 +48,7 @@ Owing to the experimental status of this config setting, there are not many enem
 |Thumper      	|Planned			|
 |Spore Lizard	|Planned			|
 |Coil-Head		|Planned			|
-|Earth Leviathan|Planned			|
+|Earth Leviathan|Planned Optional	|
 |Forest Giant	|Planned			|
 |Baboon Hawk	|Planned Optional	|
 |Hygrodere		|Planned			|
@@ -65,6 +65,7 @@ Owing to the experimental status of this config setting, there are not many enem
 |Butler			|Planned			|
 |Masked Bee		|Planned			|
 |Old Bird		|Planned			|
+|Tulip Snake	|Planned			|
 |Manticoil		|No					|
 |Roaming Locust	|No					|
 |Turret			|Planned			|
@@ -95,6 +96,7 @@ Made on request from @tkcool and @pedro9006.
 * Rotating masks & colour config: @sashimi_express
 * Phantom bodies on death client-side: @ValiusV (via GitHub) and @purefpszac
 * Cannot interact when holding mask: @purefpszac
+* Cannot QE interact when not holding mask (v50): @VirusTLNR (via GitHub)
 
 ### Contact
 For requesting new features or highlighting issues/bugs found, please post them in the mod's
