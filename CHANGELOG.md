@@ -1,3 +1,6 @@
+# 1.3.5
+- Fix typo causing QE interactions to have duplicate keybinds if only one is rebinded
+
 # 1.3.4
 - Fix item QE interactions due to v50 inputUtils
 
