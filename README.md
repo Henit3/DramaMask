@@ -68,8 +68,8 @@ For example, Hoarding Bugs would not discriminate against a """Masked""" if they
 |Nutcracker		|Supported				|
 |Hoarding Bug	|Supported - Not Natural|
 |Butler			|Planned				|
-|Masked Bee		|Planned				|
-|Old Bird		|Planned				|
+|Masked Bee		|Planned - Not Natural	|
+|Old Bird		|Planned - Not Natural	|
 |Tulip Snake	|Planned				|
 |Eyeless Dog	|No						|
 |Manticoil		|No						|
