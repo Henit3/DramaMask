@@ -39,7 +39,7 @@ public abstract class ModifyPlayerArrayPatch
 
     protected static void SaveAndModifyPlayerArray(EnemyAI __instance)
     {
-        if (!ShouldHideFromEnemy(__instance)) return;
+        if (!EnemyTargets.ShouldHideFromEnemy(__instance)) return;
 
         // Save old value and filter out searching for players that are activating a configured mask
         allPlayerScriptsOriginal = StartOfRound.Instance.allPlayerScripts;
@@ -51,15 +51,9 @@ public abstract class ModifyPlayerArrayPatch
 
     protected static void LoadOriginalPlayerArray(EnemyAI __instance)
     {
-        if (!ShouldHideFromEnemy(__instance)) return;
+        if (!EnemyTargets.ShouldHideFromEnemy(__instance)) return;
 
         // Reset the player array to its old value
         StartOfRound.Instance.allPlayerScripts = allPlayerScriptsOriginal;
-    }
-
-    private static bool ShouldHideFromEnemy(EnemyAI __instance)
-    {
-        return EnemyTargets.HidesFromEnemy(__instance)
-            || __instance is MaskedPlayerEnemy;
     }
 }

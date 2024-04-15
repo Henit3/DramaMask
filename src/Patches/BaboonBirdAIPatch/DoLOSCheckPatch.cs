@@ -12,7 +12,7 @@ public class DoLOSCheckPatch
 {
     private static bool IsThreatHiddenPlayer(IVisibleThreat threat)
     {
-        return EnemyTargets.HidesFromEnemy(nameof(BaboonBirdAI))
+        return EnemyTargets.ShouldHideFromEnemy(nameof(BaboonBirdAI))
             && threat is PlayerControllerB player
             && player.IsHidden();
     }

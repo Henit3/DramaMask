@@ -16,9 +16,9 @@ public static class EnemyTargets
         nameof(DressGirlAI),
         nameof(SandWormAI)
     ];
-    public static bool HidesFromEnemy(EnemyAI enemy)
-        => HidesFromEnemy(enemy.GetType().Name);
-    public static bool HidesFromEnemy(string enemyName)
+    public static bool ShouldHideFromEnemy(EnemyAI enemy)
+        => ShouldHideFromEnemy(enemy.GetType().Name);
+    public static bool ShouldHideFromEnemy(string enemyName)
     {
         if (Plugin.Config.EnemiesHiddenFrom.Value is All) return true;
         if (Plugin.Config.EnemiesHiddenFrom.Value is Masked) return enemyName is nameof(MaskedPlayerEnemy);

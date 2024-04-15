@@ -12,7 +12,7 @@ public class TriggerChaseWithPlayerPatch
     public static bool Prefix(SandSpiderAI __instance,
         PlayerControllerB playerScript)
     {
-        if (!EnemyTargets.HidesFromEnemy(nameof(SandSpiderAI))) return true;
+        if (!EnemyTargets.ShouldHideFromEnemy(nameof(SandSpiderAI))) return true;
 
         return !playerScript.IsHidden();
     }

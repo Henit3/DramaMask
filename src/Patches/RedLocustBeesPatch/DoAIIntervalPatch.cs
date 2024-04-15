@@ -11,7 +11,7 @@ public class DoAIIntervalPatch
 {
     private static bool IsPlayerHidden()
     {
-        return EnemyTargets.HidesFromEnemy(nameof(RedLocustBees))
+        return EnemyTargets.ShouldHideFromEnemy(nameof(RedLocustBees))
             && StartOfRound.Instance.localPlayerController.IsHidden();
     }
 
