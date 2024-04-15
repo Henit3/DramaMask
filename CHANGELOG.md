@@ -1,3 +1,9 @@
+# 1.3.5
+- Fix typo causing QE interactions to have duplicate keybinds if only one is rebinded
+
+# 1.3.4
+- Fix item QE interactions due to v50 inputUtils
+
 # 1.3.3
 - Fix recently introduced incompatibility with MoreCompany with item QE interactions
 - Added FAQ and improved some config descriptions (e.g. showing options in LethalConfig)
