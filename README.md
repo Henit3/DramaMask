@@ -63,8 +63,8 @@ Owing to the experimental status of this config setting, there are not many enem
 |Hoarding Bug	|Planned Optional	|
 |Eyeless Dog	|No					|
 |Butler			|Planned			|
-|Masked Bee		|Planned			|
-|Old Bird		|Planned			|
+|Masked Bee		|Planned Optional	|
+|Old Bird		|Planned Optional	|
 |Tulip Snake	|Planned			|
 |Manticoil		|No					|
 |Roaming Locust	|No					|
