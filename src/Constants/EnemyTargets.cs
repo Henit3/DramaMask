@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace DramaMask.Constants;
 
@@ -14,7 +14,9 @@ public static class EnemyTargets
         nameof(HoarderBugAI),
         nameof(RedLocustBees),
         nameof(DressGirlAI),
-        nameof(SandWormAI)
+        nameof(SandWormAI),
+        nameof(RadMechAI),
+        nameof(ButlerBeesEnemyAI)
     ];
     public static bool ShouldHideFromEnemy(EnemyAI enemy)
         => ShouldHideFromEnemy(enemy.GetType().Name);
