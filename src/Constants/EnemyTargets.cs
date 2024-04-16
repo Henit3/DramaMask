@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 
 namespace DramaMask.Constants;
 
@@ -23,6 +23,6 @@ public static class EnemyTargets
         if (Plugin.Config.EnemiesHiddenFrom.Value is All) return true;
         if (Plugin.Config.EnemiesHiddenFrom.Value is Masked) return enemyName is nameof(MaskedPlayerEnemy);
 
-        return _naturalExceptions.Contains(enemyName);
+        return !_naturalExceptions.Contains(enemyName);
     }
 }
