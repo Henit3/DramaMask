@@ -45,7 +45,7 @@ public abstract class ModifyPlayerArrayPatch
         allPlayerScriptsOriginal = StartOfRound.Instance.allPlayerScripts;
 
         StartOfRound.Instance.allPlayerScripts = StartOfRound.Instance.allPlayerScripts
-            .Where(player => player == null || !player.isPlayerControlled || !player.IsHidden())
+            .Where(player => !(player == null || !player.isPlayerControlled || player.IsHidden()))
             .ToArray();
     }
 
