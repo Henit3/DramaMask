@@ -37,6 +37,12 @@ public abstract class ModifyPlayerArrayPatch
         return index < StartOfRound.Instance.allPlayerScripts.Length;
     }
 
+    // For getting the actual index after the hidden players have been removed
+    protected static ulong GetTrueIndex(int index)
+    {
+        return StartOfRound.Instance.allPlayerScripts[index].playerClientId;
+    }
+
     protected static void SaveAndModifyPlayerArray(EnemyAI __instance)
     {
         if (!EnemyTargets.ShouldHideFromEnemy(__instance)) return;

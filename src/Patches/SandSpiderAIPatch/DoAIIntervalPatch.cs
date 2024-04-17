@@ -35,7 +35,7 @@ public class DoAIIntervalPatch : ModifyPlayerArrayPatch
     }
 
     [HarmonyPostfix]
-    public static void Postfix(EnemyAI __instance)
+    public static void Postfix(SandSpiderAI __instance)
     {
         LoadOriginalPlayerArray(__instance);
     }
