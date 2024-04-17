@@ -50,8 +50,9 @@ public abstract class ModifyPlayerArrayPatch
         // Save old value and filter out searching for players that are activating a configured mask
         allPlayerScriptsOriginal = StartOfRound.Instance.allPlayerScripts;
 
+        // Intentionally keep the invalid ones (null and non-controlled) for max compatibility
         StartOfRound.Instance.allPlayerScripts = StartOfRound.Instance.allPlayerScripts
-            .Where(player => !(player == null || !player.isPlayerControlled || player.IsHidden()))
+            .Where(player => (player == null || !player.isPlayerControlled) || !player.IsHidden())
             .ToArray();
     }
 
