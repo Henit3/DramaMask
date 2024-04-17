@@ -1,5 +1,4 @@
-﻿using DramaMask.Extensions;
-using DramaMask.Patches.Base;
+﻿using DramaMask.Patches.Base;
 using HarmonyLib;
 using System.Collections.Generic;
 using System.Reflection.Emit;
