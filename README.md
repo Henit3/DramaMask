@@ -10,24 +10,24 @@ Also adds a new type of mask, Drama, which is not haunted unlike its Tragedy and
 They can also be attached to players' faces, allowing you to look identical to Masked enemies and spook your friends!
 To balance this mechanic out, there is a stealth meter that is used while attempting to hide.
 
-Due to the current transitioning of mod libraries from v49 to v50, LethalLevelLoader may be broken until v50 comes out.
-This is only the case if you have both LLL and LLLFixed enabled; disabling LLL should fix this issue.
+If playing on v50+ and LethalLevelLoader is being used, ensure it is on 1.2.0 or higher to avoid conflicts with most mods; including this one. 
 Works on v45-v50 with no other known incompatibilities; supports controller and LethalCompanyVR!
 
 > Formerly known as DramaMask
 
 ## Config Options
-* Which masks can be used by the player to hide [Host]
-* The player can hide from all enemies (Experimental) [Host]
-* Disable the stealth meter balancing mechanic [Host]
-* Adjust stealth meter behaviour (can be made different if attached) [Host]
-* Adjust stealth meter appearance (position and colour) [Client]
-* Stealth meter visibility [OptionalSync]
-* Remove mask on meter depletion [Host]
-* Adjust drama mask spawn rates with a multiplier, and on specific moons [Host]
-* Change mask action keybinds if Input Utils has been installed [Client]
-* Disable mask possession when attached [Host]
-* Change mask view on usage (can be made different if attached) [OptionalSync]
+* Which masks can be used by the player to hide **[Host]**
+* The selection of enemies that can be hidden from & specific enemy overrides **[Host]**
+* Potentially increase custom enemy compatibility at the cost of performance **[Host]**
+* Disable the stealth meter balancing mechanic **[Host]**
+* Adjust stealth meter behaviour (can be made different if attached) **[Host]**
+* Adjust stealth meter appearance (position and colour) **[Client]**
+* Stealth meter visibility **[OptionalSync]**
+* Remove mask on meter depletion **[Host]**
+* Adjust drama mask spawn rates with a multiplier & specific moon overrides **[Host]**
+* Change mask action keybinds if Input Utils has been installed **[Client]**
+* Disable mask possession when attached **[Host]**
+* Change mask view on usage (can be made different if attached) **[OptionalSync]**
 
 ## FAQ
 ### Where can I find the Drama mask?
@@ -49,6 +49,8 @@ Some of these enemies can be considered to have their own agenda, so they have b
 Players will not be hidden from these enemies if the "Enemies Hidden From" config is set to "Natural".
 For example, Hoarding Bugs would not discriminate against a """Masked""" if they decide to start stealing from their nest.
 
+Extra overrides for these can be specified using the "Enemy Hiding Overrides" config to enable or disable for specific enemies using their names in the code (exclusions prioritised).
+
 |Enemy			|Status					|
 |---------------|:---------------------:|
 |Masked 		|Supported - Always		|
@@ -67,21 +69,33 @@ For example, Hoarding Bugs would not discriminate against a """Masked""" if they
 |Snare Flea		|Supported				|
 |Nutcracker		|Supported				|
 |Hoarding Bug	|Supported - Not Natural|
-|Butler			|Planned				|
-|Masked Bee		|Planned - Not Natural	|
-|Old Bird		|Planned - Not Natural	|
-|Tulip Snake	|Planned				|
+|Butler			|Supported				|
+|Masked Bee		|Supported - Not Natural|
+|Old Bird		|Supported - Not Natural|
+|Tulip Snake	|Supported				|
 |Eyeless Dog	|No						|
 |Manticoil		|No						|
 |Roaming Locust	|No						|
 |Company		|No						|
 |Turret			|Supported				|
+|Modded			|Compatibility Dependent|
+
+### Which modded enemies are supported? / How can I make my custom enemy support hiding?
+The current method of hiding depends on references to `StartOfRound.allPlayerScripts` being patched to only include entries of visible (and pre-existing invalid) players,
+when the base methods for detecting players in `EnemyAI` are called.
+Vanilla enemies that make use of their own methods for player detection are additionally patched, so they may also be invoked by custom enemies.
+References to `PlayerIsTargetable` are also patched for calls made outside `MeetsStandardPlayerCollisionConditions`, if the "Increased Custom Enemy Compatibility" setting is enabled.
+Any storage or cross-referencing done with an index to `allPlayerScripts` (like in `ButlerEnemyAI`) should instead make use of `playerClientId` on the player,
+since the position in the array may be affected by this mod's patches.
+
+Enemies can also be added to `DramaMask.Constants.EnemyTargets.NaturalExceptions` to stop them being hidden from if the "Enemies Hidden From" setting is "Natural".
+
+Aside from this, explicit patches for custom enemies will _not_ be provided by this mod.
 
 ### Why can I not use items with a mask attached?
 This is intentional behaviour and is currently integral to how the mod's mask attaching features work. Changing this could mean rewriting the entire codebase to accomodate this, so it is currently not Supported. This is feasible though and may be considered for an update in the distant future.
 
 ## Roadmap (development to be paused)
-* Add better support for all the experimentatal all enemy hiding behaviour
 * Sound and visuals support for VR in place of the stealth bar
 * Allow the player to have their hands out like the Masked (unlikely without more help)
 

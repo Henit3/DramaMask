@@ -156,7 +156,7 @@ public class ConfigValues : SyncedConfig<ConfigValues>
                 { "AssuranceLevel", 3 },
                 { "VowLevel", 0 }
             }.AsString(),
-            new ConfigDescription("Custom spawn chances for moons the Drama mask can spawn on, comma separated.")
+            new ConfigDescription("Custom spawn chances for moons the Drama mask can spawn on, comma separated (Special values include: All, Vanilla, Modded).")
         )).Value;
 
 
