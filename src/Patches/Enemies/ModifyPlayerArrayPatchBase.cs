@@ -1,4 +1,4 @@
-using DramaMask.Constants;
+using DramaMask.Config;
 using DramaMask.Extensions;
 using GameNetcodeStuff;
 using HarmonyLib;
@@ -45,7 +45,7 @@ public abstract class ModifyPlayerArrayPatchBase
 
     protected static void SaveAndModifyPlayerArray(EnemyAI __instance)
     {
-        if (!EnemyTargets.ShouldHideFromEnemy(__instance)) return;
+        if (!EnemyTargetHandler.ShouldHideFromEnemy(__instance)) return;
 
         // Save old value and filter out searching for players that are activating a configured mask
         allPlayerScriptsOriginal = StartOfRound.Instance.allPlayerScripts;
@@ -58,7 +58,7 @@ public abstract class ModifyPlayerArrayPatchBase
 
     protected static void LoadOriginalPlayerArray(EnemyAI __instance)
     {
-        if (!EnemyTargets.ShouldHideFromEnemy(__instance)) return;
+        if (!EnemyTargetHandler.ShouldHideFromEnemy(__instance)) return;
 
         // Reset the player array to its old value
         StartOfRound.Instance.allPlayerScripts = allPlayerScriptsOriginal;

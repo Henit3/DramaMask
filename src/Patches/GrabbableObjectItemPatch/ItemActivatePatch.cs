@@ -54,7 +54,7 @@ public class ItemActivatePatch
         if (!instance.playerHeldBy.IsLocal()) return;
 
         instance.SetMaskView(buttonDown
-            ? Plugin.Config.HeldMaskView.LocalValue
+            ? (int)Plugin.Config.HeldMaskView.LocalValue
             : null);
     }
 }

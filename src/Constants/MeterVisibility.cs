@@ -1,8 +1,8 @@
 ﻿namespace DramaMask.Constants;
 
-public static class MeterVisibility
+public enum MeterVisibility
 {
-    public const string Never = "Never";
-    public const string OnHold = "On Hold";
-    public const string Always = "Always";
+    Never,
+    OnHold,
+    Always
 }

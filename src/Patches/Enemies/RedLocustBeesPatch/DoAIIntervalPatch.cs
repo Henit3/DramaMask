@@ -1,4 +1,4 @@
-﻿using DramaMask.Constants;
+﻿using DramaMask.Config;
 using DramaMask.Extensions;
 using HarmonyLib;
 using System.Collections.Generic;
@@ -11,7 +11,7 @@ public class DoAIIntervalPatch
 {
     private static bool IsPlayerHidden()
     {
-        return EnemyTargets.ShouldHideFromEnemy(nameof(RedLocustBees))
+        return EnemyTargetHandler.ShouldHideFromEnemy(nameof(RedLocustBees))
             && StartOfRound.Instance.localPlayerController.IsHidden();
     }
 

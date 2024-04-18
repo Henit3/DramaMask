@@ -1,4 +1,4 @@
-﻿using DramaMask.Constants;
+﻿using DramaMask.Config;
 using DramaMask.Extensions;
 using GameNetcodeStuff;
 using HarmonyLib;
@@ -12,7 +12,7 @@ public class CheckSightForThreatPatch
 {
     private static bool IsThreatHiddenPlayer(IVisibleThreat threat)
     {
-        return EnemyTargets.ShouldHideFromEnemy(nameof(RadMechAI))
+        return EnemyTargetHandler.ShouldHideFromEnemy(nameof(RadMechAI))
             && threat is PlayerControllerB player
             && player.IsHidden();
     }

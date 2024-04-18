@@ -18,9 +18,7 @@ public class ConfigValues : SyncedConfig<ConfigValues>
     // Entries not synced where they are only used server-side, or are local config settings
 
     [DataMember] public SyncedEntry<bool> AllMasksHide;
-    public SyncedEntry<string> EnemiesHiddenFrom;
-    private string _enemiesHiddenFromDesc;
-    private string[] _enemiesHiddenFromOptions;
+    public SyncedEntry<EnemyTargets> EnemiesHiddenFrom;
     public SyncedEntry<string> EnemyHidingOverrideConfig;
     public SyncedEntry<bool> IncreaseCustomEnemyCompatibility;
     [DataMember] public SyncedEntry<bool> AttachedCanPossess;
@@ -46,9 +44,7 @@ public class ConfigValues : SyncedConfig<ConfigValues>
     /// <summary>
     /// Use LocalValue (syncing optional)
     /// </summary>
-    [DataMember] public SyncedEntry<string> StealthMeterVisibility;
-    private string _stealthMeterVisibilityDesc;
-    private string[] _stealthMeterVisibilityOptions;
+    [DataMember] public SyncedEntry<MeterVisibility> StealthMeterVisibility;
     private ConfigEntry<float> _barXPosition;
     public float BarXPosition;
     private ConfigEntry<float> _barYPosition;
@@ -60,15 +56,11 @@ public class ConfigValues : SyncedConfig<ConfigValues>
     /// <summary>
     /// Use LocalValue (syncing optional)
     /// </summary>
-    [DataMember] public SyncedEntry<string> HeldMaskView;
-    private string _heldMaskViewDesc;
-    private string[] _heldMaskViewOptions;
+    [DataMember] public SyncedEntry<HeldMaskView> HeldMaskView;
     /// <summary>
     /// Use LocalValue (syncing optional)
     /// </summary>
-    [DataMember] public SyncedEntry<string> AttachedMaskView;
-    private string _attachedMaskViewDesc;
-    private string[] _attachedMaskViewOptions;
+    [DataMember] public SyncedEntry<AttachedMaskView> AttachedMaskViewConfig;
     private ConfigEntry<bool> _changeClientViewInstantly;
     public bool ChangeClientViewInstantly;
 
@@ -105,8 +97,7 @@ public class ConfigValues : SyncedConfig<ConfigValues>
             new(section, "Enemies Hidden From"),
             EnemyTargets.Natural,
             new ConfigDescription(
-                _enemiesHiddenFromDesc = "The selection of enemies that attaching a mask hides you from (Natural attempts to stay true to the monster's usual behaviour).",
-                new AcceptableValueList<string>(_enemiesHiddenFromOptions = [EnemyTargets.Masked, EnemyTargets.Natural, EnemyTargets.All])
+                "The selection of enemies that attaching a mask hides you from (Natural attempts to stay true to the monster's usual behaviour)."
             ));
 
         EnemyHidingOverrideConfig = cfg.BindSyncedEntry(
@@ -261,8 +252,7 @@ public class ConfigValues : SyncedConfig<ConfigValues>
             new(section, "Stealth Meter Visibility"),
             MeterVisibility.OnHold,
             new ConfigDescription(
-                _stealthMeterVisibilityDesc = "When to show the stealth meter, if at all. [Optionally synced]",
-                new AcceptableValueList<string>(_stealthMeterVisibilityOptions = [MeterVisibility.Never, MeterVisibility.OnHold, MeterVisibility.Always])
+                "When to show the stealth meter, if at all. [Optionally synced]"
             ));
 
         BarXPosition = (_barXPosition = cfg.Bind(
@@ -303,18 +293,16 @@ public class ConfigValues : SyncedConfig<ConfigValues>
 
         HeldMaskView = cfg.BindSyncedEntry(
             new(section, "Held Mask View"),
-            MaskView.Opaque,
+            Constants.HeldMaskView.Opaque,
             new ConfigDescription(
-                _heldMaskViewDesc = "How the mask appears when holding up a mask to your face. [Optionally synced]",
-                new AcceptableValueList<string>(_heldMaskViewOptions = [MaskView.Opaque, MaskView.Translucent, MaskView.Outline])
+                 "How the mask appears when holding up a mask to your face. [Optionally synced]"
             ));
 
-        AttachedMaskView = cfg.BindSyncedEntry(
+        AttachedMaskViewConfig = cfg.BindSyncedEntry(
             new(section, "Attached Mask View"),
-            MaskView.Translucent,
+            Constants.AttachedMaskView.Translucent,
             new ConfigDescription(
-                _attachedMaskViewDesc = "How the mask appears when attaching a mask to your face. [Optionally synced]",
-                new AcceptableValueList<string>(_attachedMaskViewOptions = [MaskView.MatchHeld, MaskView.Opaque, MaskView.Translucent, MaskView.Outline])
+                "How the mask appears when attaching a mask to your face. [Optionally synced]"
             ));
 
         ChangeClientViewInstantly = (_changeClientViewInstantly = cfg.Bind(
@@ -339,8 +327,8 @@ public class ConfigValues : SyncedConfig<ConfigValues>
     private void OnSyncEnemyHidingOverrideConfig(object s, EventArgs e) => ProcessSyncEnemyHidingOverrideConfig();
     private void ProcessSyncEnemyHidingOverrideConfig()
     {
-        EnemyTargets.OverrideInclusions.Clear();
-        EnemyTargets.OverrideExclusions.Clear();
+        EnemyTargetHandler.OverrideInclusions.Clear();
+        EnemyTargetHandler.OverrideExclusions.Clear();
 
         if (EnemyHidingOverrideConfig.Value is null) return;
 
@@ -353,12 +341,12 @@ public class ConfigValues : SyncedConfig<ConfigValues>
             var name = values[0].Trim();
             if (toHideFrom)
             {
-                EnemyTargets.OverrideInclusions.Add(name);
+                EnemyTargetHandler.OverrideInclusions.Add(name);
                 Plugin.Logger.LogInfo($"Registered enemy [{name}] to be hidden from");
             }
             else
             {
-                EnemyTargets.OverrideExclusions.Add(name);
+                EnemyTargetHandler.OverrideExclusions.Add(name);
                 Plugin.Logger.LogInfo($"Registered enemy [{name}] to not be hidden from");
             }
         }
@@ -378,11 +366,11 @@ public class ConfigValues : SyncedConfig<ConfigValues>
         if (SyncMaskView.Value)
         {
             HeldMaskView.LocalValue = HeldMaskView.Value;
-            AttachedMaskView.LocalValue = AttachedMaskView.Value;
+            AttachedMaskViewConfig.LocalValue = AttachedMaskViewConfig.Value;
         }
-        if (AttachedMaskView.LocalValue is MaskView.MatchHeld)
+        if (AttachedMaskViewConfig.LocalValue is AttachedMaskView.MatchHeld)
         {
-            AttachedMaskView.LocalValue = HeldMaskView.LocalValue;
+            AttachedMaskViewConfig.LocalValue = (AttachedMaskView)(int)HeldMaskView.LocalValue;
         }
     }
 
@@ -391,13 +379,7 @@ public class ConfigValues : SyncedConfig<ConfigValues>
         // Would've liked a string option config item for the enum-like constants
 
         LethalConfigManager.AddConfigItem(new BoolCheckBoxConfigItem(AllMasksHide.Entry, requiresRestart: false));
-        LethalConfigManager.AddConfigItem(new TextInputFieldConfigItem(EnemiesHiddenFrom.Entry, new TextInputFieldOptions()
-        {
-            NumberOfLines = 1,
-            TrimText = true,
-            RequiresRestart = false,
-            Description = GetDescriptionWithOptions(_enemiesHiddenFromDesc, _enemiesHiddenFromOptions)
-        }));
+        LethalConfigManager.AddConfigItem(new EnumDropDownConfigItem<EnemyTargets>(EnemiesHiddenFrom.Entry, requiresRestart: false));
         LethalConfigManager.AddConfigItem(new TextInputFieldConfigItem(EnemyHidingOverrideConfig.Entry, new TextInputFieldOptions()
         {
             NumberOfLines = 1,
@@ -452,13 +434,7 @@ public class ConfigValues : SyncedConfig<ConfigValues>
         LethalConfigManager.AddConfigItem(new BoolCheckBoxConfigItem(RemoveOnDepletion.Entry, requiresRestart: false));
 
         LethalConfigManager.AddConfigItem(new BoolCheckBoxConfigItem(SyncStealthMeterVisibility.Entry, requiresRestart: false));
-        LethalConfigManager.AddConfigItem(new TextInputFieldConfigItem(StealthMeterVisibility.Entry, new TextInputFieldOptions()
-        {
-            NumberOfLines = 1,
-            TrimText = true,
-            RequiresRestart = false,
-            Description = GetDescriptionWithOptions(_stealthMeterVisibilityDesc, _stealthMeterVisibilityOptions)
-        }));
+        LethalConfigManager.AddConfigItem(new EnumDropDownConfigItem<MeterVisibility>(StealthMeterVisibility.Entry, requiresRestart: false));
         LethalConfigManager.AddConfigItem(new FloatStepSliderConfigItem(_barXPosition, new FloatStepSliderOptions()
         {
             Min = -380f,
@@ -481,20 +457,8 @@ public class ConfigValues : SyncedConfig<ConfigValues>
         }));
 
         LethalConfigManager.AddConfigItem(new BoolCheckBoxConfigItem(SyncMaskView.Entry, requiresRestart: false));
-        LethalConfigManager.AddConfigItem(new TextInputFieldConfigItem(AttachedMaskView.Entry, new TextInputFieldOptions()
-        {
-            NumberOfLines = 1,
-            TrimText = true,
-            RequiresRestart = false,
-            Description = GetDescriptionWithOptions(_heldMaskViewDesc, _heldMaskViewOptions)
-        }));
-        LethalConfigManager.AddConfigItem(new TextInputFieldConfigItem(HeldMaskView.Entry, new TextInputFieldOptions()
-        {
-            NumberOfLines = 1,
-            TrimText = true,
-            RequiresRestart = false,
-            Description = GetDescriptionWithOptions(_attachedMaskViewDesc, _attachedMaskViewOptions)
-        }));
+        LethalConfigManager.AddConfigItem(new EnumDropDownConfigItem<AttachedMaskView>(AttachedMaskViewConfig.Entry, requiresRestart: false));
+        LethalConfigManager.AddConfigItem(new EnumDropDownConfigItem<HeldMaskView>(HeldMaskView.Entry, requiresRestart: false));
         LethalConfigManager.AddConfigItem(new BoolCheckBoxConfigItem(_changeClientViewInstantly, requiresRestart: false));
     }
 

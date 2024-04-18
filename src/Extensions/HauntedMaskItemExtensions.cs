@@ -43,7 +43,7 @@ public static class HauntedMaskItemExtensions
         renderers.First().enabled = isVisible;
     }
 
-    public static void SetMaskView(this HauntedMaskItem mask, string maskView)
+    public static void SetMaskView(this HauntedMaskItem mask, int? maskView)
     {
         // Register original mesh for each mash type to reset with later
         if (!_originalMeshMap.ContainsKey(mask.maskTypeId))
@@ -62,11 +62,11 @@ public static class HauntedMaskItemExtensions
         var maskMeshFilter = mask.gameObject.GetComponentsInChildren<MeshFilter>().First(IsMainMaskMesh);
         maskMeshFilter.mesh = maskView switch
         {
-            MaskView.Outline => OutlineMesh,
+            (int)HeldMaskView.Outline => OutlineMesh,
             _ => _originalMeshMap[mask.maskTypeId]
         };
         var maskMeshRenderer = mask.gameObject.GetComponentsInChildren<MeshRenderer>().First(IsMainMaskMesh);
-        maskMeshRenderer.material = maskView is MaskView.Translucent
+        maskMeshRenderer.material = maskView is (int)HeldMaskView.Translucent
             ? TransparentMat
             : _originalMatMap[mask.maskTypeId];
     }
@@ -112,7 +112,7 @@ public static class HauntedMaskItemExtensions
                 // Set head mask's mask view only for the local player
                 var headMask = mask.currentHeadMask.gameObject.GetComponent<HauntedMaskItem>();
                 headMask.SetMaskView(player.IsLocal()
-                    ? Plugin.Config.AttachedMaskView.LocalValue
+                    ? (int)Plugin.Config.AttachedMaskViewConfig.LocalValue
                     : null);
                 headMask.enabled = false;
             }
@@ -138,7 +138,7 @@ public static class HauntedMaskItemExtensions
         if (player != null && player.IsLocal())
         {
             mask.SetMaskView(isAttaching
-                ? Plugin.Config.HeldMaskView.LocalValue
+                ? (int)Plugin.Config.HeldMaskView.LocalValue
                 : null);
         }
         mask.SetVisibility(!isAttaching);
