@@ -21,6 +21,7 @@ public class ConfigValues : SyncedConfig<ConfigValues>
     public SyncedEntry<string> EnemiesHiddenFrom;
     private string _enemiesHiddenFromDesc;
     private string[] _enemiesHiddenFromOptions;
+    public SyncedEntry<string> EnemyHidingOverrideConfig;
     public SyncedEntry<bool> IncreaseCustomEnemyCompatibility;
     [DataMember] public SyncedEntry<bool> AttachedCanPossess;
 
@@ -108,6 +109,16 @@ public class ConfigValues : SyncedConfig<ConfigValues>
                 new AcceptableValueList<string>(_enemiesHiddenFromOptions = [EnemyTargets.Masked, EnemyTargets.Natural, EnemyTargets.All])
             ));
 
+        EnemyHidingOverrideConfig = cfg.BindSyncedEntry(
+            new(section, "Enemy Hiding Overrides"),
+            new Dictionary<string, bool>()
+            {
+                { nameof(HoarderBugAI), false },
+                { nameof(ForestGiantAI), true }
+            }.AsString(),
+            new ConfigDescription("Overrides for which enemies can be hidden from (exclusions prioritised), comma separated."
+        ));
+
         IncreaseCustomEnemyCompatibility = cfg.BindSyncedEntry(
             new(section, "Increased Custom Enemy Compatibility"),
             false,
@@ -166,7 +177,7 @@ public class ConfigValues : SyncedConfig<ConfigValues>
             if (values.Length != 2) continue;
             if (!int.TryParse(values[1], out var spawnrate)) continue;
 
-            var name = values[0];
+            var name = values[0].Trim();
             if (Enum.TryParse<LevelTypes>(name, true, out var levelType))
             {
                 DramaSpawnMapVanilla[levelType] = spawnrate;
@@ -315,6 +326,32 @@ public class ConfigValues : SyncedConfig<ConfigValues>
     private void OnInitialSyncCompleted(object s, EventArgs e) => PostSyncProcessing();
     private void PostSyncProcessing()
     {
+        // Hiding Targets
+        if (EnemyHidingOverrideConfig.Value is not null)
+        {
+            EnemyTargets.OverrideInclusions.Clear();
+            EnemyTargets.OverrideExclusions.Clear();
+
+            foreach (var pair in EnemyHidingOverrideConfig.Value.Split(','))
+            {
+                var values = pair.Split(':');
+                if (values.Length != 2) continue;
+                if (!bool.TryParse(values[1], out var toHideFrom)) continue;
+
+                var name = values[0].Trim();
+                if (toHideFrom)
+                {
+                    EnemyTargets.OverrideInclusions.Add(name);
+                    Plugin.Logger.LogInfo($"Registered enemy [{name}] to be hidden from");
+                }
+                else
+                {
+                    EnemyTargets.OverrideExclusions.Add(name);
+                    Plugin.Logger.LogInfo($"Registered enemy [{name}] to not be hidden from");
+                }
+            }
+        }
+
         // Stealth Meter HUD
         if (SyncStealthMeterVisibility.Value)
         {
@@ -342,8 +379,14 @@ public class ConfigValues : SyncedConfig<ConfigValues>
         {
             NumberOfLines = 1,
             TrimText = true,
-            RequiresRestart = true,
+            RequiresRestart = false,
             Description = GetDescriptionWithOptions(_enemiesHiddenFromDesc, _enemiesHiddenFromOptions)
+        }));
+        LethalConfigManager.AddConfigItem(new TextInputFieldConfigItem(EnemyHidingOverrideConfig.Entry, new TextInputFieldOptions()
+        {
+            NumberOfLines = 1,
+            TrimText = true,
+            RequiresRestart = false
         }));
         LethalConfigManager.AddConfigItem(new BoolCheckBoxConfigItem(IncreaseCustomEnemyCompatibility.Entry, requiresRestart: true));
         LethalConfigManager.AddConfigItem(new BoolCheckBoxConfigItem(AttachedCanPossess.Entry, requiresRestart: false));
