@@ -28,10 +28,13 @@ Works on v45-v50 with no other known incompatibilities; supports controller and 
 * Change mask action keybinds if Input Utils has been installed **[Client]**
 * Disable mask possession when attached **[Host]**
 * Change mask view on usage (can be made different if attached) **[OptionalSync]**
+* Stop mask actions applying immediately on non-host clients, as it can cause temporary visual desync on rapid changes **[Client]**
 
 ## FAQ
 ### Where can I find the Drama mask?
-The Drama mask can be found as scrap with its spawn locations and rates matching that of the Comedy and Tragedy masks (detailed in the table below). This can be adjusted to match your preferences with the base spawn rate multiplier (applied on the default rates) and custom spawn config settings (for granular customisation per moon).
+The Drama mask can be found as scrap with its spawn locations and rates matching that of the Comedy and Tragedy masks (detailed in the table below).
+This can be adjusted to match your preferences with the base spawn rate multiplier (applied on the default rates) and custom spawn config settings (for granular customisation per moon).
+Special values for this include [All, Vanilla, Modded] in line with what is provided by LethalLib, and all values are evaluated left to right (for overriding).
 
 |Moon		|Spawn Chance	|
 |-----------|:-------------:|

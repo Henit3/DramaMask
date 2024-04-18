@@ -173,6 +173,7 @@ public class ConfigValues : SyncedConfig<ConfigValues>
             if (Enum.TryParse<LevelTypes>(name, true, out var levelType))
             {
                 DramaSpawnMapVanilla[levelType] = spawnrate;
+                if (levelType is LevelTypes.All) DramaSpawnMapVanilla[LevelTypes.Modded] = spawnrate;
                 Plugin.Logger.LogDebug($"Registered spawn rate for level type {levelType} to {spawnrate}");
             }
             else
