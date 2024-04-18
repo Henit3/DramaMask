@@ -118,6 +118,7 @@ public class ConfigValues : SyncedConfig<ConfigValues>
             }.AsString(),
             new ConfigDescription("Overrides for which enemies can be hidden from (exclusions prioritised), comma separated."
         ));
+        EnemyHidingOverrideConfig.Changed += OnSyncEnemyHidingOverrideConfig;
 
         IncreaseCustomEnemyCompatibility = cfg.BindSyncedEntry(
             new(section, "Increased Custom Enemy Compatibility"),
@@ -254,6 +255,7 @@ public class ConfigValues : SyncedConfig<ConfigValues>
                 "Whether to sync the 'Stealth Meter Visibility' config values.",
                 new AcceptableValueList<bool>(true, false)
             ));
+        SyncStealthMeterVisibility.Changed += OnSyncStealthMeterVisibility;
 
         StealthMeterVisibility = cfg.BindSyncedEntry(
             new(section, "Stealth Meter Visibility"),
@@ -297,6 +299,7 @@ public class ConfigValues : SyncedConfig<ConfigValues>
                 "Whether to sync the Held & Attached 'Mask View' config values.",
                 new AcceptableValueList<bool>(true, false)
             ));
+        SyncMaskView.Changed += OnSyncMaskView;
 
         HeldMaskView = cfg.BindSyncedEntry(
             new(section, "Held Mask View"),
@@ -326,39 +329,52 @@ public class ConfigValues : SyncedConfig<ConfigValues>
     private void OnInitialSyncCompleted(object s, EventArgs e) => PostSyncProcessing();
     private void PostSyncProcessing()
     {
-        // Hiding Targets
-        if (EnemyHidingOverrideConfig.Value is not null)
+        ProcessSyncEnemyHidingOverrideConfig();
+
+        ProcessSyncStealthMeterVisibility();
+
+        ProcessSyncMaskView();
+    }
+
+    private void OnSyncEnemyHidingOverrideConfig(object s, EventArgs e) => ProcessSyncEnemyHidingOverrideConfig();
+    private void ProcessSyncEnemyHidingOverrideConfig()
+    {
+        EnemyTargets.OverrideInclusions.Clear();
+        EnemyTargets.OverrideExclusions.Clear();
+
+        if (EnemyHidingOverrideConfig.Value is null) return;
+
+        foreach (var pair in EnemyHidingOverrideConfig.Value.Split(','))
         {
-            EnemyTargets.OverrideInclusions.Clear();
-            EnemyTargets.OverrideExclusions.Clear();
+            var values = pair.Split(':');
+            if (values.Length != 2) continue;
+            if (!bool.TryParse(values[1], out var toHideFrom)) continue;
 
-            foreach (var pair in EnemyHidingOverrideConfig.Value.Split(','))
+            var name = values[0].Trim();
+            if (toHideFrom)
             {
-                var values = pair.Split(':');
-                if (values.Length != 2) continue;
-                if (!bool.TryParse(values[1], out var toHideFrom)) continue;
-
-                var name = values[0].Trim();
-                if (toHideFrom)
-                {
-                    EnemyTargets.OverrideInclusions.Add(name);
-                    Plugin.Logger.LogInfo($"Registered enemy [{name}] to be hidden from");
-                }
-                else
-                {
-                    EnemyTargets.OverrideExclusions.Add(name);
-                    Plugin.Logger.LogInfo($"Registered enemy [{name}] to not be hidden from");
-                }
+                EnemyTargets.OverrideInclusions.Add(name);
+                Plugin.Logger.LogInfo($"Registered enemy [{name}] to be hidden from");
+            }
+            else
+            {
+                EnemyTargets.OverrideExclusions.Add(name);
+                Plugin.Logger.LogInfo($"Registered enemy [{name}] to not be hidden from");
             }
         }
+    }
 
-        // Stealth Meter HUD
-        if (SyncStealthMeterVisibility.Value)
-        {
-            StealthMeterVisibility.LocalValue = StealthMeterVisibility.Value;
-        }
+    private void OnSyncStealthMeterVisibility(object s, EventArgs e) => ProcessSyncStealthMeterVisibility();
+    private void ProcessSyncStealthMeterVisibility()
+    {
+        if (!SyncStealthMeterVisibility.Value) return;
 
-        // Mask View
+        StealthMeterVisibility.LocalValue = StealthMeterVisibility.Value;
+    }
+
+    private void OnSyncMaskView(object s, EventArgs e) => ProcessSyncMaskView();
+    private void ProcessSyncMaskView()
+    {
         if (SyncMaskView.Value)
         {
             HeldMaskView.LocalValue = HeldMaskView.Value;
