@@ -1,3 +1,6 @@
+# 2.0.1
+- Switched main supported version to v50 with addition of version specific enemy patches
+
 # 2.0.0
 - Added better support for hiding from all enemies
 - Added configs to specify which enemy groups and overrides to use
