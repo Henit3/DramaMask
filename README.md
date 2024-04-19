@@ -91,7 +91,7 @@ References to `PlayerIsTargetable` are also patched for calls made outside `Meet
 Any storage or cross-referencing done with an index to `allPlayerScripts` (like in `ButlerEnemyAI`) should instead make use of `playerClientId` on the player,
 since the position in the array may be affected by this mod's patches.
 
-Enemies can also be added to `DramaMask.Constants.EnemyTargets.NaturalExceptions` to stop them being hidden from if the "Enemies Hidden From" setting is "Natural".
+Enemies can also be added to `DramaMask.Config.EnemyTargetHandler.NaturalExceptions` to stop them being hidden from if the "Enemies Hidden From" setting is "Natural".
 
 Aside from this, explicit patches for custom enemies will _not_ be provided by this mod.
 

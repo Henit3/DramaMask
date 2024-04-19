@@ -4,15 +4,17 @@ using GameNetcodeStuff;
 using HarmonyLib;
 using System.Collections.Generic;
 using System.Reflection.Emit;
+using UnityEngine;
 
 namespace DramaMask.Patches.Enemies.RadMechAIPatch;
 
 [HarmonyPatch(typeof(RadMechAI), nameof(RadMechAI.CheckSightForThreat))]
 public class CheckSightForThreatPatch
 {
-    private static bool IsThreatHiddenPlayer(IVisibleThreat threat)
+    private static bool IsThreatHiddenPlayer(Collider collider)
     {
         return EnemyTargetHandler.ShouldHideFromEnemy(nameof(RadMechAI))
+            && collider.transform.TryGetComponent<IVisibleThreat>(out var threat)
             && threat is PlayerControllerB player
             && player.IsHidden();
     }
@@ -31,8 +33,7 @@ public class CheckSightForThreatPatch
         matcher.MatchForward(false, [new(OpCodes.Brtrue)]);
         var continueTarget = matcher.Instruction.operand;
 
-        // Return to the start of the loop to insert our continue condition
-        matcher.MatchBack(false, [new(OpCodes.Br)]);
+        // Insert our continue condition after this one (cannot do before since jump to label would skip it)
         matcher.Advance(1);
 
         // if (RoundManager.Instance.tempColliderResults[index] is PlayerControllerB player && player.IsHidden()) continue;
