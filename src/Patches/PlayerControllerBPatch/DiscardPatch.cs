@@ -4,7 +4,7 @@ using HarmonyLib;
 namespace DramaMask.Patches.PlayerControllerBPatch;
 
 [HarmonyPatch(typeof(PlayerControllerB), "Discard_performed")]
-public class DiscardItemPatch : BaseChangeItemPatch
+public class DiscardPatch : BaseChangeItemPatch
 {
     [HarmonyPrefix]
     public static bool Prefix(PlayerControllerB __instance)
