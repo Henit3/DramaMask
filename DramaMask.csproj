@@ -17,7 +17,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="src\Patches\Enemies\ButlerEnemyAIPatch\**" />
+    <Compile Remove="src\Patches\Enemies\RadMechAIPatch\**" />
     <Compile Remove="_Releases\**" />
+    <None Remove="src\Patches\Enemies\ButlerEnemyAIPatch\**" />
+    <None Remove="src\Patches\Enemies\RadMechAIPatch\**" />
     <None Remove="_Releases\**" />
     <Compile Remove="Assets\**" />
     <None Remove="Assets\**" />
@@ -27,6 +31,8 @@
   <ItemGroup>
     <None Remove="*.bat" />
     <Compile Remove="*.yml" />
+    <EmbeddedResource Remove="src\Patches\Enemies\ButlerEnemyAIPatch\**" />
+    <EmbeddedResource Remove="src\Patches\Enemies\RadMechAIPatch\**" />
     <None Remove="*.yml" />
     <Compile Remove="src\Network\NetworkTester.cs" />
   </ItemGroup>
