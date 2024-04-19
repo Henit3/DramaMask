@@ -21,14 +21,14 @@
     <None Remove="_Releases\**" />
     <Compile Remove="Assets\**" />
     <None Remove="Assets\**" />
-    <Compile Remove="Patches\Old\**" />
+    <Compile Remove="src\Patches\Old\**" />
   </ItemGroup>
 
   <ItemGroup>
     <None Remove="*.bat" />
     <Compile Remove="*.yml" />
     <None Remove="*.yml" />
-    <Compile Remove="Network\NetworkTester.cs" />
+    <Compile Remove="src\Network\NetworkTester.cs" />
   </ItemGroup>
 
   <ItemGroup>

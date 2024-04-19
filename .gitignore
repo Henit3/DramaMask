@@ -10,4 +10,4 @@ obj/*
 # Local files
 _Releases/*
 Assets/*
-Patches/Old/*
+src/Patches/Old/*

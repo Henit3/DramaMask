@@ -1,3 +1,7 @@
+[![Release Version](https://img.shields.io/github/v/release/Henit3/DramaMask?style=for-the-badge&logo=github)](https://github.com/Henit3d/DramaMask/releases)
+[![Thunderstore Version](https://img.shields.io/thunderstore/v/necrowing/DramaMask?style=for-the-badge&logo=thunderstore&logoColor=white)](https://thunderstore.io/c/lethal-company/p/necrowing/DramaMask/)
+[![Thunderstore Downloads](https://img.shields.io/thunderstore/dt/necrowing/DramaMask?style=for-the-badge&logo=thunderstore&logoColor=white)](https://thunderstore.io/c/lethal-company/p/necrowing/DramaMask/)
+
 # Stealthy Masks
 
 Wearing masks makes you blend in with the other Masked!
@@ -6,28 +10,31 @@ Also adds a new type of mask, Drama, which is not haunted unlike its Tragedy and
 They can also be attached to players' faces, allowing you to look identical to Masked enemies and spook your friends!
 To balance this mechanic out, there is a stealth meter that is used while attempting to hide.
 
-Due to the current transitioning of mod libraries from v49 to v50, LethalLevelLoader may be broken until v50 comes out.
-This is only the case if you have both LLL and LLLFixed enabled; disabling LLL should fix this issue.
+If playing on v50+ and LethalLevelLoader is being used, ensure it is on 1.2.0 or higher to avoid conflicts with most mods; including this one. 
 Works on v45-v50 with no other known incompatibilities; supports controller and LethalCompanyVR!
 
 > Formerly known as DramaMask
 
 ## Config Options
-* Which masks can be used by the player to hide [Host]
-* The player can hide from all enemies (Experimental) [Host]
-* Disable the stealth meter balancing mechanic [Host]
-* Adjust stealth meter behaviour (can be made different if attached) [Host]
-* Adjust stealth meter appearance (position and colour) [Client]
-* Stealth meter visibility [OptionalSync]
-* Remove mask on meter depletion [Host]
-* Adjust drama mask spawn rates with a multiplier, and on specific moons [Host]
-* Change mask action keybinds if Input Utils has been installed [Client]
-* Disable mask possession when attached [Host]
-* Change mask view on usage (can be made different if attached) [OptionalSync]
+* Which masks can be used by the player to hide **[Host]**
+* The selection of enemies that can be hidden from & specific enemy overrides **[Host]**
+* Potentially increase custom enemy compatibility at the cost of performance **[Host]**
+* Disable the stealth meter balancing mechanic **[Host]**
+* Adjust stealth meter behaviour (can be made different if attached) **[Host]**
+* Adjust stealth meter appearance (position and colour) **[Client]**
+* Stealth meter visibility **[OptionalSync]**
+* Remove mask on meter depletion **[Host]**
+* Adjust drama mask spawn rates with a multiplier & specific moon overrides **[Host]**
+* Change mask action keybinds if Input Utils has been installed **[Client]**
+* Disable mask possession when attached **[Host]**
+* Change mask view on usage (can be made different if attached) **[OptionalSync]**
+* Stop mask actions applying immediately on non-host clients, as it can cause temporary visual desync on rapid changes **[Client]**
 
 ## FAQ
 ### Where can I find the Drama mask?
-The Drama mask can be found as scrap with its spawn locations and rates matching that of the Comedy and Tragedy masks (detailed in the table below). This can be adjusted to match your preferences with the base spawn rate multiplier (applied on the default rates) and custom spawn config settings (for granular customisation per moon).
+The Drama mask can be found as scrap with its spawn locations and rates matching that of the Comedy and Tragedy masks (detailed in the table below).
+This can be adjusted to match your preferences with the base spawn rate multiplier (applied on the default rates) and custom spawn config settings (for granular customisation per moon).
+Special values for this include [All, Vanilla, Modded] in line with what is provided by LethalLib, and all values are evaluated left to right (for overriding).
 
 |Moon		|Spawn Chance	|
 |-----------|:-------------:|
@@ -40,41 +47,58 @@ The Drama mask can be found as scrap with its spawn locations and rates matching
 To also make it available in the store, check out @megapiggy's [BuyableDramaMask](https://thunderstore.io/c/lethal-company/p/MegaPiggy/BuyableDramaMask/) mod.
 
 ### What enemies are supported with hide from all enemies?
-Owing to the experimental status of this config setting, there are not many enemies on this list. However, the next update plans to add much more support for this
+While the Masked are the main targets to hide from, proper support for other enemies has been added as of 1.4.0 (detailed in the table below).
+Some of these enemies can be considered to have their own agenda, so they have been classified as "Not Natural".
+Players will not be hidden from these enemies if the "Enemies Hidden From" config is set to "Natural".
+For example, Hoarding Bugs would not discriminate against a """Masked""" if they decide to start stealing from their nest.
 
-|Enemy			|Status				|
-|---------------|:-----------------:|
-|Masked 		|Supported			|
-|Thumper      	|Planned			|
-|Spore Lizard	|Planned			|
-|Coil-Head		|Planned			|
-|Earth Leviathan|Planned Optional	|
-|Forest Giant	|Planned			|
-|Baboon Hawk	|Planned Optional	|
-|Hygrodere		|Planned			|
-|Bunker Spider	|Planned			|
-|Jester			|Planned			|
-|Bracken		|Planned			|
-|Circuit Bee	|Planned Optional	|
-|Ghost Girl		|Planned Optional	|
-|Snare Flea		|Planned			|
-|Company		|No					|
-|Nutcracker		|Planned			|
-|Hoarding Bug	|Planned Optional	|
-|Eyeless Dog	|No					|
-|Butler			|Planned			|
-|Masked Bee		|Planned Optional	|
-|Old Bird		|Planned Optional	|
-|Tulip Snake	|Planned			|
-|Manticoil		|No					|
-|Roaming Locust	|No					|
-|Turret			|Planned			|
+Extra overrides for these can be specified using the "Enemy Hiding Overrides" config to enable or disable for specific enemies using their names in the code (exclusions prioritised).
+
+|Enemy			|Status					|
+|---------------|:---------------------:|
+|Masked 		|Supported - Always		|
+|Thumper      	|Supported				|
+|Spore Lizard	|Supported				|
+|Coil-Head		|Supported				|
+|Earth Leviathan|Supported - Not Natural|
+|Forest Giant	|Supported				|
+|Baboon Hawk	|Supported - Not Natural|
+|Hygrodere		|Supported				|
+|Bunker Spider	|Supported - Not Natural|
+|Jester			|Supported				|
+|Bracken		|Supported				|
+|Circuit Bee	|Supported - Not Natural|
+|Ghost Girl		|Supported - Not Natural|
+|Snare Flea		|Supported				|
+|Nutcracker		|Supported				|
+|Hoarding Bug	|Supported - Not Natural|
+|Butler			|Supported				|
+|Masked Bee		|Supported - Not Natural|
+|Old Bird		|Supported - Not Natural|
+|Tulip Snake	|Supported				|
+|Eyeless Dog	|No						|
+|Manticoil		|No						|
+|Roaming Locust	|No						|
+|Company		|No						|
+|Turret			|Supported				|
+|Modded			|Compatibility Dependent|
+
+### Which modded enemies are supported? / How can I make my custom enemy support hiding?
+The current method of hiding depends on references to `StartOfRound.allPlayerScripts` being patched to only include entries of visible (and pre-existing invalid) players,
+when the base methods for detecting players in `EnemyAI` are called.
+Vanilla enemies that make use of their own methods for player detection are additionally patched, so they may also be invoked by custom enemies.
+References to `PlayerIsTargetable` are also patched for calls made outside `MeetsStandardPlayerCollisionConditions`, if the "Increased Custom Enemy Compatibility" setting is enabled.
+Any storage or cross-referencing done with an index to `allPlayerScripts` (like in `ButlerEnemyAI`) should instead make use of `playerClientId` on the player,
+since the position in the array may be affected by this mod's patches.
+
+Enemies can also be added to `DramaMask.Config.EnemyTargetHandler.NaturalExceptions` to stop them being hidden from if the "Enemies Hidden From" setting is "Natural".
+
+Aside from this, explicit patches for custom enemies will _not_ be provided by this mod.
 
 ### Why can I not use items with a mask attached?
-This is intentional behaviour and is currently integral to how the mod's mask attaching features work. Changing this could mean rewriting the entire codebase to accomodate this, so it is currently not planned. This is feasible though and may be considered for an update in the distant future.
+This is intentional behaviour and is currently integral to how the mod's mask attaching features work. Changing this could mean rewriting the entire codebase to accomodate this, so it is currently not Supported. This is feasible though and may be considered for an update in the distant future.
 
 ## Roadmap (development to be paused)
-* Add better support for all the experimentatal all enemy hiding behaviour
 * Sound and visuals support for VR in place of the stealth bar
 * Allow the player to have their hands out like the Masked (unlikely without more help)
 
@@ -95,7 +119,7 @@ Made on request from @tkcool and @pedro9006.
 * Stuck Mask on orbit: @Regnareb and @sashimi_express
 * Rotating masks & colour config: @sashimi_express
 * Phantom bodies on death client-side: @ValiusV (via GitHub) and @purefpszac
-* Cannot interact when holding mask: @purefpszac
+* Cannot interact (later QE) when holding mask: @purefpszac
 * Cannot QE interact when not holding mask (v50): @VirusTLNR (via GitHub)
 
 ### Contact
