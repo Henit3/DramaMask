@@ -1,3 +1,9 @@
+# 2.0.0
+- Added better support for hiding from all enemies
+- Added configs to specify which enemy groups and overrides to use
+- Improved config for specifying moon overrides with special values
+- Added dropdown selection for applicable config fields in LethalConfig
+
 # 1.3.5
 - Fix typo causing QE interactions to have duplicate keybinds if only one is rebinded
 
