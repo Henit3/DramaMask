@@ -11,7 +11,7 @@ They can also be attached to players' faces, allowing you to look identical to M
 To balance this mechanic out, there is a stealth meter that is used while attempting to hide.
 
 If playing on v50+ and LethalLevelLoader is being used, ensure it is on 1.2.0 or higher to avoid conflicts with most mods; including this one. 
-Works on v45-v50 with no other known incompatibilities; supports controller and LethalCompanyVR!
+Works on v45-v50 until 2.0.0 and v50+ with 2.0.1+ with no other known incompatibilities; supports controller and LethalCompanyVR!
 
 > Formerly known as DramaMask
 
