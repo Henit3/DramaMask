@@ -121,6 +121,7 @@ Made on request from @tkcool and @pedro9006.
 * Phantom bodies on death client-side: @ValiusV (via GitHub) and @purefpszac
 * Cannot interact (later QE) when holding mask: @purefpszac
 * Cannot QE interact when not holding mask (v50): @VirusTLNR (via GitHub)
+* HotbarPlus incompatibilities: @mari0no1
 
 ### Contact
 For requesting new features or highlighting issues/bugs found, please post them in the mod's

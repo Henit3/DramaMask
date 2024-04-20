@@ -1,3 +1,7 @@
+# 2.0.2
+- Add compatibility to HotbarPlus and similar mods
+- Added mask grab and drop sounds to Drama
+
 # 2.0.1
 - Switched main supported version to v50 with addition of version specific enemy patches
 
