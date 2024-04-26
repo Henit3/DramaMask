@@ -24,10 +24,23 @@ public static class EnemyTargetHandler
         if (OverrideExclusions.Contains(enemyName)) return false;
         if (OverrideInclusions.Contains(enemyName)) return true;
 
-        if (Plugin.Config.EnemiesHiddenFrom.Value is EnemyTargets.All) return true;
-        if (Plugin.Config.EnemiesHiddenFrom.Value is EnemyTargets.Masked) return enemyName is nameof(MaskedPlayerEnemy);
+        if (Plugin.Config.EnemiesHiddenFrom.Value is EnemyHideTargets.All) return true;
+        if (Plugin.Config.EnemiesHiddenFrom.Value is EnemyHideTargets.Masked) return enemyName is nameof(MaskedPlayerEnemy);
 
         return !NaturalExceptions.Contains(enemyName);
+    }
+
+    public static bool ShouldCollideWithEnemy(EnemyAI enemy)
+        => ShouldCollideWithEnemy(enemy.GetType().Name);
+    public static bool ShouldCollideWithEnemy(string enemyName)
+    {
+        return Plugin.Config.EnemiesNoCollideOn.Value switch
+        {
+            EnemyCollideTargets.None => true,
+            EnemyCollideTargets.Masked => enemyName is not nameof(MaskedPlayerEnemy),
+            EnemyCollideTargets.Hidden => !ShouldHideFromEnemy(enemyName),
+            _ => true
+        };
     }
 }
 

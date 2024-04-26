@@ -1,4 +1,5 @@
-﻿using DramaMask.Extensions;
+﻿using DramaMask.Config;
+using DramaMask.Extensions;
 using GameNetcodeStuff;
 using HarmonyLib;
 using System.Diagnostics;
@@ -12,6 +13,12 @@ public class PlayerIsTargetablePatch
     public static bool Prefix(EnemyAI __instance, ref bool __result,
         PlayerControllerB playerScript, bool cannotBeInShip = false, bool overrideInsideFactoryCheck = false)
     {
+        if (playerScript.IsHidden() && !EnemyTargetHandler.ShouldCollideWithEnemy(__instance))
+        {
+            __result = false;
+            return false;
+        }
+
         if (!Plugin.Config.IncreaseCustomEnemyCompatibility.Value) return true;
 
         // Don't want to invalidate player collision

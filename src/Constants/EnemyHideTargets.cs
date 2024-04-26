@@ -1,6 +1,6 @@
 ﻿namespace DramaMask.Constants;
 
-public enum EnemyTargets
+public enum EnemyHideTargets
 {
     Masked,
     Natural,

@@ -18,8 +18,9 @@ public class ConfigValues : SyncedConfig<ConfigValues>
     // Entries not synced where they are only used server-side, or are local config settings
 
     [DataMember] public SyncedEntry<bool> AllMasksHide;
-    public SyncedEntry<EnemyTargets> EnemiesHiddenFrom;
+    public SyncedEntry<EnemyHideTargets> EnemiesHiddenFrom;
     public SyncedEntry<string> EnemyHidingOverrideConfig;
+    public SyncedEntry<EnemyCollideTargets> EnemiesNoCollideOn;
     public SyncedEntry<bool> IncreaseCustomEnemyCompatibility;
     [DataMember] public SyncedEntry<bool> AttachedCanPossess;
 
@@ -95,7 +96,7 @@ public class ConfigValues : SyncedConfig<ConfigValues>
 
         EnemiesHiddenFrom = cfg.BindSyncedEntry(
             new(section, "Enemies Hidden From"),
-            EnemyTargets.Natural,
+            EnemyHideTargets.Natural,
             new ConfigDescription(
                 "The selection of enemies that attaching a mask hides you from (Natural attempts to stay true to the monster's usual behaviour)."
             ));
@@ -110,6 +111,13 @@ public class ConfigValues : SyncedConfig<ConfigValues>
             new ConfigDescription("Overrides for which enemies can be hidden from (exclusions prioritised), comma separated."
         ));
         EnemyHidingOverrideConfig.Changed += OnSyncEnemyHidingOverrideConfig;
+
+        EnemiesNoCollideOn = cfg.BindSyncedEntry(
+            new(section, "Enemies Without Collision Event"),
+            EnemyCollideTargets.None,
+            new ConfigDescription(
+                "The selection of enemies that attaching a mask stops collision events/damage from."
+            ));
 
         IncreaseCustomEnemyCompatibility = cfg.BindSyncedEntry(
             new(section, "Increased Custom Enemy Compatibility"),
@@ -392,13 +400,14 @@ public class ConfigValues : SyncedConfig<ConfigValues>
         // Would've liked a string option config item for the enum-like constants
 
         LethalConfigManager.AddConfigItem(new BoolCheckBoxConfigItem(AllMasksHide.Entry, requiresRestart: false));
-        LethalConfigManager.AddConfigItem(new EnumDropDownConfigItem<EnemyTargets>(EnemiesHiddenFrom.Entry, requiresRestart: false));
+        LethalConfigManager.AddConfigItem(new EnumDropDownConfigItem<EnemyHideTargets>(EnemiesHiddenFrom.Entry, requiresRestart: false));
         LethalConfigManager.AddConfigItem(new TextInputFieldConfigItem(EnemyHidingOverrideConfig.Entry, new TextInputFieldOptions()
         {
             NumberOfLines = 1,
             TrimText = true,
             RequiresRestart = false
         }));
+        LethalConfigManager.AddConfigItem(new EnumDropDownConfigItem<EnemyCollideTargets>(EnemiesNoCollideOn.Entry, requiresRestart: false));
         LethalConfigManager.AddConfigItem(new BoolCheckBoxConfigItem(IncreaseCustomEnemyCompatibility.Entry, requiresRestart: true));
         LethalConfigManager.AddConfigItem(new BoolCheckBoxConfigItem(AttachedCanPossess.Entry, requiresRestart: false));
 
