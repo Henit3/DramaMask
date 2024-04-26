@@ -1,8 +1,8 @@
 {
   "name": "DramaMask",
-  "version_number": "2.0.2",
+  "version_number": "2.0.3",
   "website_url": "https://github.com/Henit3/DramaMask",
-  "description": "Enables masks to be worn to hide from the Masked and adds a safe mask, Drama!",
+  "description": "Enables masks to be worn to hide from enemies by blending in with the Masked and adds a safe mask, Drama!",
   "dependencies": [
     "BepInEx-BepInExPack-5.4.2100",
     "Evaisa-LethalLib-0.15.0",

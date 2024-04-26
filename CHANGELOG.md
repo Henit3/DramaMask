@@ -1,3 +1,6 @@
+# 2.0.3
+- Add config option to become invulnerable when using the mask
+
 # 2.0.2
 - Add compatibility to HotbarPlus and similar mods
 - Added mask grab and drop sounds to Drama
