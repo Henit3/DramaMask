@@ -22,6 +22,9 @@ public class CheckForVeryClosePlayerPatch
     {
         foreach (var collider in nearPlayerColliders)
         {
+            // Collider or its transform can be null
+            // This isn't checked for in vanilla since the relevant collider would always be before the invalid one
+            if (collider == null || collider.transform == null) continue;
             var player = collider.transform.GetComponent<PlayerControllerB>();
             if (player == null || player.IsHidden()) continue;
             return player;
