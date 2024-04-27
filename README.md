@@ -18,7 +18,7 @@ Works on v45-v50 until 2.0.0 and v50+ with 2.0.1+ with no other known incompatib
 ## Config Options
 * Which masks can be used by the player to hide **[Host]**
 * The selection of enemies that can be hidden from & specific enemy overrides **[Host]**
-* The selection of enemies that players are invulnerable to when hiding **[Host]**
+* The selection of enemies that players won't trigger collision events for when hiding **[Host]**
 * Potentially increase custom enemy compatibility at the cost of performance **[Host]**
 * Disable the stealth meter balancing mechanic **[Host]**
 * Adjust stealth meter behaviour (can be made different if attached) **[Host]**

@@ -1,5 +1,5 @@
 # 2.0.3
-- Add config option to become invulnerable when using the mask
+- Add config option to ignore enemy collisions events when using the mask
 
 # 2.0.2
 - Add compatibility to HotbarPlus and similar mods
