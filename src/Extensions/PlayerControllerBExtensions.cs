@@ -5,7 +5,7 @@ namespace DramaMask.Extensions;
 public static class PlayerControllerBExtensions
 {
     public static ulong GetId(this PlayerControllerB player) => player?.playerClientId ?? 0;
-    public static bool IsLocal(this PlayerControllerB player) => player.GetId() == (player?.NetworkManager?.LocalClientId ?? 0);
+    public static bool IsLocal(this PlayerControllerB player) => player.GetId() == HUDManager.Instance.localPlayer.playerClientId;
 
     // We assume that the HoldMask animation has been overriden by the attach mask handler
     public static void SetArmsRaised(this PlayerControllerB player, bool isRaising) {} //player.SafeSetAnimation("HoldMask", isRaising);
