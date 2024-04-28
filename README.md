@@ -112,6 +112,7 @@ Made on request from @tkcool and @pedro9006.
 	[InsanityMeter](https://thunderstore.io/c/lethal-company/p/MegaPiggy/InsanityMeter/) mod
 * Mask visibility on use: @star0138
 * Config based on usage type: @sagey08
+* Disabling collision events based on vibility: @alancrytex, @qwbarch, @autumnis
 
 #### Bug Finders:
 * (Pre-Release) Networking: @roshposhtosh, @sabzy, and @saintshekzz
@@ -123,6 +124,7 @@ Made on request from @tkcool and @pedro9006.
 * Cannot interact (later QE) when holding mask: @purefpszac
 * Cannot QE interact when not holding mask (v50): @VirusTLNR (via GitHub)
 * HotbarPlus incompatibilities: @mari0no1
+* Thumper near player detection NRE: @jontep5543
 
 ### Contact
 For requesting new features or highlighting issues/bugs found, please post them in the mod's

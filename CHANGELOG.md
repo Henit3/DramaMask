@@ -1,3 +1,7 @@
+# 2.0.4
+- Patched the network events that were missed in 2.0.3 causing issues for clients
+- Added NRE fix for exposed vanilla thumper collision detection
+
 # 2.0.3
 - Add config option to ignore enemy collisions events when using the mask
 
