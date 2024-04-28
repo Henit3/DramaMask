@@ -1,5 +1,6 @@
 # 2.0.4
 - Patched the network events that were missed in 2.0.3 causing issues for clients
+- Fixed player id extension using the wrong field
 - Added NRE fix for exposed vanilla thumper collision detection
 
 # 2.0.3
