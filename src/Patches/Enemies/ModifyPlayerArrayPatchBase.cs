@@ -38,7 +38,7 @@ public abstract class ModifyPlayerArrayPatchBase
     }
 
     // For getting the actual index after the hidden players have been removed
-    protected static ulong GetTrueIndex(int index)
+    protected static ulong GetBehaviourIndex(int index)
     {
         return StartOfRound.Instance.allPlayerScripts[index].playerClientId;
     }

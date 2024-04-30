@@ -89,8 +89,8 @@ The current method of hiding depends on references to `StartOfRound.allPlayerScr
 when the base methods for detecting players in `EnemyAI` are called.
 Vanilla enemies that make use of their own methods for player detection are additionally patched, so they may also be invoked by custom enemies.
 References to `PlayerIsTargetable` are also patched for calls made outside `MeetsStandardPlayerCollisionConditions`, if the "Increased Custom Enemy Compatibility" setting is enabled.
-Any storage or cross-referencing done with an index to `allPlayerScripts` (like in `ButlerEnemyAI`) should instead make use of `playerClientId` on the player,
-since the position in the array may be affected by this mod's patches.
+Any storage or cross-referencing done with an index to `allPlayerScripts` (like in `ButlerEnemyAI`) should instead make use of `actualClientId` on the player,
+since the position in the array may be affected by this mod's patches (note that this does not necessarily correspond to the index in `allPlayerScripts`).
 
 Enemies can also be added to `DramaMask.Config.EnemyTargetHandler.NaturalExceptions` to stop them being hidden from if the "Enemies Hidden From" setting is "Natural".
 

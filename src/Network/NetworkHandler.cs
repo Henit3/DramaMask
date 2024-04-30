@@ -72,7 +72,7 @@ public class NetworkHandler : NetworkBehaviour
     {
         // Skip if the host connected
         if (obj == 0) return;
-        RegisterPlayer(obj);
+        RegisterPlayer(StartOfRound.Instance.allPlayerScripts[obj].GetId());
     }
     private void RegisterPlayer(ulong id)
     {
@@ -84,7 +84,7 @@ public class NetworkHandler : NetworkBehaviour
     {
         // Skip if the host disconnected
         if (obj == 0) return;
-        UnregisterPlayer(obj);
+        UnregisterPlayer(StartOfRound.Instance.allPlayerScripts[obj].GetId());
     }
     private void UnregisterPlayer(ulong id)
     {

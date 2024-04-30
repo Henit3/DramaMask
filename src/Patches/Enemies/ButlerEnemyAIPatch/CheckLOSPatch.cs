@@ -30,7 +30,7 @@ public class CheckLOSPatch : ModifyPlayerArrayPatchBase
 
         AddOobCheckToLoopPredicate(matcher, new(OpCodes.Ldloc_S, 4));
 
-        // Replace all dereferencing using this index on other arrays by the playerClientId instead
+        // Replace all dereferencing using this index on other arrays by the actualClientId instead
         // This should be valid since the Nutcracker makes use of this as an index (lastPlayerSeenMoving)
 
         // Match for the recently replaced clt (main loop predicate) to go backward from
@@ -73,7 +73,7 @@ public class CheckLOSPatch : ModifyPlayerArrayPatchBase
             matcher.Advance(2);
             matcher.InsertAndAdvance([
                 new(OpCodes.Call,           // .GetTrueIndex()
-                    AccessTools.Method(typeof(ModifyPlayerArrayPatchBase), nameof(GetTrueIndex)))
+                    AccessTools.Method(typeof(ModifyPlayerArrayPatchBase), nameof(GetBehaviourIndex)))
             ]);
             matcher.Advance(-3);
         }
