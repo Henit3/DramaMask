@@ -1,3 +1,6 @@
+# 2.0.5
+- Reverted player id extension using the wrong field due to way more issues
+
 # 2.0.4
 - Patched the network events that were missed in 2.0.3 causing issues for clients
 - Fixed player id extension using the wrong field
