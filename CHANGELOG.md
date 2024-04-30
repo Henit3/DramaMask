@@ -1,3 +1,14 @@
+# 2.0.6
+- Reverted all changes to the way player ids are handled
+
+# 2.0.5
+- Reverted player id extension using the wrong field due to way more issues
+
+# 2.0.4
+- Patched the network events that were missed in 2.0.3 causing issues for clients
+- Fixed player id extension using the wrong field
+- Added NRE fix for exposed vanilla thumper collision detection
+
 # 2.0.3
 - Add config option to ignore enemy collisions events when using the mask
 
