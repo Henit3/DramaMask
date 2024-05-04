@@ -1,4 +1,8 @@
 ﻿using DramaMask.Constants;
+using DramaMask.Extensions;
+using DramaMask.Network;
+using GameNetcodeStuff;
+using System;
 using System.Collections.Generic;
 
 namespace DramaMask.Config;
@@ -30,10 +34,21 @@ public static class EnemyTargetHandler
         return !NaturalExceptions.Contains(enemyName);
     }
 
-    public static bool ShouldCollideWithEnemy(EnemyAI enemy)
-        => ShouldCollideWithEnemy(enemy.GetType().Name);
-    public static bool ShouldCollideWithEnemy(string enemyName)
+    public static bool ShouldCollideWithEnemy(PlayerControllerB player, EnemyAI enemy)
+        => ShouldCollideWithEnemy(player, enemy.GetType().Name);
+    public static bool ShouldCollideWithEnemy(PlayerControllerB player, string enemyName)
     {
+        var targetStealthData = player.IsLocal()
+            ? NetworkHandler.Instance.MyStealth
+            : NetworkHandler.Instance.StealthMap[player.GetId()];
+
+        if (targetStealthData.LastStartedStealth.HasValue
+            && DateTime.UtcNow.Subtract(targetStealthData.LastStartedStealth.Value)
+                .TotalSeconds < Plugin.Config.MinCollideTime.Value)
+        {
+            return true;
+        }
+
         return Plugin.Config.EnemiesNoCollideOn.Value switch
         {
             EnemyCollideTargets.None => true,

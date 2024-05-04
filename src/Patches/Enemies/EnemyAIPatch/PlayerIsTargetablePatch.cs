@@ -13,7 +13,7 @@ public class PlayerIsTargetablePatch
     public static bool Prefix(EnemyAI __instance, ref bool __result,
         PlayerControllerB playerScript, bool cannotBeInShip = false, bool overrideInsideFactoryCheck = false)
     {
-        if (playerScript.IsHidden() && !EnemyTargetHandler.ShouldCollideWithEnemy(__instance))
+        if (playerScript.IsHidden() && !EnemyTargetHandler.ShouldCollideWithEnemy(playerScript, __instance))
         {
             __result = false;
             return false;

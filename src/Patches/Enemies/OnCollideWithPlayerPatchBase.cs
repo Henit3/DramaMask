@@ -1,5 +1,6 @@
 ﻿using DramaMask.Config;
 using DramaMask.Extensions;
+using GameNetcodeStuff;
 using HarmonyLib;
 using System.Reflection.Emit;
 
@@ -22,11 +23,12 @@ public abstract class OnCollideWithPlayerPatchBase
             player,                         // player
             new(OpCodes.Call,               // .IsHidden()
                 AccessTools.Method(typeof(PlayerControllerBExtensions), nameof(PlayerControllerBExtensions.IsHidden))),
+            player,                         // player
             new(OpCodes.Ldstr,              // enemyName
                 enemyName),
-            new(OpCodes.Call,               // EnemyTargetHandler.ShouldCollideWithEnemy(string _)
+            new(OpCodes.Call,               // EnemyTargetHandler.ShouldCollideWithEnemy(player, string _)
                 AccessTools.Method(typeof(EnemyTargetHandler), nameof(EnemyTargetHandler.ShouldCollideWithEnemy),
-                    [typeof(string)])),
+                    [typeof(PlayerControllerB), typeof(string)])),
             new(OpCodes.Not),               // !
             new(OpCodes.And),               // &&
             new(OpCodes.Brfalse,            // [continue to next instruction]

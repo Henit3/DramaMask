@@ -21,6 +21,7 @@ public class ConfigValues : SyncedConfig<ConfigValues>
     public SyncedEntry<EnemyHideTargets> EnemiesHiddenFrom;
     public SyncedEntry<string> EnemyHidingOverrideConfig;
     public SyncedEntry<EnemyCollideTargets> EnemiesNoCollideOn;
+    public SyncedEntry<float> MinCollideTime;
     public SyncedEntry<bool> IncreaseCustomEnemyCompatibility;
     [DataMember] public SyncedEntry<bool> AttachedCanPossess;
 
@@ -117,6 +118,14 @@ public class ConfigValues : SyncedConfig<ConfigValues>
             EnemyCollideTargets.None,
             new ConfigDescription(
                 "The selection of enemies that attaching a mask stops collision events/damage from."
+            ));
+
+        MinCollideTime = cfg.BindSyncedEntry(
+            new(section, "Min Hiding Time to start ignoring Collisions"),
+            3f,
+            new ConfigDescription(
+                "How long players are required to continuously hide before collision events are ignored.",
+                new AcceptableValueRange<float>(0, 30)
             ));
 
         IncreaseCustomEnemyCompatibility = cfg.BindSyncedEntry(
@@ -408,6 +417,13 @@ public class ConfigValues : SyncedConfig<ConfigValues>
             RequiresRestart = false
         }));
         LethalConfigManager.AddConfigItem(new EnumDropDownConfigItem<EnemyCollideTargets>(EnemiesNoCollideOn.Entry, requiresRestart: false));
+        LethalConfigManager.AddConfigItem(new FloatStepSliderConfigItem(MinCollideTime.Entry, new FloatStepSliderOptions()
+        {
+            Min = 0,
+            Max = 30,
+            Step = 0.1f,
+            RequiresRestart = false
+        }));
         LethalConfigManager.AddConfigItem(new BoolCheckBoxConfigItem(IncreaseCustomEnemyCompatibility.Entry, requiresRestart: true));
         LethalConfigManager.AddConfigItem(new BoolCheckBoxConfigItem(AttachedCanPossess.Entry, requiresRestart: false));
 

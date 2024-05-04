@@ -53,6 +53,17 @@ public class StealthData : NetworkData
         }
     }
 
+    private DateTime? _lastStartedStealth = null;
+    public DateTime? LastStartedStealth
+    {
+        get => _lastStartedStealth;
+        set
+        {
+            _lastStartedStealth = value;
+            if (ShouldCopyToMap()) NetworkHandler.Instance.StealthMap[PlayerId].LastStartedStealth = value;
+        }
+    }
+
     private DateTime? _lastStoppedStealth = null;
     public DateTime? LastStoppedStealth
     {
@@ -83,7 +94,8 @@ public class StealthData : NetworkData
         // Don't update for host mapped copy value directly
         if (IsLocalCopy || PlayerId != 0)
         {
-            if (!isHiddenProposed) SetLastStoppedStealthNow();
+            if (isHiddenProposed) SetLastStartedStealthNow();
+            else SetLastStoppedStealthNow();
         }
 
         if (!ShouldServerProcess()) return;
@@ -92,6 +104,11 @@ public class StealthData : NetworkData
         if (!(isHiddenProposed == NetworkHandler.Instance.VisiblePlayers.Contains(PlayerId))) return;
 
         NetworkHandler.Instance.SetPlayerHiddenServer(PlayerId, isHiddenProposed);
+    }
+
+    public void SetLastStartedStealthNow()
+    {
+        LastStartedStealth = DateTime.UtcNow;
     }
 
     public void SetLastStoppedStealthNow()
@@ -105,9 +122,10 @@ public class StealthData : NetworkData
     {
         _isHoldingMask = false;
         _stealthValue = Plugin.Config.MaxHiddenTime.Value;
+        _lastStartedStealth = null;
         _lastStoppedStealth = null;
         _addExhaustionPenalty = false;
     }
 
-    public override string ToString() => $"{base.ToString()}: {IsHoldingMask}|{StealthValue}|{LastStoppedStealth}|{AddExhaustionPenalty}";
+    public override string ToString() => $"{base.ToString()}: {IsHoldingMask}|{StealthValue}|{LastStartedStealth}|{LastStoppedStealth}|{AddExhaustionPenalty}";
 }
