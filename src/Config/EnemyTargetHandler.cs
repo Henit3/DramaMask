@@ -38,6 +38,9 @@ public static class EnemyTargetHandler
         => ShouldCollideWithEnemy(player, enemy.GetType().Name);
     public static bool ShouldCollideWithEnemy(PlayerControllerB player, string enemyName)
     {
+        // Early exit to ignore date time calculations
+        if (Plugin.Config.EnemiesNoCollideOn.Value == EnemyCollideTargets.None) return true;
+
         var targetStealthData = player.IsLocal()
             ? NetworkHandler.Instance.MyStealth
             : NetworkHandler.Instance.StealthMap[player.GetId()];
@@ -51,7 +54,6 @@ public static class EnemyTargetHandler
 
         return Plugin.Config.EnemiesNoCollideOn.Value switch
         {
-            EnemyCollideTargets.None => true,
             EnemyCollideTargets.Masked => enemyName is not nameof(MaskedPlayerEnemy),
             EnemyCollideTargets.Hidden => !ShouldHideFromEnemy(enemyName),
             _ => true
