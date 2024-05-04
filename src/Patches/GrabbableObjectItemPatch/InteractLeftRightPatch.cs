@@ -55,10 +55,6 @@ public class InteractLeftRightPatch
                 }
                 else
                 {
-                    if (Plugin.Config.UseStealthMeter.Value)
-                    {
-                        targetStealthData.SetLastStoppedStealthNow();
-                    }
                     Traverse.Create(instance).Field("maskOn").SetValue(false);
                 }
             }

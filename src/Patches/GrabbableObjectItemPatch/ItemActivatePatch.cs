@@ -39,11 +39,6 @@ public class ItemActivatePatch
         targetStealthData.IsHoldingMask = buttonDown && instance.CanHide();
         if (!targetPretendData.IsMaskAttached)
         {
-            // Redundant: !targetStealthData.IsAttemptingStealth() && 
-            if (Plugin.Config.UseStealthMeter.Value && !buttonDown)
-            {
-                targetStealthData.SetLastStoppedStealthNow();
-            }
             Traverse.Create(instance).Field("maskOn").SetValue(buttonDown);
         }
         else

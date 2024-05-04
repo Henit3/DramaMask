@@ -17,7 +17,7 @@ public class PretendData : NetworkData
             if (ShouldCopyToMap()) NetworkHandler.Instance.PretendMap[PlayerId].IsMaskAttached = value;
             if (ShouldServerProcess()) NetworkHandler.Instance.SetPlayerMaskAttachedServer(PlayerId, value);
 
-            var stealthData = IsClientCopy
+            var stealthData = IsLocalCopy
                 ? NetworkHandler.Instance.MyStealth
                 : NetworkHandler.Instance.StealthMap[PlayerId];
             stealthData.HandleToggleHidden(_isMaskAttached);

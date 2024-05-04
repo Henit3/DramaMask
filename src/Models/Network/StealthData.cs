@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using DramaMask.Network;
 
 namespace DramaMask.Models.Network;
@@ -24,7 +24,7 @@ public class StealthData : NetworkData
 
     public bool IsAttemptingStealth()
     {
-        var pretendData = IsClientCopy
+        var pretendData = IsLocalCopy
             ? NetworkHandler.Instance.MyPretend
             : NetworkHandler.Instance.PretendMap[PlayerId];
         return IsHoldingMask || pretendData.IsMaskAttached;
@@ -46,7 +46,6 @@ public class StealthData : NetworkData
             {
                 _isStealthValueValid = false;
                 AddExhaustionPenalty = true;
-                if (Plugin.Config.RemoveOnDepletion.Value) SetLastStoppedStealthNow();
             }
             else return;
 
@@ -78,16 +77,19 @@ public class StealthData : NetworkData
 
     public void HandleToggleHidden(bool isHiddenProposed)
     {
+        // If the proposed value is valid to action within the current scope (local/map): "If should hide + can hide"
+        if (!(isHiddenProposed == (IsAttemptingStealth() && _isStealthValueValid))) return;
+
+        // Don't update for host mapped copy value directly
+        if (IsLocalCopy || PlayerId != 0)
+        {
+            if (!isHiddenProposed) SetLastStoppedStealthNow();
+        }
+
         if (!ShouldServerProcess()) return;
 
-        var isAttemptingStealth = IsAttemptingStealth();
-        if (isHiddenProposed
-            && isAttemptingStealth && _isStealthValueValid
-            && NetworkHandler.Instance.VisiblePlayers.Contains(PlayerId)) { /* Toggled to true and is now true */ }
-        else if (!isHiddenProposed
-            && !(isAttemptingStealth && _isStealthValueValid)
-            && !NetworkHandler.Instance.VisiblePlayers.Contains(PlayerId)) { /* Toggled to false and is now false */ }
-        else return;
+        // If the proposed value is valid to action with the shared network variable: "+ not applied on network var"
+        if (!(isHiddenProposed == NetworkHandler.Instance.VisiblePlayers.Contains(PlayerId))) return;
 
         NetworkHandler.Instance.SetPlayerHiddenServer(PlayerId, isHiddenProposed);
     }

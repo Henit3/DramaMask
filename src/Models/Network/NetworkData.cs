@@ -10,11 +10,11 @@ namespace DramaMask.Models.Network;
  */
 public abstract class NetworkData
 {
-    protected readonly bool IsClientCopy;
+    protected readonly bool IsLocalCopy;
     protected readonly ulong PlayerId;
     public NetworkData()
     {
-        IsClientCopy = true;
+        IsLocalCopy = true;
     }
     public NetworkData(ulong playerId)
     {
@@ -23,7 +23,7 @@ public abstract class NetworkData
 
     public abstract void Reset();
 
-    protected bool ShouldCopyToMap() => IsClientCopy && NetworkHandler.IsHostOrServer();
-    protected bool ShouldServerProcess() => !IsClientCopy && NetworkHandler.IsHostOrServer();
-    public override string ToString() => $"{(IsClientCopy ? "Self" : PlayerId)}";
+    protected bool ShouldCopyToMap() => IsLocalCopy && NetworkHandler.IsHostOrServer();
+    protected bool ShouldServerProcess() => !IsLocalCopy && NetworkHandler.IsHostOrServer();
+    public override string ToString() => $"{(IsLocalCopy ? "Self" : PlayerId)}";
 }
