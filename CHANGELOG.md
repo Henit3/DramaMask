@@ -1,3 +1,6 @@
+# 2.0.7
+- Added minimum time to stay hidden for collision ignoring effects to kick in
+
 # 2.0.6
 - Reverted all changes to the way player ids are handled
 

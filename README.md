@@ -19,6 +19,7 @@ Works on v45-v50 until 2.0.0 and v50+ with 2.0.1+ with no other known incompatib
 * Which masks can be used by the player to hide **[Host]**
 * The selection of enemies that can be hidden from & specific enemy overrides **[Host]**
 * The selection of enemies that players won't trigger collision events for when hiding **[Host]**
+* The minimum time players need to be hidden to start ignoring collision events **[Host]**
 * Potentially increase custom enemy compatibility at the cost of performance **[Host]**
 * Disable the stealth meter balancing mechanic **[Host]**
 * Adjust stealth meter behaviour (can be made different if attached) **[Host]**
