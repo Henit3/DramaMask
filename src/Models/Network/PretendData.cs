@@ -24,18 +24,6 @@ public class PretendData : NetworkData
         }
     }
 
-    private bool _isRaisingArms = false;
-    public bool IsRaisingArms
-    {
-        get => _isRaisingArms;
-        set
-        {
-            _isRaisingArms = value;
-            if (ShouldCopyToMap()) NetworkHandler.Instance.PretendMap[PlayerId].IsRaisingArms = value;
-            if (ShouldServerProcess()) NetworkHandler.Instance.SetPlayerRaisingArmsServer(PlayerId, value);
-        }
-    }
-
     private bool _isMaskEyesOn = false;
     public bool IsMaskEyesOn
     {
@@ -51,9 +39,8 @@ public class PretendData : NetworkData
     public override void Reset()
     {
         _isMaskAttached = false;
-        _isRaisingArms = false;
         _isMaskEyesOn = false;
     }
 
-    public override string ToString() => $"{base.ToString()}: {IsMaskAttached}|{IsRaisingArms}|{IsMaskEyesOn}";
+    public override string ToString() => $"{base.ToString()}: {IsMaskAttached}|{IsMaskEyesOn}";
 }

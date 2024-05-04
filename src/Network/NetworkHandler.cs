@@ -133,19 +133,6 @@ public class NetworkHandler : NetworkBehaviour
 
         mask.SetMaskAttached(isAttaching);
     }
-    public void SetPlayerRaisingArmsServer(ulong playerId, bool isRaising)
-    {
-        SetPlayerRaisingArmsClientRpc(playerId, isRaising);
-    }
-    [ClientRpc]
-    public void SetPlayerRaisingArmsClientRpc(ulong playerId, bool isRaising)
-    {
-        var player = StartOfRound.Instance.GetPlayer(playerId);
-        Plugin.Logger.LogDebug($"RaisingArmsClientRPC {playerId} -> {player}: {isRaising}");
-        if (player == null) return;
-
-        player.SetArmsRaised(isRaising);
-    }
 
     [ServerRpc(RequireOwnership = false)]
     public void SetPlayerMaskEyesValueServerRpc(ulong playerId, bool isActivating)

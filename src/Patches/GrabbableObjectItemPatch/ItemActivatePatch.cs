@@ -41,10 +41,6 @@ public class ItemActivatePatch
         {
             Traverse.Create(instance).Field("maskOn").SetValue(buttonDown);
         }
-        else
-        {
-            targetPretendData.IsRaisingArms = buttonDown;
-        }
 
         if (!instance.playerHeldBy.IsLocal()) return;
 

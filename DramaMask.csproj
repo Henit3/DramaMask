@@ -75,7 +75,6 @@
   <ItemGroup>
     <EmbeddedResource Include="Assets\dramamask" />
     <EmbeddedResource Include="Assets\maskview" />
-    <EmbeddedResource Include="Assets\armsout" />
   </ItemGroup>
   
   <ItemGroup>

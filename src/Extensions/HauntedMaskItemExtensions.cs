@@ -26,9 +26,6 @@ public static class HauntedMaskItemExtensions
     private static readonly Vector3 _publicHeadMaskRotAdjustment = new(-5f, 0f, 0f);
     private static Vector3 _originalHeadMaskScale;
 
-    /*public static AnimationClip HoldingMaskAnimation;
-    public static AnimationClip ArmsOutAnimation;*/
-
     public static void SetVisibility(this HauntedMaskItem mask,
         bool isVisible, bool? isOthersVisible = null)
     {
@@ -82,20 +79,6 @@ public static class HauntedMaskItemExtensions
 
         //Based on HauntedMaskItem.MaskClampToHeadAnimationEvent
         var player = AccessTools.Field(typeof(HauntedMaskItem), "previousPlayerHeldBy").GetValue(mask) as PlayerControllerB;
-
-        /*if (player != null)
-        {
-            var overrideController = player.playerBodyAnimator.runtimeAnimatorController as AnimatorOverrideController;
-            if (overrideController == null)
-            {
-                Plugin.Logger.LogWarning("Player animator override controller not accessible");
-            }
-            else
-            {
-                overrideController["HoldMaskToFace"] = isAttaching ? ArmsOutAnimation : HoldingMaskAnimation;
-                Plugin.Logger.LogDebug($"Overwrote HoldMask to {overrideController["HoldMaskToFace"].name}");
-            }
-        }*/
 
         if (isAttaching)
         {

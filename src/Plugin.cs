@@ -22,8 +22,6 @@ public class Plugin : BaseUnityPlugin
     public new static ManualLogSource Logger;
     internal static new ConfigValues Config;
 
-    //public static readonly bool IsMoreEmotesPresent = Chainloader.PluginInfos.ContainsKey("MoreEmotes-Sligili");
-
     private static readonly Harmony Harmony = new(PluginInfo.PLUGIN_GUID);
 
     private void Awake()
@@ -100,15 +98,6 @@ public class Plugin : BaseUnityPlugin
         if (transparentMat == null) return;
         HauntedMaskItemExtensions.TransparentMat = transparentMat;
         Logger.LogDebug("Loaded asset: transMaskMat");
-
-        /*var armsOutBundle = LoadBundle(PluginInfo.PLUGIN_GUID, "armsout");
-        if (armsOutBundle == null) return;
-
-        var armsOutAnimation = armsOutBundle.SafeLoadAsset<AnimationClip>("assets/custom/armsout.anim");
-        if (armsOutAnimation == null) return;
-
-        HauntedMaskItemExtensions.ArmsOutAnimation = armsOutAnimation;
-        Logger.LogDebug("Loaded asset: armsOut");*/
     }
 
     private AssetBundle LoadBundle(string guid, string bundleName)
