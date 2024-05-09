@@ -41,9 +41,8 @@ public static class EnemyTargetHandler
         // Early exit to ignore date time calculations
         if (Plugin.Config.EnemiesNoCollideOn.Value == EnemyCollideTargets.None) return true;
 
-        var targetStealthData = player.IsLocal()
-            ? NetworkHandler.Instance.MyStealth
-            : NetworkHandler.Instance.StealthMap[player.GetId()];
+        var targetStealthData = NetworkHandler.Instance.GetStealth(player.IsLocal(), player.GetId());
+        if (targetStealthData == null) return true;
 
         if (targetStealthData.LastStartedStealth.HasValue
             && DateTime.UtcNow.Subtract(targetStealthData.LastStartedStealth.Value)

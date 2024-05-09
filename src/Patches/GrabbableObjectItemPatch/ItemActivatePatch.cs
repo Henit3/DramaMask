@@ -28,13 +28,11 @@ public class ItemActivatePatch
             if (_useInputFlipFlop) return;
         }
 
-        var targetStealthData = instance.playerHeldBy.IsLocal()
-            ? NetworkHandler.Instance.MyStealth
-            : NetworkHandler.Instance.StealthMap[id];
+        var targetStealthData = NetworkHandler.Instance.GetStealth(instance.playerHeldBy.IsLocal(), id);
+        if (targetStealthData == null) return;
 
-        var targetPretendData = instance.playerHeldBy.IsLocal()
-            ? NetworkHandler.Instance.MyPretend
-            : NetworkHandler.Instance.PretendMap[id];
+        var targetPretendData = NetworkHandler.Instance.GetPretend(instance.playerHeldBy.IsLocal(), id);
+        if (targetPretendData == null) return;
 
         targetStealthData.IsHoldingMask = buttonDown && instance.CanHide();
         if (!targetPretendData.IsMaskAttached)

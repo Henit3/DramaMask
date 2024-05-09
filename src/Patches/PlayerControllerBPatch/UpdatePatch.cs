@@ -23,12 +23,11 @@ public class UpdatePatch
 
         var id = __instance.GetId();
 
-        var pretendData = __instance.IsLocal()
-            ? NetworkHandler.Instance.MyPretend
-            : NetworkHandler.Instance.PretendMap[id];
-        var stealthData = __instance.IsLocal()
-            ? NetworkHandler.Instance.MyStealth
-            : NetworkHandler.Instance.StealthMap[id];
+        var pretendData = NetworkHandler.Instance.GetPretend(__instance.IsLocal(), id);
+        if (pretendData == null) return;
+
+        var stealthData = NetworkHandler.Instance.GetStealth(__instance.IsLocal(), id);
+        if (stealthData == null) return;
 
         var isAttemptingStealth = stealthData.IsAttemptingStealth();
         if (isAttemptingStealth)

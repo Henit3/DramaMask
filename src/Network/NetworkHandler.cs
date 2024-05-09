@@ -10,10 +10,12 @@ public class NetworkHandler : NetworkBehaviour
     public static NetworkHandler Instance { get; private set; }
 
     public NetworkList<ulong> VisiblePlayers;
-    
+
+    public StealthData GetStealth(bool isLocal, ulong id) => StealthMap.GetNetworkData(MyStealth, isLocal, id);
     public Dictionary<ulong, StealthData> StealthMap { get; private set; }
     public StealthData MyStealth { get; private set; }
 
+    public PretendData GetPretend(bool isLocal, ulong id) => PretendMap.GetNetworkData(MyPretend, isLocal, id);
     public Dictionary<ulong, PretendData> PretendMap { get; private set; }
     public PretendData MyPretend { get; private set; }
 
