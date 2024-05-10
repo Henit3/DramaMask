@@ -1,3 +1,6 @@
+# 2.0.8
+- Added safety checks to try and keep any errors self contained within the mod's effects
+
 # 2.0.7
 - Added minimum time to stay hidden for collision ignoring effects to kick in
 
