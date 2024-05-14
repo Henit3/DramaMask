@@ -127,6 +127,7 @@ Made on request from @tkcool and @pedro9006.
 * HotbarPlus incompatibilities: @mari0no1
 * Thumper near player detection NRE: @jontep5543
 * Issues on client crash: @mari0no1
+* No interaction on game over with mask worn: @virustlnr
 
 ### Contact
 For requesting new features or highlighting issues/bugs found, please post them in the mod's

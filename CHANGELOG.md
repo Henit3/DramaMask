@@ -1,3 +1,6 @@
+# 2.0.9
+- Fixed bug stopping interaction when a mask is worn when the player is ejected
+
 # 2.0.8
 - Added safety checks to try and keep any errors self contained within the mod's effects
 
