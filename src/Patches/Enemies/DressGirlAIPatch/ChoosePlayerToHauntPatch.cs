@@ -27,12 +27,12 @@ public class ChoosePlayerToHauntPatch : ModifyPlayerArrayPatchBase
         // Match for first blt (player loop predicate 1)
         matcher.MatchForward(false, [new(OpCodes.Blt)]);
 
-        AddOobCheckToLoopPredicate(matcher, new(OpCodes.Ldloc_S, 5));
+        AddOobCheckToLoopPredicate(matcher, generator, new(OpCodes.Ldloc_S, 5));
 
         // Repeat for second player loop
         matcher.MatchForward(false, [new(OpCodes.Blt)]);
 
-        AddOobCheckToLoopPredicate(matcher, new(OpCodes.Ldloc_S, 6));
+        AddOobCheckToLoopPredicate(matcher, generator, new(OpCodes.Ldloc_S, 6));
 
         return matcher.InstructionEnumeration();
     }

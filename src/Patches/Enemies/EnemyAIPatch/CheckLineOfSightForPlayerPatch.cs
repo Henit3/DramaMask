@@ -30,7 +30,7 @@ public class CheckLineOfSightForPlayerPatch : ModifyPlayerArrayPatchBase
         matcher.End();
         matcher.MatchBack(false, [new(OpCodes.Blt)]);
 
-        AddOobCheckToLoopPredicate(matcher, new(OpCodes.Ldloc_1));
+        AddOobCheckToLoopPredicate(matcher, generator, new(OpCodes.Ldloc_1));
 
         return matcher.InstructionEnumeration();
     }

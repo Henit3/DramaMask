@@ -2,6 +2,7 @@ using DramaMask.Config;
 using DramaMask.Extensions;
 using GameNetcodeStuff;
 using HarmonyLib;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Emit;
 
@@ -11,24 +12,50 @@ public abstract class ModifyPlayerArrayPatchBase
 {
     private static PlayerControllerB[] allPlayerScriptsOriginal;
 
-    protected static void AddOobCheckToLoopPredicate(CodeMatcher matcher, CodeInstruction index)
+    // We go into the loop and add instructions at the start to maintain compatibility with other mods' transpilations checks
+    protected static void AddOobCheckToLoopPredicate(CodeMatcher matcher, ILGenerator generator, CodeInstruction index)
     {
+        // Store the current position to return back to after processing
+        var predicatePosition = matcher.Pos;
+
         // Store the branch target to use in adjusted predicate
-        var enterLoopTarget = matcher.Instruction.operand;
+        if (!matcher.Instruction.Branches(out var possibleEnterLoopTarget))
+        {
+            Plugin.Logger.LogWarning("Couldn't apply OOB check to loop predicate: Loop entry target not accessible");
+            return;
+        }
+        var enterLoopTarget = possibleEnterLoopTarget.Value;
 
-        // Replace blt with clt to only check as part of first "and" condition
-        matcher.RemoveInstruction().InsertAndAdvance([new(OpCodes.Clt)]);
+        // Create a label on exiting the loop to jump out to if out of bounds, using pre-exisiting ones if available
+        Label exitLoopTarget;
+        matcher.Advance(1);
+        if ((exitLoopTarget = matcher.Instruction.labels.FirstOrDefault()) == default)
+        {
+            exitLoopTarget = generator.DefineLabel();
+            matcher.AddLabelsAt(matcher.Pos, [exitLoopTarget]);
+        }
 
-        // Add extra "and" condition to check if out of bounds, branching into processing loop if both satisfied
-        // ... && IsWithinPlayerBounds(index)
-        matcher.InsertAndAdvance(
+        // Go to the loop entry target to insert our checks
+        matcher.Start();
+        matcher.SearchForward((instruction) => instruction.labels.Contains(enterLoopTarget));
+
+        // Jump back out of the loop if out of bounds
+        List<CodeInstruction> insertedInstructions = [
             index,                          // index
             new(OpCodes.Call,               // IsWithinPlayerBounds()
                 AccessTools.Method(typeof(ModifyPlayerArrayPatchBase), nameof(IsWithinPlayerBounds))),
-            new(OpCodes.And),               // &&
-            new(OpCodes.Brtrue,
-                enterLoopTarget)            // enter processing loop
-        );
+            new(OpCodes.Brfalse,
+                exitLoopTarget)            // exit processing loop
+        ];
+
+        // Insert checks and transfer the label from the old loop entry instruction to our new one
+        var oldLoopEntryInstruction = matcher.Instruction;
+        matcher.Insert(insertedInstructions);
+        matcher.Instruction.MoveLabelsFrom(oldLoopEntryInstruction);
+
+        // Return to starting instruction for further processing
+        matcher.Start();
+        matcher.Advance(predicatePosition + insertedInstructions.Count);
     }
 
     // For accompanying OOB checking transpilation

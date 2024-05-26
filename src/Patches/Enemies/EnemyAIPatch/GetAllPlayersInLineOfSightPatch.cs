@@ -31,7 +31,7 @@ public class GetAllPlayersInLineOfSightPatch : ModifyPlayerArrayPatchBase
         matcher.End();
         matcher.MatchBack(false, [new(OpCodes.Blt)]);
 
-        AddOobCheckToLoopPredicate(matcher, new(OpCodes.Ldloc_2));
+        AddOobCheckToLoopPredicate(matcher, generator, new(OpCodes.Ldloc_2));
 
         return matcher.InstructionEnumeration();
     }

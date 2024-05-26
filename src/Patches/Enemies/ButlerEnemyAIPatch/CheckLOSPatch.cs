@@ -28,7 +28,7 @@ public class CheckLOSPatch : ModifyPlayerArrayPatchBase
         matcher.End();
         matcher.MatchBack(false, [new(OpCodes.Blt)]);
 
-        AddOobCheckToLoopPredicate(matcher, new(OpCodes.Ldloc_S, 4));
+        AddOobCheckToLoopPredicate(matcher, generator, new(OpCodes.Ldloc_S, 4));
 
         // Replace all dereferencing using this index on other arrays by the playerClientId instead
         // This should be valid since the Nutcracker makes use of this as an index (lastPlayerSeenMoving)

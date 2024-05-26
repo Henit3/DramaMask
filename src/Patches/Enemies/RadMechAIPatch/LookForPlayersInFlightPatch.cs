@@ -28,7 +28,7 @@ public class LookForPlayersInFlightPatch : ModifyPlayerArrayPatchBase
         matcher.End();
         matcher.MatchBack(false, [new(OpCodes.Blt)]);
 
-        AddOobCheckToLoopPredicate(matcher, new(OpCodes.Ldloc_0));
+        AddOobCheckToLoopPredicate(matcher, generator, new(OpCodes.Ldloc_0));
 
         return matcher.InstructionEnumeration();
     }
