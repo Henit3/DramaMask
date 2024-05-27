@@ -4,12 +4,13 @@ namespace DramaMask.Config;
 
 internal static class InputUtilsCompat
 {
-    public static bool Enabled =>
+    private static bool Installed =>
         BepInEx.Bootstrap.Chainloader.PluginInfos.ContainsKey("com.rune580.LethalCompanyInputUtils");
+    public static bool Enabled => Installed && !Plugin.Config.IgnoreCustomKeybinds;
 
     public static void Init()
     {
-        if (Enabled) InputUtilsConfig.Instance = new();
+        if (Installed) InputUtilsConfig.Instance = new();
     }
 
     public static InputAction AttachMask => InputUtilsConfig.Instance.AttachMask;

@@ -1,4 +1,4 @@
-﻿using BepInEx.Configuration;
+using BepInEx.Configuration;
 using CSync.Extensions;
 using CSync.Lib;
 using DramaMask.Extensions;
@@ -66,6 +66,9 @@ public class ConfigValues : SyncedConfig<ConfigValues>
     private ConfigEntry<bool> _changeClientViewInstantly;
     public bool ChangeClientViewInstantly;
 
+    private ConfigEntry<bool> _ignoreCustomKeybinds;
+    public bool IgnoreCustomKeybinds;
+
     public ConfigValues(ConfigFile cfg) : base(PluginInfo.PLUGIN_GUID)
     {
         ConfigManager.Register(this);
@@ -76,6 +79,7 @@ public class ConfigValues : SyncedConfig<ConfigValues>
         SetStealthMeter(cfg);
         SetStealthMeterHUD(cfg);
         SetMaskView(cfg);
+        SetMisc(cfg);
 
         PostSyncProcessing();
 
@@ -344,7 +348,22 @@ public class ConfigValues : SyncedConfig<ConfigValues>
             ))).Value;
     }
 
-    private void OnInitialSyncCompleted(object s, EventArgs e) => PostSyncProcessing();
+    private void SetMisc(ConfigFile cfg)
+    {
+        const string section = "Misc";
+
+        IgnoreCustomKeybinds = (_ignoreCustomKeybinds = cfg.Bind(
+            new(section, "Ignore Custom Keybinds"),
+            false,
+            new ConfigDescription(
+                "If InputUtils installed, whether to ignore any custom keybinds; temporary compatibility for unconventional control schemes like with LCVR.",
+                new AcceptableValueList<bool>(true, false)
+            ))).Value;
+        _ignoreCustomKeybinds.SettingChanged += (_, _)
+            => IgnoreCustomKeybinds = _ignoreCustomKeybinds.Value;
+    }
+
+    private void OnInitialSyncCompleted(object s, EventArgs e) => ProcessSyncEnemyHidingOverrideConfig();
     private void PostSyncProcessing()
     {
         ProcessSyncEnemyHidingOverrideConfig();
@@ -498,6 +517,8 @@ public class ConfigValues : SyncedConfig<ConfigValues>
         LethalConfigManager.AddConfigItem(new EnumDropDownConfigItem<AttachedMaskView>(AttachedMaskViewConfig.Entry, requiresRestart: false));
         LethalConfigManager.AddConfigItem(new EnumDropDownConfigItem<HeldMaskView>(HeldMaskView.Entry, requiresRestart: false));
         LethalConfigManager.AddConfigItem(new BoolCheckBoxConfigItem(_changeClientViewInstantly, requiresRestart: false));
+
+        LethalConfigManager.AddConfigItem(new BoolCheckBoxConfigItem(_ignoreCustomKeybinds, requiresRestart: false));
     }
 
     private static string GetDescriptionWithOptions(string description, string[] options)

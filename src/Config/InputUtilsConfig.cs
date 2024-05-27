@@ -32,6 +32,8 @@ public class InputUtilsConfig : LcInputActions
     private void OnMaskAction(InputAction.CallbackContext context,
         string actionName, ref bool shouldHandleCustom)
     {
+        if (DramaMask.Plugin.Config.IgnoreCustomKeybinds) return;
+
         if (!context.performed) return;
 
         shouldHandleCustom = true;

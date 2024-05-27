@@ -60,8 +60,11 @@ public class InteractLeftRightPatch
             {
                 // Local invocation of behaviour so we can query hoveringOverTrigger (tied to camera)
                 var isMaskEyeInteractClash = !StartOfRound.Instance.localPlayerUsingController;
-                try { isMaskEyeInteractClash = InputUtilsCompat.IsMaskEyeInteractClash(); }
-                catch (TypeLoadException) { }
+                if (!Plugin.Config.IgnoreCustomKeybinds)
+                {
+                    try { isMaskEyeInteractClash = InputUtilsCompat.IsMaskEyeInteractClash(); }
+                    catch (TypeLoadException) { }
+                }
 
                 if (instance.playerHeldBy.IsLocal()
                     && (!isMaskEyeInteractClash
