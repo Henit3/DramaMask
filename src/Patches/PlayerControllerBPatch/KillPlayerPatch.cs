@@ -1,6 +1,5 @@
 ﻿using DramaMask.Extensions;
 using DramaMask.Network;
-using DramaMask.UI;
 using GameNetcodeStuff;
 using HarmonyLib;
 using UnityEngine;
@@ -34,7 +33,6 @@ public class KillPlayerPatch
         {
             NetworkHandler.Instance.MyStealth.Reset();
             NetworkHandler.Instance.MyPretend.Reset();
-            StealthMeterUI.Instance.Visible = false;
         }
         if (NetworkHandler.IsHostOrServer())
         {

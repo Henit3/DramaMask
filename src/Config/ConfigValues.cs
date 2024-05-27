@@ -3,6 +3,7 @@ using CSync.Extensions;
 using CSync.Lib;
 using DramaMask.Extensions;
 using DramaMask.Constants;
+using DramaMask.UI;
 using LethalConfig;
 using LethalConfig.ConfigItems;
 using LethalConfig.ConfigItems.Options;
@@ -47,12 +48,12 @@ public class ConfigValues : SyncedConfig2<ConfigValues>
     /// Use LocalValue (syncing optional)
     /// </summary>
     [DataMember] public SyncedEntry<MeterVisibility> StealthMeterVisibility;
-    private ConfigEntry<float> _barXPosition;
-    public float BarXPosition;
-    private ConfigEntry<float> _barYPosition;
-    public float BarYPosition;
-    private ConfigEntry<string> _barColour;
-    public Color BarColour;
+    private ConfigEntry<float> _meterOffset;
+    public float MeterOffset;
+    private ConfigEntry<bool> _accurateMeter;
+    public bool AccurateMeter;
+    private ConfigEntry<string> _meterColour;
+    public Color MeterColour;
 
     [DataMember] public SyncedEntry<bool> SyncMaskView;
     /// <summary>
@@ -289,27 +290,38 @@ public class ConfigValues : SyncedConfig2<ConfigValues>
                 "When to show the stealth meter, if at all. [Optionally synced]"
             ));
 
-        BarXPosition = (_barXPosition = cfg.Bind(
-            new(section, "Bar X Position"),
+        MeterOffset = (_meterOffset = cfg.Bind(
+            new(section, "Meter Offset"),
             0f,
             new ConfigDescription(
-                "The X position (horizontal) that the stealth bar will appear at on the screen (0 is the centre).",
-                new AcceptableValueRange<float>(-380, 380)
+                "The combined offset applied to the position of the stealth meter ring.",
+                new AcceptableValueRange<float>(-5, 5)
             ))).Value;
+        _meterOffset.SettingChanged += (_, _) =>
+        {
+            MeterOffset = _meterOffset.Value;
+            StealthMeter.Instance.ApplyMeterOffsets();
+        };
 
-        BarYPosition = (_barYPosition = cfg.Bind(
-            new(section, "Bar Y Position"),
-            235f,
+        AccurateMeter = (_accurateMeter = cfg.Bind(
+            new(section, "Accurate Meter"),
+            true,
             new ConfigDescription(
-                "The Y position (vertical) that the stealth bar will appear at on the screen (0 is the centre).",
-                new AcceptableValueRange<float>(-250, 250)
+                "Whether the stealth meter ring should be accurate or have vanilla behaviour.",
+                new AcceptableValueList<bool>(true, false)
             ))).Value;
+        _accurateMeter.SettingChanged += (_, _) => AccurateMeter = _accurateMeter.Value;
 
-        BarColour = (_barColour = cfg.Bind(
+        MeterColour = (_meterColour = cfg.Bind(
             new(section, "Bar Colour"),
             new Color(220, 220, 220, byte.MaxValue).AsConfigString(),
             new ConfigDescription("The colour that the stealth bar will appear as (format as \"r|g|b\" in hex, e.g. \"00|80|ff\" for cyan).")
         )).Value.FromConfigString();
+        _meterColour.SettingChanged += (_, _) =>
+        {
+            MeterColour = _meterColour.Value.FromConfigString();
+            StealthMeter.Instance.Colour = MeterColour;
+        };
     }
 
     private void SetMaskView(ConfigFile cfg)
@@ -489,21 +501,14 @@ public class ConfigValues : SyncedConfig2<ConfigValues>
 
         LethalConfigManager.AddConfigItem(new BoolCheckBoxConfigItem(SyncStealthMeterVisibility.Entry, requiresRestart: false));
         LethalConfigManager.AddConfigItem(new EnumDropDownConfigItem<MeterVisibility>(StealthMeterVisibility.Entry, requiresRestart: false));
-        LethalConfigManager.AddConfigItem(new FloatStepSliderConfigItem(_barXPosition, new FloatStepSliderOptions()
+        LethalConfigManager.AddConfigItem(new FloatStepSliderConfigItem(_meterOffset, new FloatStepSliderOptions()
         {
-            Min = -380f,
-            Max = 380f,
+            Min = -3f,
+            Max = 3f,
             Step = 0.1f,
             RequiresRestart = false
         }));
-        LethalConfigManager.AddConfigItem(new FloatStepSliderConfigItem(_barYPosition, new FloatStepSliderOptions()
-        {
-            Min = -250f,
-            Max = 250f,
-            Step = 0.1f,
-            RequiresRestart = false
-        }));
-        LethalConfigManager.AddConfigItem(new TextInputFieldConfigItem(_barColour, new TextInputFieldOptions()
+        LethalConfigManager.AddConfigItem(new TextInputFieldConfigItem(_meterColour, new TextInputFieldOptions()
         {
             NumberOfLines = 1,
             TrimText = true,

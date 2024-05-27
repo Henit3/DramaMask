@@ -31,11 +31,11 @@ public class LateUpdatePatch
         if (!__instance.IsLocal() || __instance.isPlayerDead) return;
 
         var shouldBeVisible = ShouldBarBeVisible(__instance.currentlyHeldObjectServer);
-        StealthMeterUI.Instance.Visible = shouldBeVisible;
+        StealthMeter.Instance.Visible = shouldBeVisible;
         if (!shouldBeVisible) return;
 
         var percent = Math.Max(0, NetworkHandler.Instance.MyStealth.StealthValue) / Plugin.Config.MaxHiddenTime.Value;
-        StealthMeterUI.Instance.UpdatePercentage(percent);
+        StealthMeter.Instance.Percent = percent;
     }
 
     private static bool ShouldBarBeVisible(GrabbableObject heldItem)
