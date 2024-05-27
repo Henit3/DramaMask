@@ -13,7 +13,7 @@ using UnityEngine;
 using static LethalLib.Modules.Levels;
 
 namespace DramaMask.Config;
-public class ConfigValues : SyncedConfig<ConfigValues>
+public class ConfigValues : SyncedConfig2<ConfigValues>
 {
     // Entries not synced where they are only used server-side, or are local config settings
 
@@ -72,7 +72,7 @@ public class ConfigValues : SyncedConfig<ConfigValues>
     public ConfigValues(ConfigFile cfg) : base(PluginInfo.PLUGIN_GUID)
     {
         ConfigManager.Register(this);
-        InitialSyncCompleted += OnInitialSyncCompleted;
+        InitialSyncCompleted += (_, _) => PostSyncProcessing();
 
         SetHidingTargets(cfg);
         SetMaskSpawning(cfg);
@@ -115,7 +115,7 @@ public class ConfigValues : SyncedConfig<ConfigValues>
             }.AsString(),
             new ConfigDescription("Overrides for which enemies can be hidden from (exclusions prioritised), comma separated."
         ));
-        EnemyHidingOverrideConfig.Changed += OnSyncEnemyHidingOverrideConfig;
+        EnemyHidingOverrideConfig.Changed += (_, _) => ProcessSyncEnemyHidingOverrideConfig();
 
         EnemiesNoCollideOn = cfg.BindSyncedEntry(
             new(section, "Enemies Without Collision Event"),
@@ -280,7 +280,7 @@ public class ConfigValues : SyncedConfig<ConfigValues>
                 "Whether to sync the 'Stealth Meter Visibility' config values.",
                 new AcceptableValueList<bool>(true, false)
             ));
-        SyncStealthMeterVisibility.Changed += OnSyncStealthMeterVisibility;
+        SyncStealthMeterVisibility.Changed += (_, _) => ProcessSyncStealthMeterVisibility();
 
         StealthMeterVisibility = cfg.BindSyncedEntry(
             new(section, "Stealth Meter Visibility"),
@@ -323,7 +323,7 @@ public class ConfigValues : SyncedConfig<ConfigValues>
                 "Whether to sync the Held & Attached 'Mask View' config values.",
                 new AcceptableValueList<bool>(true, false)
             ));
-        SyncMaskView.Changed += OnSyncMaskView;
+        SyncMaskView.Changed += (_, _) => ProcessSyncMaskView();
 
         HeldMaskView = cfg.BindSyncedEntry(
             new(section, "Held Mask View"),
@@ -346,6 +346,8 @@ public class ConfigValues : SyncedConfig<ConfigValues>
                 "Instant changes locally; can cause temporary visual desync on rapid changes.",
                 new AcceptableValueList<bool>(true, false)
             ))).Value;
+        _changeClientViewInstantly.SettingChanged += (_, _)
+            => ChangeClientViewInstantly = _changeClientViewInstantly.Value;
     }
 
     private void SetMisc(ConfigFile cfg)
@@ -373,7 +375,6 @@ public class ConfigValues : SyncedConfig<ConfigValues>
         ProcessSyncMaskView();
     }
 
-    private void OnSyncEnemyHidingOverrideConfig(object s, EventArgs e) => ProcessSyncEnemyHidingOverrideConfig();
     private void ProcessSyncEnemyHidingOverrideConfig()
     {
         EnemyTargetHandler.OverrideInclusions.Clear();
@@ -401,7 +402,6 @@ public class ConfigValues : SyncedConfig<ConfigValues>
         }
     }
 
-    private void OnSyncStealthMeterVisibility(object s, EventArgs e) => ProcessSyncStealthMeterVisibility();
     private void ProcessSyncStealthMeterVisibility()
     {
         if (!SyncStealthMeterVisibility.Value) return;
@@ -409,7 +409,6 @@ public class ConfigValues : SyncedConfig<ConfigValues>
         StealthMeterVisibility.LocalValue = StealthMeterVisibility.Value;
     }
 
-    private void OnSyncMaskView(object s, EventArgs e) => ProcessSyncMaskView();
     private void ProcessSyncMaskView()
     {
         if (SyncMaskView.Value)
@@ -425,8 +424,6 @@ public class ConfigValues : SyncedConfig<ConfigValues>
 
     private void SetupLethalConfig()
     {
-        // Would've liked a string option config item for the enum-like constants
-
         LethalConfigManager.AddConfigItem(new BoolCheckBoxConfigItem(AllMasksHide.Entry, requiresRestart: false));
         LethalConfigManager.AddConfigItem(new EnumDropDownConfigItem<EnemyHideTargets>(EnemiesHiddenFrom.Entry, requiresRestart: false));
         LethalConfigManager.AddConfigItem(new TextInputFieldConfigItem(EnemyHidingOverrideConfig.Entry, new TextInputFieldOptions()

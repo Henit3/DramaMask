@@ -13,7 +13,7 @@ using DramaMask.Config;
 namespace DramaMask;
 
 [BepInDependency("evaisa.lethallib", "0.15.1")]
-[BepInDependency("com.sigurd.csync", "4.1.0")]
+[BepInDependency("com.sigurd.csync", "5.0.0")]
 [BepInDependency("ainavt.lc.lethalconfig", BepInDependency.DependencyFlags.SoftDependency)]
 [BepInDependency("com.rune580.LethalCompanyInputUtils", BepInDependency.DependencyFlags.SoftDependency)]
 [BepInPlugin(PluginInfo.PLUGIN_GUID, PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
