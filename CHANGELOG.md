@@ -1,3 +1,7 @@
+# 2.0.10
+- Fixed minor transpilation conflict with LethalCompanyVR
+- Added config to ignore custom keybinds for compatibility with unconventional controller schemes when InputUtils is installed
+
 # 2.0.9
 - Fixed bug stopping interaction when a mask is worn when the player is ejected
 

@@ -10,8 +10,11 @@ Also adds a new type of mask, Drama, which is not haunted unlike its Tragedy and
 They can also be attached to players' faces, allowing you to look identical to Masked enemies and spook your friends!
 To balance this mechanic out, there is a stealth meter that is used while attempting to hide.
 
-If playing on v50+ and LethalLevelLoader is being used, ensure it is on 1.2.0 or higher to avoid conflicts with most mods; including this one. 
-Works on v45-v50 until 2.0.0 and v50+ with 2.0.1+ with no other known incompatibilities; supports controller and LethalCompanyVR!
+### Compatibility
+* **[LethalLevelLoader](https://thunderstore.io/c/lethal-company/p/IAmBatby/LethalLevelLoader/)**: If playing on v50+ and LLL is being used, ensure it is on 1.2.0 or higher to avoid conflicts with most mods; including this one.
+* **[MaskedAiRevamp](https://thunderstore.io/c/lethal-company/p/Piggy/MaskedAIRevamp/)**: Ignoring collision with Masked enemies will not work; it is recommended to use [LethalIntelligence](https://thunderstore.io/c/lethal-company/p/VirusTLNR/LethalIntelligenceExperimental/) instead as this is a successor with more updates.
+
+Works on v45-v50 until 2.0.0 and v50+ with 2.0.1+ with no other known incompatibilities; supports controller and [LethalCompanyVR](https://thunderstore.io/c/lethal-company/p/DaXcess/LethalCompanyVR/)!
 
 > Formerly known as DramaMask
 
@@ -31,6 +34,7 @@ Works on v45-v50 until 2.0.0 and v50+ with 2.0.1+ with no other known incompatib
 * Disable mask possession when attached **[Host]**
 * Change mask view on usage (can be made different if attached) **[OptionalSync]**
 * Stop mask actions applying immediately on non-host clients, as it can cause temporary visual desync on rapid changes **[Client]**
+* Ignore custom keybinds with InputUtils installed for compatibility with unconventional control schemes like with LethalCompanyVR **[Client]**
 
 ## FAQ
 ### Where can I find the Drama mask?
@@ -98,7 +102,7 @@ Enemies can also be added to `DramaMask.Config.EnemyTargetHandler.NaturalExcepti
 Aside from this, explicit patches for custom enemies will _not_ be provided by this mod.
 
 ### Why can I not use items with a mask attached?
-This is intentional behaviour and is currently integral to how the mod's mask attaching features work. Changing this could mean rewriting the entire codebase to accomodate this, so it is currently not Supported. This is feasible though and may be considered for an update in the distant future.
+This is intentional behaviour and is currently integral to how the mod's mask attaching features work. Changing this could mean rewriting the entire codebase to accomodate this, so it is currently not supported. This is feasible though, and may be considered for an update in the distant future.
 
 ## Roadmap (development to be paused)
 * Sound and visuals support for VR in place of the stealth bar
@@ -113,7 +117,7 @@ Made on request from @tkcool and @pedro9006.
 	[InsanityMeter](https://thunderstore.io/c/lethal-company/p/MegaPiggy/InsanityMeter/) mod
 * Mask visibility on use: @star0138
 * Config based on usage type: @sagey08
-* Disabling collision events based on vibility: @alancrytex, @qwbarch, @autumnis
+* Disabling collision events based on visibility: @alancrytex, @qwbarch, @autumnis
 
 #### Bug Finders:
 * (Pre-Release) Networking: @roshposhtosh, @sabzy, and @saintshekzz
@@ -128,6 +132,7 @@ Made on request from @tkcool and @pedro9006.
 * Thumper near player detection NRE: @jontep5543
 * Issues on client crash: @mari0no1
 * No interaction on game over with mask worn: @virustlnr
+* Transpilation incompatibility with LethalVR: @daxcess
 
 ### Contact
 For requesting new features or highlighting issues/bugs found, please post them in the mod's
