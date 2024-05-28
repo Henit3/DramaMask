@@ -292,10 +292,10 @@ public class ConfigValues : SyncedConfig2<ConfigValues>
 
         MeterOffset = (_meterOffset = cfg.Bind(
             new(section, "Meter Offset"),
-            0f,
+            0.5f,
             new ConfigDescription(
                 "The combined offset applied to the position of the stealth meter ring.",
-                new AcceptableValueRange<float>(-5, 5)
+                new AcceptableValueRange<float>(-3, 3)
             ))).Value;
         _meterOffset.SettingChanged += (_, _) =>
         {

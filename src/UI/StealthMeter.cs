@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace DramaMask.UI;
@@ -6,6 +7,9 @@ namespace DramaMask.UI;
 // Adapted from the Oxygen mod: https://github.com/execOQ/Oxygen-LC/blob/master/General/OxygenInit.cs
 public class StealthMeter : MonoBehaviour
 {
+    private static bool IsOxygenInstalled =>
+        BepInEx.Bootstrap.Chainloader.PluginInfos.ContainsKey("consequential.Oxygen");
+
     private const float AccurateMinValue = 0.2978f;
     private const float AccurateMaxValue = 0.9101f;
     private const float AccurateValueRange = AccurateMaxValue - AccurateMinValue;
@@ -16,6 +20,14 @@ public class StealthMeter : MonoBehaviour
     private static float InvAdjustFillAmount(float value) => Plugin.Config.AccurateMeter
         ? (value - AccurateMinValue) / AccurateValueRange
         : value;
+
+    private static GameObject _weightUi
+        => GameObject.Find("Systems/UI/Canvas/IngamePlayerHUD/TopLeftCorner/WeightUI");
+    private static GameObject _statusEffectContainer
+        => GameObject.Find("Systems/UI/Canvas/IngamePlayerHUD/TopLeftCorner/StatusEffects");
+
+    private static Vector3 _initWeightPosition;
+    private static Vector3 _initStatusPosition;
 
     public static StealthMeter Instance { get; private set; }
 
@@ -86,8 +98,21 @@ public class StealthMeter : MonoBehaviour
             return;
         }
 
+        SetInitPositions();
+
         Instance = new();
         Plugin.Logger.LogInfo("StealthMeter initialized");
+    }
+
+    private static void SetInitPositions()
+    {
+        _initWeightPosition = _weightUi == null
+            ? new Vector3(0, 0, 0)
+            : _weightUi.transform.localPosition;
+
+        _initStatusPosition = _statusEffectContainer == null
+            ? new Vector3(0, 0, 0)
+            : _statusEffectContainer.transform.localPosition;
     }
 
     private StealthMeter()
@@ -97,12 +122,7 @@ public class StealthMeter : MonoBehaviour
 
     private void InitVanilla()
     {
-        GameObject topLeftCorner = GameObject.Find("Systems/UI/Canvas/IngamePlayerHUD/TopLeftCorner");
-        if (topLeftCorner == null)
-        {
-            Plugin.Logger.LogError("TopLeftCorner not found");
-            return;
-        }
+        var topLeftCorner = SprintMeter.transform.parent.gameObject;
 
         _stealthMeter = Instantiate(SprintMeter, topLeftCorner.transform);
         _stealthMeter.name = "StealthMeter";
@@ -121,28 +141,41 @@ public class StealthMeter : MonoBehaviour
             return;
         }
 
-        RectTransform sprintRectTransform = SprintMeter.GetComponent<RectTransform>();
+        var sprintRectTransform = SprintMeter.GetComponent<RectTransform>();
         if (sprintRectTransform == null)
         {
             Plugin.Logger.LogError("SprintRectTransform not found while applying offsets");
             return;
         }
 
-        RectTransform rectTransform = _stealthMeter.GetComponent<RectTransform>();
+        var rectTransform = _stealthMeter.GetComponent<RectTransform>();
         rectTransform.anchorMin = sprintRectTransform.anchorMin;
         rectTransform.anchorMax = sprintRectTransform.anchorMax;
         rectTransform.pivot = sprintRectTransform.pivot;
 
-        var offsetPosX = Plugin.Config.MeterOffset * 3f;
-        var offsetPosY = Plugin.Config.MeterOffset * -5f;
-        var offsetScaleX = Plugin.Config.MeterOffset * 0.3f;
-        var offsetScaleY = Plugin.Config.MeterOffset * 0.4f;
-
-        rectTransform.localPosition = sprintRectTransform.localPosition + new Vector3(offsetPosX, offsetPosY, 0);
-        rectTransform.localScale = sprintRectTransform.localScale + new Vector3(offsetScaleX, offsetScaleY, 0);
+        rectTransform.localPosition = sprintRectTransform.localPosition
+            + Plugin.Config.MeterOffset * new Vector3(3f, -5f, 0);
+        rectTransform.localScale = sprintRectTransform.localScale
+            + Plugin.Config.MeterOffset * new Vector3(0.3f, 0.4f, 0);
         rectTransform.rotation = sprintRectTransform.rotation;
+        
+        if (_statusEffectContainer != null)
+        {
+            // 20 per meter, cap meter at 1 if oxygen due to oxygen bar
+            var offsetCap = IsOxygenInstalled ? 1 : 0;
+            _statusEffectContainer.transform.localPosition = _initStatusPosition
+                + new Vector3(Math.Min(offsetCap, Plugin.Config.MeterOffset) * 20, 0, 0);
 
-        // TODO: Status effect positioning
-        // TODO: Weight display positioning
+            Plugin.Logger.LogInfo("StatusEffectHUD adjusted");
+        }
+
+        if (_weightUi != null)
+        {
+            // 20 per meter, cap total at 0 due to vanilla stamina bar
+            _weightUi.transform.localPosition = _initWeightPosition
+                + new Vector3(Math.Min(0, Plugin.Config.MeterOffset * 20), 0, 0);
+
+            Plugin.Logger.LogInfo("WeightUI adjusted");
+        }
     }
 }
