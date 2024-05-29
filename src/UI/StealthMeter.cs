@@ -1,4 +1,5 @@
 ﻿using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,6 +10,10 @@ public class StealthMeter : MonoBehaviour
 {
     private static bool IsOxygenInstalled =>
         BepInEx.Bootstrap.Chainloader.PluginInfos.ContainsKey("consequential.Oxygen");
+    private static bool IsEladsHudInstalled =>
+        BepInEx.Bootstrap.Chainloader.PluginInfos.ContainsKey("me.eladnlg.customhud");
+    private static bool IsShyHudInstalled =>
+        BepInEx.Bootstrap.Chainloader.PluginInfos.ContainsKey("ShyHUD");
 
     private const float AccurateMinValue = 0.2978f;
     private const float AccurateMaxValue = 0.9101f;
@@ -21,9 +26,9 @@ public class StealthMeter : MonoBehaviour
         ? (value - AccurateMinValue) / AccurateValueRange
         : value;
 
-    private static GameObject _weightUi
+    private static GameObject WeightUi
         => GameObject.Find("Systems/UI/Canvas/IngamePlayerHUD/TopLeftCorner/WeightUI");
-    private static GameObject _statusEffectContainer
+    private static GameObject StatusEffectContainer
         => GameObject.Find("Systems/UI/Canvas/IngamePlayerHUD/TopLeftCorner/StatusEffects");
 
     private static Vector3 _initWeightPosition;
@@ -42,6 +47,8 @@ public class StealthMeter : MonoBehaviour
         {
             if (uiElement == null) return;
             uiElement.enabled = value;
+
+            if (uiEladsText != null) uiEladsText.enabled = value;
         }
     }
 
@@ -50,13 +57,27 @@ public class StealthMeter : MonoBehaviour
         get
         {
             if (uiElement == null) return 0f;
-            return InvAdjustFillAmount(uiElement.fillAmount);
+            return IsEladsHudInstalled ? uiElement.fillAmount : InvAdjustFillAmount(uiElement.fillAmount);
         }
         set
         {
-            var adjustedFillAmount = AdjustFillAmount(value);
+            var adjustedFillAmount = IsEladsHudInstalled ? value : AdjustFillAmount(value);
             if (uiElement.fillAmount == adjustedFillAmount) return;
             uiElement.fillAmount = adjustedFillAmount;
+
+            if (uiEladsText != null)
+            {
+                float roundedValue = (float)Math.Round(Percent, 2);
+                int oxygenInPercent = (int)(roundedValue * 100);
+
+                uiEladsText.text = $"{oxygenInPercent}<size=75%><voffset=1>%</voffset></size>";
+            }
+
+            if (IsShyHudInstalled)
+            {
+                var toFadeOut = value >= 0.75f;
+                uiElement.CrossFadeAlpha(toFadeOut ? 0f : 1f, toFadeOut ? 5f : 0.5f, ignoreTimeScale: false);
+            }
         }
     }
 
@@ -70,6 +91,7 @@ public class StealthMeter : MonoBehaviour
         set
         {
             uiElement.color = value;
+            if (uiEladsText != null) uiEladsText.color = value;
         }
     }
 
@@ -80,7 +102,9 @@ public class StealthMeter : MonoBehaviour
         {
             if (_sprintMeter == null)
             {
-                _sprintMeter = GameObject.Find("Systems/UI/Canvas/IngamePlayerHUD/TopLeftCorner/SprintMeter");
+                _sprintMeter = GameObject.Find(IsEladsHudInstalled 
+                    ? "Systems/UI/Canvas/IngamePlayerHUD/PlayerInfo(Clone)/Stamina"
+                    : "Systems/UI/Canvas/IngamePlayerHUD/TopLeftCorner/SprintMeter");
                 if (_sprintMeter == null) Plugin.Logger.LogError("SprintMeter is null");
             }
             return _sprintMeter;
@@ -89,6 +113,7 @@ public class StealthMeter : MonoBehaviour
     
     private GameObject _stealthMeter;
     private Image uiElement;
+    private TextMeshProUGUI uiEladsText;
 
     public static void Init()
     {
@@ -101,42 +126,46 @@ public class StealthMeter : MonoBehaviour
         SetInitPositions();
 
         Instance = new();
-        Plugin.Logger.LogInfo("StealthMeter initialized");
     }
 
     private static void SetInitPositions()
     {
         if (_initWeightPosition == default)
         {
-            _initWeightPosition = _weightUi == null
+            _initWeightPosition = WeightUi == null
                 ? default
-                : _weightUi.transform.localPosition;
+                : WeightUi.transform.localPosition;
         }
 
         if (_initStatusPosition == default)
         {
-            _initStatusPosition = _statusEffectContainer == null
+            _initStatusPosition = StatusEffectContainer == null
             ? default
-            : _statusEffectContainer.transform.localPosition;
+            : StatusEffectContainer.transform.localPosition;
         }
     }
 
     private StealthMeter()
     {
-        InitVanilla();
-    }
-
-    private void InitVanilla()
-    {
         var topLeftCorner = SprintMeter.transform.parent.gameObject;
 
         _stealthMeter = Instantiate(SprintMeter, topLeftCorner.transform);
         _stealthMeter.name = "StealthMeter";
-        uiElement = _stealthMeter.transform.GetComponent<Image>();
-        uiElement.color = Plugin.Config.MeterColour;
+
+        if (!IsEladsHudInstalled) InitVanilla();
+        else InitEladsHud();
+
+        Colour = Plugin.Config.MeterColour;
         Percent = 1f;
+    }
+
+    private void InitVanilla()
+    {
+        uiElement = _stealthMeter.transform.GetComponent<Image>();
 
         ApplyMeterOffsets();
+
+        Plugin.Logger.LogInfo("StealthMeter initialised (Vanilla)");
     }
 
     public void ApplyMeterOffsets()
@@ -154,34 +183,45 @@ public class StealthMeter : MonoBehaviour
             return;
         }
 
-        var rectTransform = _stealthMeter.GetComponent<RectTransform>();
-        rectTransform.anchorMin = sprintRectTransform.anchorMin;
-        rectTransform.anchorMax = sprintRectTransform.anchorMax;
-        rectTransform.pivot = sprintRectTransform.pivot;
-
-        rectTransform.localPosition = sprintRectTransform.localPosition
+        _stealthMeter.transform.localPosition = sprintRectTransform.localPosition
             + Plugin.Config.MeterOffset * new Vector3(3f, -5f, 0);
-        rectTransform.localScale = sprintRectTransform.localScale
+        _stealthMeter.transform.localScale = sprintRectTransform.localScale
             + Plugin.Config.MeterOffset * new Vector3(0.3f, 0.4f, 0);
-        rectTransform.rotation = sprintRectTransform.rotation;
+        _stealthMeter.transform.rotation = sprintRectTransform.rotation;
         
-        if (_statusEffectContainer != null)
+        if (StatusEffectContainer != null)
         {
             // 20 per meter, cap meter at 1 if oxygen due to oxygen bar
             var offsetCap = IsOxygenInstalled ? 1 : 0;
-            _statusEffectContainer.transform.localPosition = _initStatusPosition
+            StatusEffectContainer.transform.localPosition = _initStatusPosition
                 + new Vector3(Math.Max(offsetCap, Plugin.Config.MeterOffset) * 20, 0, 0);
 
             Plugin.Logger.LogInfo("StatusEffectHUD adjusted");
         }
 
-        if (_weightUi != null)
+        if (WeightUi != null)
         {
             // 20 per meter, cap total at 0 due to vanilla stamina bar
-            _weightUi.transform.localPosition = _initWeightPosition
+            WeightUi.transform.localPosition = _initWeightPosition
                 + new Vector3(Math.Max(0, Plugin.Config.MeterOffset * 20), 0, 0);
 
             Plugin.Logger.LogInfo("WeightUI adjusted");
         }
+    }
+
+    private void InitEladsHud()
+    {
+        uiElement = _stealthMeter.transform.Find("Bar/StaminaBar").GetComponent<Image>();
+        uiEladsText = _stealthMeter.transform.Find("StaminaInfo").GetComponent<TextMeshProUGUI>();
+        uiEladsText.horizontalAlignment = HorizontalAlignmentOptions.Right;
+
+        // Destroy children objects that aren't needed
+        DestroyImmediate(_stealthMeter.transform.Find("CarryInfo").gameObject);
+        DestroyImmediate(_stealthMeter.transform.Find("Bar/Stamina Change FG").gameObject);
+
+        _stealthMeter.transform.localPosition = SprintMeter.transform.localPosition
+            + new Vector3(0f, 60f, 0);
+
+        Plugin.Logger.LogInfo("StealthMeter initialised (EladsHUD)");
     }
 }
