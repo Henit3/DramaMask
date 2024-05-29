@@ -106,13 +106,19 @@ public class StealthMeter : MonoBehaviour
 
     private static void SetInitPositions()
     {
-        _initWeightPosition = _weightUi == null
-            ? new Vector3(0, 0, 0)
-            : _weightUi.transform.localPosition;
+        if (_initWeightPosition == default)
+        {
+            _initWeightPosition = _weightUi == null
+                ? default
+                : _weightUi.transform.localPosition;
+        }
 
-        _initStatusPosition = _statusEffectContainer == null
-            ? new Vector3(0, 0, 0)
+        if (_initStatusPosition == default)
+        {
+            _initStatusPosition = _statusEffectContainer == null
+            ? default
             : _statusEffectContainer.transform.localPosition;
+        }
     }
 
     private StealthMeter()
@@ -164,7 +170,7 @@ public class StealthMeter : MonoBehaviour
             // 20 per meter, cap meter at 1 if oxygen due to oxygen bar
             var offsetCap = IsOxygenInstalled ? 1 : 0;
             _statusEffectContainer.transform.localPosition = _initStatusPosition
-                + new Vector3(Math.Min(offsetCap, Plugin.Config.MeterOffset) * 20, 0, 0);
+                + new Vector3(Math.Max(offsetCap, Plugin.Config.MeterOffset) * 20, 0, 0);
 
             Plugin.Logger.LogInfo("StatusEffectHUD adjusted");
         }
@@ -173,7 +179,7 @@ public class StealthMeter : MonoBehaviour
         {
             // 20 per meter, cap total at 0 due to vanilla stamina bar
             _weightUi.transform.localPosition = _initWeightPosition
-                + new Vector3(Math.Min(0, Plugin.Config.MeterOffset * 20), 0, 0);
+                + new Vector3(Math.Max(0, Plugin.Config.MeterOffset * 20), 0, 0);
 
             Plugin.Logger.LogInfo("WeightUI adjusted");
         }

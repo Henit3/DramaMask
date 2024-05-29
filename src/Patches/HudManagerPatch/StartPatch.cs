@@ -4,11 +4,11 @@ using HarmonyLib;
 
 namespace DramaMask.Patches.HudManagerPatch;
 
-[HarmonyPatch(typeof(HUDManager), "Awake")]
-public class AwakePatch
+[HarmonyPatch(typeof(HUDManager), "Start")]
+public class StartPatch
 {
     [HarmonyPostfix]
-    public static void Postfix(HUDManager __instance, ref HUDElement[] ___HUDElements)
+    public static void Postfix(HUDManager __instance)
     {
         if (!Plugin.Config.UseStealthMeter.Value
             || Plugin.Config.StealthMeterVisibility.LocalValue is MeterVisibility.Never) return;
