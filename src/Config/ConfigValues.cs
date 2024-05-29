@@ -532,6 +532,7 @@ public class ConfigValues : SyncedConfig2<ConfigValues>
             Step = 0.1f,
             RequiresRestart = false
         }));
+        LethalConfigManager.AddConfigItem(new BoolCheckBoxConfigItem(_accurateMeter, requiresRestart: false));
         LethalConfigManager.AddConfigItem(new TextInputFieldConfigItem(_meterColour, new TextInputFieldOptions()
         {
             NumberOfLines = 1,
