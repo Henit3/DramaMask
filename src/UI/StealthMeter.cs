@@ -34,6 +34,8 @@ public class StealthMeter : MonoBehaviour
     private static Vector3 _initWeightPosition;
     private static Vector3 _initStatusPosition;
 
+    // Workaround: Can use Instance, but comparisons show Instance == null as true
+    public static bool Initialised = false;
     public static StealthMeter Instance { get; private set; }
 
     public bool Visible
@@ -117,15 +119,15 @@ public class StealthMeter : MonoBehaviour
 
     public static void Init()
     {
-        if (Instance != null)
+        if (Initialised)
         {
             Plugin.Logger.LogDebug("StealthMeter already initialized");
             return;
         }
 
         SetInitPositions();
-
         Instance = new();
+        Initialised = true;
     }
 
     private static void SetInitPositions()

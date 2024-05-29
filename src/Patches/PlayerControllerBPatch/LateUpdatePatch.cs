@@ -21,7 +21,8 @@ public class LateUpdatePatch
     private static void HandleStealthMeter(PlayerControllerB __instance)
     {
         if (!Plugin.Config.UseStealthMeter.Value
-            || Plugin.Config.StealthMeterVisibility.LocalValue is MeterVisibility.Never) return;
+            || Plugin.Config.StealthMeterVisibility.LocalValue is MeterVisibility.Never
+            || !StealthMeter.Initialised) return;
 
         // Ignore updates called by pre-loaded scripts that are not controlled by a player
         if (!__instance.isPlayerControlled) return;

@@ -242,6 +242,15 @@ public class ConfigValues : SyncedConfig2<ConfigValues>
                 "Whether the masks should have a timeout limiting usage to make them balanced.",
                 new AcceptableValueList<bool>(true, false)
             ));
+        UseStealthMeter.Changed += (_, _) =>
+        {
+            if (!UseStealthMeter.Value)
+            {
+                if (StealthMeter.Initialised) StealthMeter.Instance.Visible = false;
+                return;
+            }
+            if (GameNetworkManager.Instance.connectedPlayers > 0) StealthMeter.Init();
+        };
 
         MaxHiddenTime = cfg.BindSyncedEntry(
             new(section, "Max Stealth Time"),
@@ -307,12 +316,13 @@ public class ConfigValues : SyncedConfig2<ConfigValues>
             new(section, "Meter Offset"),
             0.5f,
             new ConfigDescription(
-                "The combined offset applied to the position of the stealth meter ring.",
+                "The combined offset applied to the position of the stealth meter ring (Does not apply with EladsHUD installed).",
                 new AcceptableValueRange<float>(-3, 3)
             ))).Value;
         _meterOffset.SettingChanged += (_, _) =>
         {
             MeterOffset = _meterOffset.Value;
+            if (!StealthMeter.Initialised) return;
             StealthMeter.Instance.ApplyMeterOffsets();
         };
 
@@ -333,6 +343,7 @@ public class ConfigValues : SyncedConfig2<ConfigValues>
         _meterColour.SettingChanged += (_, _) =>
         {
             MeterColour = _meterColour.Value.FromConfigString();
+            if (!StealthMeter.Initialised) return;
             StealthMeter.Instance.Colour = MeterColour;
         };
     }
