@@ -26,7 +26,7 @@ Works on v45-v50 until 2.0.0 and v50+ with 2.0.1+ with no other known incompatib
 * Potentially increase custom enemy compatibility at the cost of performance **[Host]**
 * Disable the stealth meter balancing mechanic **[Host]**
 * Adjust stealth meter behaviour (can be made different if attached) **[Host]**
-* Adjust stealth meter appearance (position and colour) **[Client]**
+* Adjust stealth meter appearance (colour and vanilla meter offset) **[Client]**
 * Stealth meter visibility **[OptionalSync]**
 * Remove mask on meter depletion **[Host]**
 * Adjust drama mask spawn rates with a multiplier & specific moon overrides **[Host]**

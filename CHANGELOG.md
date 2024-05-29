@@ -1,3 +1,8 @@
+# 2.1.0
+- Added vanilla style stealth meter with out of the box compatibility for InsanityDisplay, EladsHUD, and ShyHUD
+- Improved local config syncing when changed via LethalConfig ingame
+- (Internal) Updated project to NET Standard 2.1
+
 # 2.0.11
 - Fixed accidental hard dependancy on InputUtils
 
