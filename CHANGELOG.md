@@ -1,3 +1,6 @@
+# 2.0.11
+- Fixed accidental hard dependancy on InputUtils
+
 # 2.0.10
 - Fixed minor transpilation conflict with LethalCompanyVR
 - Added config to ignore custom keybinds for compatibility with unconventional controller schemes when InputUtils is installed
