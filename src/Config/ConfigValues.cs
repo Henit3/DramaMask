@@ -9,6 +9,7 @@ using LethalConfig.ConfigItems;
 using LethalConfig.ConfigItems.Options;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Runtime.Serialization;
 using UnityEngine;
 using static LethalLib.Modules.Levels;
@@ -82,10 +83,22 @@ public class ConfigValues : SyncedConfig2<ConfigValues>
         SetMaskView(cfg);
         SetMisc(cfg);
 
+        RemoveOldConfigEntries(cfg);
+
         PostSyncProcessing();
 
         try { SetupLethalConfig(); }
         catch { Plugin.Logger.LogInfo("Soft dependency on LethalConfig could not be loaded."); }
+    }
+
+    // Source @kittenji on the Lethal Company Modding Discord Server: https://discord.com/channels/1168655651455639582/1205519828857651220
+    private void RemoveOldConfigEntries(ConfigFile cfg)
+    {
+        PropertyInfo orphanedEntriesProp = cfg.GetType()
+            .GetProperty("OrphanedEntries", BindingFlags.NonPublic | BindingFlags.Instance);
+        var orphanedEntries = (Dictionary<ConfigDefinition, string>)orphanedEntriesProp.GetValue(cfg, null);
+        orphanedEntries.Clear();
+        cfg.Save();
     }
 
     private void SetHidingTargets(ConfigFile cfg)
