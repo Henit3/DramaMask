@@ -1,4 +1,5 @@
-﻿using LCVR.Player;
+﻿using DunGen;
+using LCVR.Player;
 using System;
 using System.Collections;
 using TMPro;
@@ -108,9 +109,9 @@ public class StealthMeter : MonoBehaviour
         {
             if (_sprintMeter == null)
             {
-                _sprintMeter = GameObject.Find(IsEladsHudInstalled 
-                    ? "Systems/UI/Canvas/IngamePlayerHUD/PlayerInfo(Clone)/Stamina"
-                    : "Systems/UI/Canvas/IngamePlayerHUD/TopLeftCorner/SprintMeter");
+                _sprintMeter = IsEladsHudInstalled
+                    ? GameObject.Find("Systems/UI/Canvas/IngamePlayerHUD/PlayerInfo(Clone)/Stamina")
+                    : GameNetworkManager.Instance.localPlayerController.sprintMeterUI.gameObject;
                 if (_sprintMeter == null) Plugin.Logger.LogError("SprintMeter is null");
             }
             return _sprintMeter;
@@ -128,27 +129,20 @@ public class StealthMeter : MonoBehaviour
             Plugin.Logger.LogDebug("StealthMeter already initialized");
             return;
         }
-
-        SetInitPositions();
+        
         Instance = new();
         Initialised = true;
     }
 
     private static void SetInitPositions()
     {
-        if (_initWeightPosition == default)
-        {
-            _initWeightPosition = WeightUi == null
-                ? default
-                : WeightUi.transform.localPosition;
-        }
+        _initWeightPosition = WeightUi == null
+            ? default
+            : WeightUi.transform.localPosition;
 
-        if (_initStatusPosition == default)
-        {
-            _initStatusPosition = StatusEffectContainer == null
+        _initStatusPosition = StatusEffectContainer == null
             ? default
             : StatusEffectContainer.transform.localPosition;
-        }
     }
 
     private StealthMeter()
@@ -158,8 +152,15 @@ public class StealthMeter : MonoBehaviour
         _stealthMeter = Instantiate(SprintMeter, topLeftCorner.transform);
         _stealthMeter.name = "StealthMeter";
 
-        if (!IsLcVrInstalled) InitVr();
-        else if (IsEladsHudInstalled) InitEladsHud();
+        if (!IsLcVrInstalled)
+        {
+            CoroutineHelper.Start(InitVr());
+            return;
+        }
+
+        SetInitPositions();
+        
+        if (IsEladsHudInstalled) InitEladsHud();
         else InitVanilla();
 
         Colour = Plugin.Config.MeterColour;
@@ -177,6 +178,12 @@ public class StealthMeter : MonoBehaviour
 
     public void ApplyMeterOffsets()
     {
+        if (IsLcVrInstalled) ApplyVrMeterOffsets();
+        else ApplyMeterOffsetsCommon();
+    }
+
+    private void ApplyMeterOffsetsCommon()
+    {
         if (_stealthMeter == null)
         {
             Plugin.Logger.LogError("StealthMeter was uninitialised while applying offsets");
@@ -190,16 +197,25 @@ public class StealthMeter : MonoBehaviour
             return;
         }
 
+        var offsetInterval = IsLcVrInstalled
+            ? new Vector3(0, -5f, 3f) / (LCVR.Plugin.Config.DisableArmHUD.Value ? 1 : 2)
+            : new Vector3(3f, -5f, 0);
+        var scaleInterval = IsLcVrInstalled
+            ? new Vector3(0, 0.4f, 0.3f)
+            : new Vector3(0.3f, 0.4f, 0);
+
+        // LCVR: Re-using same code with x and z components switched
+        //       Adjust position of meter & self when using arm HUD
         _stealthMeter.transform.localPosition = sprintRectTransform.localPosition
-            + Plugin.Config.MeterOffset * new Vector3(3f, -5f, 0);
+            + Plugin.Config.MeterOffset * offsetInterval;
         _stealthMeter.transform.localScale = sprintRectTransform.localScale
-            + Plugin.Config.MeterOffset * new Vector3(0.3f, 0.4f, 0);
+            + Plugin.Config.MeterOffset * scaleInterval;
         _stealthMeter.transform.rotation = sprintRectTransform.rotation;
         
         if (StatusEffectContainer != null)
         {
             // 20 per meter, cap meter at 1 if oxygen due to oxygen bar
-            var offsetCap = IsOxygenInstalled ? 1 : 0;
+            var offsetCap = IsOxygenInstalled && !IsLcVrInstalled ? 1 : 0;
             StatusEffectContainer.transform.localPosition = _initStatusPosition
                 + new Vector3(Math.Max(offsetCap, Plugin.Config.MeterOffset) * 20, 0, 0);
 
@@ -243,14 +259,17 @@ public class StealthMeter : MonoBehaviour
         // Wait until VR Instance exists
         yield return new WaitUntil(() => VRSession.Instance != null);
 
+        SetInitPositions();
+
         ApplyVrMeterOffsets();
+
+        Colour = Plugin.Config.MeterColour;
+        Percent = 1f;
 
         Plugin.Logger.LogInfo("StealthMeter initialised (VR)");
     }
 
-    // TODO: Switch between vanilla and vr based on LCVR status
-    // TODO: Fix the below wrt handling of StatusEffectHud and WeightUi
-    public void ApplyVrMeterOffsets()
+    private void ApplyVrMeterOffsets()
     {
         if (_stealthMeter == null)
         {
@@ -258,21 +277,13 @@ public class StealthMeter : MonoBehaviour
             return;
         }
         
-        // Set parent to TopLeftCorner equivalent
-        Transform sprintMeterTransform = _sprintMeter.transform.parent;
-        _sprintMeter.transform.SetParent(sprintMeterTransform.parent, false);
+        // Set parent to TopLeftCorner equivalent for positioning
+        Transform sprintMeterTransform = SprintMeter.transform;
+        _stealthMeter.transform.SetParent(sprintMeterTransform.parent, false);
 
-        // Re-using same code with x and z components switched
-        // Adjust position of meter & self when using arm HUD
-        var meterOffsetPos = Plugin.Config.MeterOffset * new Vector3(0, -5f, 3f)
-            / (LCVR.Plugin.Config.DisableArmHUD.Value ? 1 : 2);
-        var meterOffsetScale = Plugin.Config.MeterOffset * new Vector3(0, 0.4f, 0.3f);
-
-        _stealthMeter.transform.localPosition = sprintMeterTransform.localPosition + meterOffsetPos;
-        _stealthMeter.transform.localScale = sprintMeterTransform.localScale + meterOffsetScale;
-        _stealthMeter.transform.rotation = sprintMeterTransform.rotation;
+        ApplyMeterOffsets();
 
         // InsanityDisplay: Shouldn't have any negative effects(?) and will hide when LCVR's HUD hides
-        _sprintMeter.transform.SetParent(sprintMeterTransform, true);
+        _stealthMeter.transform.SetParent(sprintMeterTransform, true);
     }
 }
