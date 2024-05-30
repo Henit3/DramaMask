@@ -1,4 +1,6 @@
-﻿using System;
+﻿using LCVR.Player;
+using System;
+using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -14,6 +16,8 @@ public class StealthMeter : MonoBehaviour
         BepInEx.Bootstrap.Chainloader.PluginInfos.ContainsKey("me.eladnlg.customhud");
     private static bool IsShyHudInstalled =>
         BepInEx.Bootstrap.Chainloader.PluginInfos.ContainsKey("ShyHUD");
+    private static bool IsLcVrInstalled =>
+        BepInEx.Bootstrap.Chainloader.PluginInfos.ContainsKey("io.daxcess.lcvr");
 
     private const float AccurateMinValue = 0.2978f;
     private const float AccurateMaxValue = 0.9101f;
@@ -154,8 +158,9 @@ public class StealthMeter : MonoBehaviour
         _stealthMeter = Instantiate(SprintMeter, topLeftCorner.transform);
         _stealthMeter.name = "StealthMeter";
 
-        if (!IsEladsHudInstalled) InitVanilla();
-        else InitEladsHud();
+        if (!IsLcVrInstalled) InitVr();
+        else if (IsEladsHudInstalled) InitEladsHud();
+        else InitVanilla();
 
         Colour = Plugin.Config.MeterColour;
         Percent = 1f;
@@ -225,5 +230,49 @@ public class StealthMeter : MonoBehaviour
             + new Vector3(0f, 60f, 0);
 
         Plugin.Logger.LogInfo("StealthMeter initialised (EladsHUD)");
+    }
+
+    // Adapted from the InsanityDisplay mod: https://github.com/Confusified/LC-InsanityDisplay/blob/master/ModCompatibility/LethalCompanyVRCompatibility.cs
+    private IEnumerator InitVr()
+    {
+        if (!VRSession.InVR) yield break;
+
+        // Set parent to sprint meter until VR Instance exists
+        _sprintMeter.transform.SetParent(SprintMeter.transform, false);
+
+        // Wait until VR Instance exists
+        yield return new WaitUntil(() => VRSession.Instance != null);
+
+        ApplyVrMeterOffsets();
+
+        Plugin.Logger.LogInfo("StealthMeter initialised (VR)");
+    }
+
+    // TODO: Switch between vanilla and vr based on LCVR status
+    // TODO: Fix the below wrt handling of StatusEffectHud and WeightUi
+    public void ApplyVrMeterOffsets()
+    {
+        if (_stealthMeter == null)
+        {
+            Plugin.Logger.LogError("StealthMeter was uninitialised while applying offsets");
+            return;
+        }
+        
+        // Set parent to TopLeftCorner equivalent
+        Transform sprintMeterTransform = _sprintMeter.transform.parent;
+        _sprintMeter.transform.SetParent(sprintMeterTransform.parent, false);
+
+        // Re-using same code with x and z components switched
+        // Adjust position of meter & self when using arm HUD
+        var meterOffsetPos = Plugin.Config.MeterOffset * new Vector3(0, -5f, 3f)
+            / (LCVR.Plugin.Config.DisableArmHUD.Value ? 1 : 2);
+        var meterOffsetScale = Plugin.Config.MeterOffset * new Vector3(0, 0.4f, 0.3f);
+
+        _stealthMeter.transform.localPosition = sprintMeterTransform.localPosition + meterOffsetPos;
+        _stealthMeter.transform.localScale = sprintMeterTransform.localScale + meterOffsetScale;
+        _stealthMeter.transform.rotation = sprintMeterTransform.rotation;
+
+        // InsanityDisplay: Shouldn't have any negative effects(?) and will hide when LCVR's HUD hides
+        _sprintMeter.transform.SetParent(sprintMeterTransform, true);
     }
 }
