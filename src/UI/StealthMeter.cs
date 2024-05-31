@@ -39,6 +39,8 @@ public class StealthMeter : MonoBehaviour
     private static Vector3 _initWeightPosition;
     private static Vector3 _initStatusPosition;
 
+    private static int VrArmHudScaler => LCVR.Plugin.Config.DisableArmHUD.Value ? 1 : 2;
+
     // Workaround: Can use Instance, but comparisons show Instance == null as true
     public static bool Initialised = false;
     public static StealthMeter Instance { get; private set; }
@@ -68,6 +70,8 @@ public class StealthMeter : MonoBehaviour
         }
         set
         {
+            if (uiElement == null) return;
+
             var adjustedFillAmount = IsEladsHudInstalled ? value : AdjustFillAmount(value);
             if (uiElement.fillAmount == adjustedFillAmount) return;
             uiElement.fillAmount = adjustedFillAmount;
@@ -97,6 +101,7 @@ public class StealthMeter : MonoBehaviour
         }
         set
         {
+            if (uiElement == null) return;
             uiElement.color = value;
             if (uiEladsText != null) uiEladsText.color = value;
         }
@@ -109,9 +114,16 @@ public class StealthMeter : MonoBehaviour
         {
             if (_sprintMeter == null)
             {
-                _sprintMeter = IsEladsHudInstalled
-                    ? GameObject.Find("Systems/UI/Canvas/IngamePlayerHUD/PlayerInfo(Clone)/Stamina")
-                    : GameNetworkManager.Instance.localPlayerController.sprintMeterUI.gameObject;
+                if (IsLcVrInstalled)
+                {
+                    _sprintMeter = GameNetworkManager.Instance.localPlayerController.sprintMeterUI.gameObject;
+                }
+                else
+                {
+                    _sprintMeter = GameObject.Find(IsEladsHudInstalled
+                        ? "Systems/UI/Canvas/IngamePlayerHUD/PlayerInfo(Clone)/Stamina"
+                        : "Systems/UI/Canvas/IngamePlayerHUD/TopLeftCorner/SprintMeter");
+                }
                 if (_sprintMeter == null) Plugin.Logger.LogError("SprintMeter is null");
             }
             return _sprintMeter;
@@ -152,7 +164,7 @@ public class StealthMeter : MonoBehaviour
         _stealthMeter = Instantiate(SprintMeter, topLeftCorner.transform);
         _stealthMeter.name = "StealthMeter";
 
-        if (!IsLcVrInstalled)
+        if (IsLcVrInstalled)
         {
             CoroutineHelper.Start(InitVr());
             return;
@@ -197,15 +209,17 @@ public class StealthMeter : MonoBehaviour
             return;
         }
 
+        // LCVR: Re-using same code with x and z components switched
+        //       Adjust position of meter & self when using arm HUD
+        var armHudScaler = 1;
+        try { if (IsLcVrInstalled) armHudScaler = VrArmHudScaler; } catch { }
         var offsetInterval = IsLcVrInstalled
-            ? new Vector3(0, -5f, 3f) / (LCVR.Plugin.Config.DisableArmHUD.Value ? 1 : 2)
+            ? new Vector3(0, -5f, 3f) / armHudScaler
             : new Vector3(3f, -5f, 0);
         var scaleInterval = IsLcVrInstalled
             ? new Vector3(0, 0.4f, 0.3f)
             : new Vector3(0.3f, 0.4f, 0);
 
-        // LCVR: Re-using same code with x and z components switched
-        //       Adjust position of meter & self when using arm HUD
         _stealthMeter.transform.localPosition = sprintRectTransform.localPosition
             + Plugin.Config.MeterOffset * offsetInterval;
         _stealthMeter.transform.localScale = sprintRectTransform.localScale
@@ -253,8 +267,10 @@ public class StealthMeter : MonoBehaviour
     {
         if (!VRSession.InVR) yield break;
 
+        uiElement = _stealthMeter.transform.GetComponent<Image>();
+
         // Set parent to sprint meter until VR Instance exists
-        _sprintMeter.transform.SetParent(SprintMeter.transform, false);
+        _stealthMeter.transform.SetParent(SprintMeter.transform, false);
 
         // Wait until VR Instance exists
         yield return new WaitUntil(() => VRSession.Instance != null);
