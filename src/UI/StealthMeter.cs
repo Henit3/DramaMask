@@ -114,16 +114,9 @@ public class StealthMeter : MonoBehaviour
         {
             if (_sprintMeter == null)
             {
-                if (IsLcVrInstalled)
-                {
-                    _sprintMeter = GameNetworkManager.Instance.localPlayerController.sprintMeterUI.gameObject;
-                }
-                else
-                {
-                    _sprintMeter = GameObject.Find(IsEladsHudInstalled
-                        ? "Systems/UI/Canvas/IngamePlayerHUD/PlayerInfo(Clone)/Stamina"
-                        : "Systems/UI/Canvas/IngamePlayerHUD/TopLeftCorner/SprintMeter");
-                }
+                _sprintMeter = IsEladsHudInstalled
+                    ? GameObject.Find("Systems/UI/Canvas/IngamePlayerHUD/PlayerInfo(Clone)/Stamina")
+                    : GameNetworkManager.Instance.localPlayerController.sprintMeterUI.gameObject;
                 if (_sprintMeter == null) Plugin.Logger.LogError("SprintMeter is null");
             }
             return _sprintMeter;
