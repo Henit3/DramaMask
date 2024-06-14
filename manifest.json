@@ -1,6 +1,6 @@
 {
   "name": "DramaMask",
-  "version_number": "2.1.0",
+  "version_number": "2.1.1",
   "website_url": "https://github.com/Henit3/DramaMask",
   "description": "Enables masks to be worn to hide from enemies by blending in with the Masked and adds a safe mask, Drama!",
   "dependencies": [

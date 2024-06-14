@@ -16,6 +16,7 @@ namespace DramaMask;
 [BepInDependency("com.sigurd.csync", "5.0.0")]
 [BepInDependency("ainavt.lc.lethalconfig", BepInDependency.DependencyFlags.SoftDependency)]
 [BepInDependency("com.rune580.LethalCompanyInputUtils", BepInDependency.DependencyFlags.SoftDependency)]
+[BepInDependency("SlapitNow.LethalHands", BepInDependency.DependencyFlags.SoftDependency)]
 [BepInPlugin(PluginInfo.PLUGIN_GUID, PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
 public class Plugin : BaseUnityPlugin
 {
@@ -40,7 +41,13 @@ public class Plugin : BaseUnityPlugin
         Logger.LogInfo($"Loading assets complete!");
 
         Logger.LogInfo($"Patching...");
-        Harmony.PatchAll();
+
+        var lethalHandsPatch = typeof(Patches.LethalHandsPatch.LethalHandsPatch);
+        Harmony.PatchExcept([lethalHandsPatch]);
+
+        try { Harmony.PatchAll(lethalHandsPatch); }
+        catch { }
+        
         Logger.LogInfo($"Patching complete!");
 
         Logger.LogInfo($"Plugin {PluginInfo.PLUGIN_GUID} ({PluginInfo.PLUGIN_VERSION}) is loaded!");
