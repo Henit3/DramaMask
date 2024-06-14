@@ -1,3 +1,6 @@
+# 2.1.1
+- Added compatibility with LethalHands when the mask is worn on squaring up, by detaching the mask and dropping it if intended by the config
+
 # 2.1.0
 - Added vanilla style stealth meter with out of the box compatibility for InsanityDisplay, EladsHUD, and ShyHUD
 - Improved local config syncing when changed via LethalConfig ingame

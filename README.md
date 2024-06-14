@@ -106,7 +106,7 @@ This is intentional behaviour and is currently integral to how the mod's mask at
 
 ## Roadmap (development to be paused)
 * Sound and visuals support for VR in place of the stealth bar
-* Allow the player to have their hands out like the Masked (unlikely without more help)
+* Allow the player to have their hands out like the Masked
 
 ## Credits
 Made on request from @tkcool and @pedro9006.
@@ -137,6 +137,7 @@ Made on request from @tkcool and @pedro9006.
 * Issues on client crash: @mari0no1
 * No interaction on game over with mask worn: @virustlnr
 * Transpilation incompatibility with LethalVR: @daxcess
+* LethalHands incompatibility when mask worn on square up: @sashimi_express
 
 ### Contact
 For requesting new features or highlighting issues/bugs found, please post them in the mod's
