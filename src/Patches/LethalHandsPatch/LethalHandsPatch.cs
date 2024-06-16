@@ -8,8 +8,8 @@ namespace DramaMask.Patches.LethalHandsPatch;
 public class LethalHandsPatch
 {
     [HarmonyPatch(nameof(LethalHands.LethalHands.SquareUp))]
-    [HarmonyPostfix]
-    public static void Postfix(LethalHands.LethalHands __instance)
+    [HarmonyPrefix]
+    public static void Prefix(LethalHands.LethalHands __instance)
     {
         var player = GameNetworkManager.Instance.localPlayerController;
 
