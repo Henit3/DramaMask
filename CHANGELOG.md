@@ -1,3 +1,6 @@
+# 2.1.2
+- Fixed compatibility with LethalHands when the current item drop mode selected
+
 # 2.1.1
 - Added compatibility with LethalHands when the mask is worn on squaring up, by detaching the mask and dropping it if intended by the config
 
