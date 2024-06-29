@@ -15,6 +15,7 @@ public class StealthData : NetworkData
         set
         {
             if (_isHoldingMask == value) return;
+
             _isHoldingMask = value;
             if (ShouldCopyToMap()) NetworkHandler.Instance.StealthMap[PlayerId].IsHoldingMask = value;
 
@@ -37,6 +38,8 @@ public class StealthData : NetworkData
         get => _stealthValue;
         set
         {
+            if (_stealthValue == value) return;
+
             var previousValue = _stealthValue;
             _stealthValue = value;
             if (ShouldCopyToMap()) NetworkHandler.Instance.StealthMap[PlayerId].StealthValue = value;
@@ -59,6 +62,8 @@ public class StealthData : NetworkData
         get => _lastStartedStealth;
         set
         {
+            if (_lastStartedStealth == value) return;
+
             _lastStartedStealth = value;
             if (ShouldCopyToMap()) NetworkHandler.Instance.StealthMap[PlayerId].LastStartedStealth = value;
         }
@@ -70,6 +75,8 @@ public class StealthData : NetworkData
         get => _lastStoppedStealth;
         set
         {
+            if (_lastStoppedStealth == value) return;
+
             _lastStoppedStealth = value;
             if (ShouldCopyToMap()) NetworkHandler.Instance.StealthMap[PlayerId].LastStoppedStealth = value;
         }
@@ -81,6 +88,8 @@ public class StealthData : NetworkData
         get => _addExhaustionPenalty;
         set
         {
+            if (_addExhaustionPenalty == value) return;
+
             _addExhaustionPenalty = value;
             if (ShouldCopyToMap()) NetworkHandler.Instance.StealthMap[PlayerId].AddExhaustionPenalty = value;
         }

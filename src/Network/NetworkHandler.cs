@@ -1,5 +1,6 @@
 ﻿using DramaMask.Extensions;
 using DramaMask.Models.Network;
+using GameNetcodeStuff;
 using System.Collections.Generic;
 using Unity.Netcode;
 
@@ -125,11 +126,9 @@ public class NetworkHandler : NetworkBehaviour
     {
         var player = StartOfRound.Instance.GetPlayer(playerId);
         Plugin.Logger.LogDebug($"AttachMaskClientRPC {playerId} -> {player}: {isAttaching}");
-        if (player == null
-            || player.currentlyHeldObjectServer == null
-            || player.currentlyHeldObjectServer is not HauntedMaskItem mask)
+        if (!IsMaskActionValid(player, out var mask, out var reasonInvalid))
         {
-            Plugin.Logger.LogDebug($"AttachMaskClientRPC {player.currentlyHeldObjectServer}");
+            Plugin.Logger.LogDebug($"AttachMaskClientRPC invalid call: {reasonInvalid}");
             return;
         }
 
@@ -150,14 +149,40 @@ public class NetworkHandler : NetworkBehaviour
     {
         var player = StartOfRound.Instance.GetPlayer(playerId);
         Plugin.Logger.LogDebug($"MaskEyesClientRPC {playerId} -> {player}: {isActivating}");
-        if (player == null
-            || player.currentlyHeldObjectServer == null
-            || player.currentlyHeldObjectServer is not HauntedMaskItem mask)
+        if (!IsMaskActionValid(player, out var mask, out var reasonInvalid))
         {
-            Plugin.Logger.LogDebug($"MaskEyesClientRPC {player.currentlyHeldObjectServer}");
+            Plugin.Logger.LogDebug($"MaskEyesClientRPC invalid call: {reasonInvalid}");
             return;
         }
 
         mask.SetMaskEyes(isActivating);
+    }
+
+    private bool IsMaskActionValid(PlayerControllerB player, out HauntedMaskItem mask, out string reasonInvalid)
+    {
+        reasonInvalid = null;
+        mask = null;
+
+        if (player == null)
+        {
+            reasonInvalid = "Player is null";
+            return false;
+        }
+
+        var currentlyHeldObjectServer = player.currentlyHeldObjectServer;
+        if (currentlyHeldObjectServer == null)
+        {
+            reasonInvalid = "CurrentlyHeldObjectServer is null";
+            return false;
+        }
+
+        if (currentlyHeldObjectServer is not HauntedMaskItem maskItem)
+        {
+            reasonInvalid = "CurrentlyHeldObjectServer is not a HauntedMaskItem";
+            return false;
+        }
+
+        mask = maskItem;
+        return true;
     }
 }

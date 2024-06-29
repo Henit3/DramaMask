@@ -13,6 +13,8 @@ public class PretendData : NetworkData
         get => _isMaskAttached;
         set
         {
+            if (_isMaskAttached == value) return;
+
             _isMaskAttached = value;
             if (ShouldCopyToMap()) NetworkHandler.Instance.PretendMap[PlayerId].IsMaskAttached = value;
             if (ShouldServerProcess()) NetworkHandler.Instance.SetPlayerMaskAttachedServer(PlayerId, value);
@@ -30,6 +32,8 @@ public class PretendData : NetworkData
         get => _isMaskEyesOn;
         set
         {
+            if (_isMaskEyesOn == value) return;
+
             _isMaskEyesOn = value;
             if (ShouldCopyToMap()) NetworkHandler.Instance.PretendMap[PlayerId].IsMaskEyesOn = value;
             if (ShouldServerProcess()) NetworkHandler.Instance.SetPlayerMaskEyesServer(PlayerId, value);
