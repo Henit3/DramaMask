@@ -192,6 +192,7 @@ public class ConfigValues : SyncedConfig2<ConfigValues>
             { LevelTypes.RendLevel, BaseDramaSpawnChance },
             { LevelTypes.DineLevel, BaseDramaSpawnChance },
             { LevelTypes.TitanLevel, BaseDramaSpawnChance },
+            { LevelTypes.ArtificeLevel, BaseDramaSpawnChance },
             { LevelTypes.Modded, BaseDramaSpawnChance }
         };
         DramaSpawnMapModded = new();
