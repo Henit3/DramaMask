@@ -1,5 +1,5 @@
 ﻿using DunGen;
-using LCVR.Player;
+//using LCVR.Player;
 using System;
 using System.Collections;
 using TMPro;
@@ -17,8 +17,8 @@ public class StealthMeter : MonoBehaviour
         BepInEx.Bootstrap.Chainloader.PluginInfos.ContainsKey("me.eladnlg.customhud");
     private static bool IsShyHudInstalled =>
         BepInEx.Bootstrap.Chainloader.PluginInfos.ContainsKey("ShyHUD");
-    private static bool IsLcVrInstalled =>
-        BepInEx.Bootstrap.Chainloader.PluginInfos.ContainsKey("io.daxcess.lcvr");
+    private static bool IsLcVrInstalled => false;
+        //BepInEx.Bootstrap.Chainloader.PluginInfos.ContainsKey("io.daxcess.lcvr");
 
     private const float AccurateMinValue = 0.2978f;
     private const float AccurateMaxValue = 0.9101f;
@@ -39,7 +39,7 @@ public class StealthMeter : MonoBehaviour
     private static Vector3 _initWeightPosition;
     private static Vector3 _initStatusPosition;
 
-    private static int VrArmHudScaler => LCVR.Plugin.Config.DisableArmHUD.Value ? 1 : 2;
+    //private static int VrArmHudScaler => LCVR.Plugin.Config.DisableArmHUD.Value ? 1 : 2;
 
     // Workaround: Can use Instance, but comparisons show Instance == null as true
     public static bool Initialised = false;
@@ -205,7 +205,7 @@ public class StealthMeter : MonoBehaviour
         // LCVR: Re-using same code with x and z components switched
         //       Adjust position of meter & self when using arm HUD
         var armHudScaler = 1;
-        try { if (IsLcVrInstalled) armHudScaler = VrArmHudScaler; } catch { }
+        //try { if (IsLcVrInstalled) armHudScaler = VrArmHudScaler; } catch { }
         var offsetInterval = IsLcVrInstalled
             ? new Vector3(0, -5f, 3f) / armHudScaler
             : new Vector3(3f, -5f, 0);
@@ -258,7 +258,8 @@ public class StealthMeter : MonoBehaviour
     // Adapted from the InsanityDisplay mod: https://github.com/Confusified/LC-InsanityDisplay/blob/master/ModCompatibility/LethalCompanyVRCompatibility.cs
     private IEnumerator InitVr()
     {
-        if (!VRSession.InVR) yield break;
+        yield break;
+        //if (!VRSession.InVR) yield break;
 
         uiElement = _stealthMeter.transform.GetComponent<Image>();
 
@@ -266,7 +267,7 @@ public class StealthMeter : MonoBehaviour
         _stealthMeter.transform.SetParent(SprintMeter.transform, false);
 
         // Wait until VR Instance exists
-        yield return new WaitUntil(() => VRSession.Instance != null);
+        //yield return new WaitUntil(() => VRSession.Instance != null);
 
         SetInitPositions();
 
