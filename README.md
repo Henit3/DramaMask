@@ -14,7 +14,13 @@ To balance this mechanic out, there is a stealth meter that is used while attemp
 * **[LethalLevelLoader](https://thunderstore.io/c/lethal-company/p/IAmBatby/LethalLevelLoader/)**: If playing on v50+ and LLL is being used, ensure it is on 1.2.0 or higher to avoid conflicts with most mods; including this one.
 * **[MaskedAiRevamp](https://thunderstore.io/c/lethal-company/p/Piggy/MaskedAIRevamp/)**: Ignoring collision with Masked enemies will not work; it is recommended to use [LethalIntelligence](https://thunderstore.io/c/lethal-company/p/VirusTLNR/LethalIntelligenceExperimental/) instead as this is a successor with more updates.
 
-Works on v45-v50 until 2.0.0 and v50+ with 2.0.1+ with no other known incompatibilities; supports controller and [LethalCompanyVR](https://thunderstore.io/c/lethal-company/p/DaXcess/LethalCompanyVR/)!
+Works with no other known incompatibilities; supports controller and [LethalCompanyVR](https://thunderstore.io/c/lethal-company/p/DaXcess/LethalCompanyVR/) (though without UI)!
+
+|LC Version	|Mod Version 	|
+|-----------|:-------------:|
+|v45	 	|<= 2.0.0 		|
+|v50      	|2.0.1 - 2.1.2	|
+|v56      	|2.1.3 <=		|
 
 > Formerly known as DramaMask
 
@@ -48,6 +54,7 @@ Special values for this include [All, Vanilla, Modded] in line with what is prov
 |Rend      	|40				|
 |Dine      	|40				|
 |Titan		|40				|
+|Artifice	|40				|
 |Modded		|40				|
 
 To also make it available in the store, check out @megapiggy's [BuyableDramaMask](https://thunderstore.io/c/lethal-company/p/MegaPiggy/BuyableDramaMask/) mod.
@@ -82,6 +89,8 @@ Extra overrides for these can be specified using the "Enemy Hiding Overrides" co
 |Masked Bee		|Supported - Not Natural|
 |Old Bird		|Supported - Not Natural|
 |Tulip Snake	|Supported				|
+|Kidnapper Fox	|Supported				|
+|Barber			|Supported				|
 |Eyeless Dog	|No						|
 |Manticoil		|No						|
 |Roaming Locust	|No						|

@@ -1,3 +1,8 @@
+# 2.1.3
+- Added v56 enemies support
+- Added Artifice to the Drama Mask spawn pool
+- Improved stability of the mod
+
 # 2.1.2
 - Fixed compatibility with LethalHands when the current item drop mode selected
 
