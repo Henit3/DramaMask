@@ -39,7 +39,7 @@ public class UpdatePatch
             }
             else
             {
-                if (Plugin.Config.RemoveOnDepletion.Value && pretendData.IsMaskAttached)
+                if (Plugin.Config.RemoveOnDepletion.Value)
                 {
                     pretendData.IsMaskAttached = false;
                 }
