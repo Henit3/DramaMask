@@ -161,7 +161,11 @@ public class DropAllHeldItemsPatch
             new(OpCodes.Ldfld,              // .isHoldingObject
                 AccessTools.Field(typeof(PlayerControllerB), nameof(PlayerControllerB.isHoldingObject)))
         ]);
-        matcher.Advance(2);
+        matcher.Advance(1);
+
+        // Mods can add extra conditions here (like LGU) - we want to skip the until the branch instruction
+        while (!matcher.Instruction.Branches(out _)) { matcher.Advance(1); }
+        matcher.Advance(1);
 
         // Skip overall resets if a mask is attached
         // if (_isPlayerValid && _isMaskAttached) return;
