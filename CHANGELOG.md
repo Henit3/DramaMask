@@ -1,3 +1,7 @@
+# 2.1.4
+- Fixed Late Game Upgrades incompatibility preventing dropping of items
+- Fixed bug allowing players to store/sell masks while they are being used
+
 # 2.1.3
 - Added v56 enemies support
 - Added Artifice to the Drama Mask spawn pool

@@ -147,6 +147,7 @@ Made on request from @tkcool and @pedro9006.
 * No interaction on game over with mask worn: @virustlnr
 * Transpilation incompatibility with LethalVR: @daxcess
 * LethalHands incompatibility when mask worn on square up: @sashimi_express
+* Late Game Upgrades incompatibilities: @readek, @symmetricsynapse, and @ajsglist (via GitHub)
 
 ### Contact
 For requesting new features or highlighting issues/bugs found, please post them in the mod's
