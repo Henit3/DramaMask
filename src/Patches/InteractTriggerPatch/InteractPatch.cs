@@ -1,4 +1,5 @@
 ﻿using DramaMask.Extensions;
+using DramaMask.Network;
 using GameNetcodeStuff;
 using HarmonyLib;
 using UnityEngine;
@@ -22,7 +23,9 @@ public class InteractPatch
             && __instance.transform.parent.parent.name != DepositCounterName) return true;
 
         var player = playerTransform.GetComponent<PlayerControllerB>();
-        if (!player.IsHidden()) return true;
+        var stealthData = NetworkHandler.Instance.GetStealth(player.IsLocal(), player.GetId());
+        if (stealthData == null
+            || !stealthData.IsAttemptingStealth()) return true;
 
         HUDManager.Instance.DisplayStatusEffect("Cannot interact with this object while using a mask");
         return false;
